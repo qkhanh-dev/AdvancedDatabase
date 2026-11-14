@@ -8,6 +8,9 @@ async function main() {
 
   const passwordHash = await bcrypt.hash('123456', 10);
 
+  // Disable FK check during seeding to solve circular dependencies
+  await prisma.$executeRawUnsafe(`SET session_replication_role = 'replica';`);
+
   // 1. Dược phẩm (THUOC)
   console.log('1. Seeding Thuoc...');
   await prisma.thuoc.upsert({
@@ -96,28 +99,37 @@ async function main() {
     },
   });
 
-  // 3. Khởi tạo Khoa & Bác sĩ (Xử lý Circular FK: KHOA.MaTruongKhoa <-> BAC_SI.MaNV)
-  console.log('3. Seeding Khoa, NhanVien & BacSi...');
-  // Check if K01 exists
-  const existK01 = await prisma.khoa.findUnique({ where: { MaKhoa: 'K01' } });
-  if (!existK01) {
-    // Step A: Create NhanVien BS01 temporarily without khoa or use raw SQL / order
-    // In PostgreSQL, we can use a transaction or insert with deferred constraints or create Khoa with dummy then update
-    // Using prisma: We create Khoa after or create with raw query
-    await prisma.$executeRawUnsafe(`
-      INSERT INTO "KHOA" ("MaKhoa", "TenKhoa", "ViTri", "SoDienThoaiKhoa", "MaTruongKhoa", "NgayBoNhiem")
-      VALUES ('K01', 'Khoa Noi Tong Hop', 'Tang 2 - Toa Nha A', '02838381111', 'BS01', '2025-01-01')
-      ON CONFLICT ("MaKhoa") DO NOTHING;
-    `);
+  // 3. Khởi tạo Khoa (KHOA)
+  console.log('3. Seeding Khoa...');
+  await prisma.khoa.upsert({
+    where: { MaKhoa: 'K01' },
+    update: {},
+    create: {
+      MaKhoa: 'K01',
+      TenKhoa: 'Khoa Noi Tong Hop',
+      ViTri: 'Tang 2 - Toa Nha A',
+      SoDienThoaiKhoa: '02838381111',
+      MaTruongKhoa: 'BS01',
+      NgayBoNhiem: new Date('2025-01-01'),
+    },
+  });
 
-    await prisma.$executeRawUnsafe(`
-      INSERT INTO "KHOA" ("MaKhoa", "TenKhoa", "ViTri", "SoDienThoaiKhoa", "MaTruongKhoa", "NgayBoNhiem")
-      VALUES ('K02', 'Khoa Ngoai Tong Hop', 'Tang 3 - Toa Nha B', '02838382222', 'BS02', '2025-02-01')
-      ON CONFLICT ("MaKhoa") DO NOTHING;
-    `);
-  }
+  await prisma.khoa.upsert({
+    where: { MaKhoa: 'K02' },
+    update: {},
+    create: {
+      MaKhoa: 'K02',
+      TenKhoa: 'Khoa Ngoai Tong Hop',
+      ViTri: 'Tang 3 - Toa Nha B',
+      SoDienThoaiKhoa: '02838382222',
+      MaTruongKhoa: 'BS02',
+      NgayBoNhiem: new Date('2025-02-01'),
+    },
+  });
 
-  // Create Staff BS01 (Doctor / Chief of Internal Medicine)
+  // 4. Nhân sự y tế (NHAN_VIEN, BAC_SI, DIEU_DUONG, NV_HANH_CHINH)
+  console.log('4. Seeding NhanVien & Subclasses...');
+  // Doctor BS01
   await prisma.nhanVien.upsert({
     where: { MaNV: 'BS01' },
     update: {},
@@ -146,7 +158,7 @@ async function main() {
     },
   });
 
-  // Create Staff BS02 (Doctor / Chief of Surgery)
+  // Doctor BS02
   await prisma.nhanVien.upsert({
     where: { MaNV: 'BS02' },
     update: {},
@@ -175,7 +187,7 @@ async function main() {
     },
   });
 
-  // Create Nurse DD01
+  // Nurse DD01
   await prisma.nhanVien.upsert({
     where: { MaNV: 'DD01' },
     update: {},
@@ -203,7 +215,7 @@ async function main() {
     },
   });
 
-  // Create Cashier / Reception NV_TN_01
+  // Cashier / Reception NV_TN_01
   await prisma.nhanVien.upsert({
     where: { MaNV: 'NV_TN_01' },
     update: {},
@@ -231,8 +243,8 @@ async function main() {
     },
   });
 
-  // 4. Phòng (PHONG)
-  console.log('4. Seeding Phong...');
+  // 5. Phòng (PHONG)
+  console.log('5. Seeding Phong...');
   await prisma.phong.upsert({
     where: { MaPhong: 'P01' },
     update: {},
@@ -259,8 +271,8 @@ async function main() {
     },
   });
 
-  // 5. Giường bệnh (GIUONG_BENH)
-  console.log('5. Seeding GiuongBenh...');
+  // 6. Giường bệnh (GIUONG_BENH)
+  console.log('6. Seeding GiuongBenh...');
   await prisma.giuongBenh.upsert({
     where: { MaGiuong: 'G01' },
     update: {},
@@ -287,8 +299,8 @@ async function main() {
     },
   });
 
-  // 6. Bệnh nhân mẫu (BENH_NHAN)
-  console.log('6. Seeding BenhNhan...');
+  // 7. Bệnh nhân mẫu (BENH_NHAN)
+  console.log('7. Seeding BenhNhan...');
   await prisma.benhNhan.upsert({
     where: { MaBN: 'BN001' },
     update: {},
@@ -315,12 +327,16 @@ async function main() {
     },
   });
 
+  // Re-enable triggers and FK checks
+  await prisma.$executeRawUnsafe(`SET session_replication_role = 'origin';`);
+
   console.log('✅ Seed completed successfully!');
 }
 
 main()
-  .catch((e) => {
+  .catch(async (e) => {
     console.error('❌ Error during seeding:', e);
+    await prisma.$executeRawUnsafe(`SET session_replication_role = 'origin';`);
     process.exit(1);
   })
   .finally(async () => {
