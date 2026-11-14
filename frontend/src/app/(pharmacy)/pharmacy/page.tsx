@@ -139,7 +139,7 @@ export default function PharmacyPage() {
                   placeholder="Nhập mã đơn thuốc (VD: DT202611140001)..."
                   className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-600"
                 />
-                <Button type="submit" disabled={loading} className="w-full text-xs bg-rose-600 hover:bg-rose-700">
+                <Button type="submit" size="lg" disabled={loading} className="w-full text-[13px] font-bold bg-rose-600 hover:bg-rose-700">
                   {loading ? "Đang tra cứu..." : "Tra Cứu Đơn Thuốc"}
                 </Button>
               </form>
@@ -180,10 +180,11 @@ export default function PharmacyPage() {
                   {currentPrescription.TrangThai === TrangThaiPhatThuocEnum.CHUA_PHAT && (
                     <Button
                       onClick={handleDispense}
+                      size="lg"
                       disabled={dispensing}
-                      className="w-full text-xs bg-emerald-600 hover:bg-emerald-700 gap-1.5 mt-2"
+                      className="w-full text-[13px] font-bold bg-emerald-600 hover:bg-emerald-700 gap-2 mt-2"
                     >
-                      <PackageCheck className="w-3.5 h-3.5" />
+                      <PackageCheck className="w-4 h-4" />
                       {dispensing ? "Đang xử lý trừ kho..." : "Xác Nhận Cấp Phát Thuốc"}
                     </Button>
                   )}

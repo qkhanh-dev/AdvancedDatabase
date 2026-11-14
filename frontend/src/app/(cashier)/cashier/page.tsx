@@ -214,7 +214,7 @@ export default function CashierPage() {
                     className="mt-1 w-full px-3 py-2 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-600"
                   />
                 </div>
-                <Button type="submit" disabled={loading} className="w-full text-xs bg-purple-600 hover:bg-purple-700">
+                <Button type="submit" size="lg" disabled={loading} className="w-full text-[13px] font-bold bg-purple-600 hover:bg-purple-700">
                   {loading ? "Đang tính toán..." : "Tính Toán Viện Phí"}
                 </Button>
               </form>
@@ -271,10 +271,11 @@ export default function CashierPage() {
 
                     <Button
                       onClick={handleCreateInvoice}
+                      size="lg"
                       disabled={loading}
-                      className="w-full text-xs bg-purple-600 hover:bg-purple-700 gap-1.5"
+                      className="w-full text-[13px] font-bold bg-purple-600 hover:bg-purple-700 gap-2"
                     >
-                      <Receipt className="w-3.5 h-3.5" /> Lập Hóa Đơn Thanh Toán
+                      <Receipt className="w-4 h-4" /> Lập Hóa Đơn Thanh Toán
                     </Button>
                   </div>
                 </div>
@@ -383,10 +384,11 @@ export default function CashierPage() {
 
                 <Button
                   onClick={handleSimulateWebhook}
+                  size="lg"
                   disabled={loading}
-                  className="w-full text-xs bg-purple-600 hover:bg-purple-700 gap-1.5"
+                  className="w-full text-[13px] font-bold bg-purple-600 hover:bg-purple-700 gap-2"
                 >
-                  <FileCheck className="w-3.5 h-3.5" /> Gửi Tín Hiệu Webhook Thanh Toán
+                  <FileCheck className="w-4 h-4" /> Gửi Tín Hiệu Webhook Thanh Toán
                 </Button>
               </div>
             </CardContent>

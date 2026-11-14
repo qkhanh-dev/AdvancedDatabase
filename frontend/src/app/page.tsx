@@ -30,6 +30,7 @@ import {
   X,
 } from "lucide-react";
 import { hospitalApi } from "@/services/hospitalApi";
+import { Sidebar } from "@/components/layout/Sidebar";
 import { useAuthStore } from "@/store/useAuthStore";
 import { GiuongBenh, Khoa, RoleEnum, TrangThaiGiuongEnum } from "@/types";
 
@@ -395,7 +396,7 @@ export default function Home() {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
 
-  const SidebarContent = (
+  const _SidebarContent = (
     <div className="w-[244px] h-full bg-white border-r border-slate-200/80 flex flex-col justify-between select-none shadow-sm">
       <div className="flex flex-col min-h-0 flex-1">
         {/* Brand Header */}
@@ -556,7 +557,7 @@ export default function Home() {
   return (
     <div className="min-h-screen lg:h-screen w-full flex bg-slate-100/70 text-slate-900 lg:overflow-hidden">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:block h-full shrink-0 z-30">{SidebarContent}</aside>
+      <Sidebar />
 
       {/* Mobile Sidebar Overlay */}
       {mobileMenuOpen && (
@@ -565,7 +566,9 @@ export default function Home() {
             className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs"
             onClick={() => setMobileMenuOpen(false)}
           />
-          <div className="relative z-10 h-full">{SidebarContent}</div>
+          <div className="relative z-10 h-full">
+            <Sidebar mobile />
+          </div>
         </div>
       )}
 

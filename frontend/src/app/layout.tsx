@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/components/providers/QueryProvider";
+import { ToastContainer } from "@/components/ui/ToastContainer";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin", "vietnamese"],
@@ -30,7 +31,10 @@ export default function RootLayout({
   return (
     <html lang="vi" className={`${plusJakartaSans.variable} ${jetbrainsMono.variable}`}>
       <body className="font-sans antialiased min-h-screen bg-slate-50 text-slate-900">
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          {children}
+          <ToastContainer />
+        </QueryProvider>
       </body>
     </html>
   );
