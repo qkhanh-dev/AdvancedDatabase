@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   AlertCircle,
   ArrowLeft,
@@ -39,6 +40,16 @@ interface PresetAccount {
 }
 
 const PRESET_ACCOUNTS: PresetAccount[] = [
+  {
+    username: "ADMIN01",
+    password: "123456",
+    roleLabel: "ADMIN",
+    hoTen: "Quản Trị Viên Hệ Thống",
+    donVi: "Phòng CNTT & Quản trị",
+    dotColor: "bg-rose-500",
+    badgeClass: "bg-rose-50 border-rose-200 text-rose-700",
+    activeBorderClass: "border-rose-400 bg-rose-50/50",
+  },
   {
     username: "BS01",
     password: "123456",
@@ -165,11 +176,13 @@ const RBAC_ROLES = [
 ];
 
 export default function LoginPage() {
+  const router = useRouter();
   const { user, token, isAuthenticated, login, logout, hydrate } = useAuthStore();
   const [username, setUsername] = useState("BS01");
   const [password, setPassword] = useState("123456");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [redirectCountdown, setRedirectCountdown] = useState<number | null>(null);
   const [message, setMessage] = useState<{
     type: "success" | "error" | "info";
     text: string;
@@ -186,6 +199,18 @@ export default function LoginPage() {
     }
   }, [isAuthenticated, token]);
 
+  useEffect(() => {
+    if (redirectCountdown === null) return;
+    if (redirectCountdown <= 0) {
+      router.push("/");
+      return;
+    }
+    const timer = setTimeout(() => {
+      setRedirectCountdown((prev) => (prev !== null ? prev - 1 : null));
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [redirectCountdown, router]);
+
   const loadProfile = async () => {
     try {
       const p = await hospitalApi.auth.getProfile();
@@ -196,23 +221,17 @@ export default function LoginPage() {
     }
   };
 
-  const handleQuickSelect = (preset: PresetAccount) => {
-    setUsername(preset.username);
-    setPassword(preset.password);
-    setMessage(null);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const performLogin = async (loginUsername: string, loginPassword: string) => {
     setLoading(true);
     setMessage(null);
     try {
       const res = await hospitalApi.auth.login({
-        username: username.trim(),
-        password,
+        username: loginUsername.trim(),
+        password: loginPassword,
       });
 
       login(res.user, res.access_token);
+      setRedirectCountdown(5);
       setMessage({
         type: "success",
         text: `Đăng nhập thành công! Xin chào ${res.user.hoTen} (${res.user.role}).`,
@@ -221,18 +240,38 @@ export default function LoginPage() {
     } catch (err: unknown) {
       const error = err as {
         response?: { data?: { message?: string | string[] } };
+        code?: string;
       };
-      const rawMsg = error?.response?.data?.message;
-      const errorMsg = Array.isArray(rawMsg)
-        ? rawMsg.join(", ")
-        : rawMsg || "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.";
-      setMessage({ type: "error", text: errorMsg });
+      if (!error?.response) {
+        setMessage({
+          type: "error",
+          text: "Không thể kết nối máy chủ API (http://localhost:3001/api). Vui lòng kiểm tra Backend.",
+        });
+      } else {
+        const rawMsg = error?.response?.data?.message;
+        const errorMsg = Array.isArray(rawMsg)
+          ? rawMsg.join(", ")
+          : rawMsg || "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.";
+        setMessage({ type: "error", text: errorMsg });
+      }
     } finally {
       setLoading(false);
     }
   };
 
+  const handleQuickSelect = async (preset: PresetAccount) => {
+    setUsername(preset.username);
+    setPassword(preset.password);
+    await performLogin(preset.username, preset.password);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await performLogin(username, password);
+  };
+
   const handleLogout = () => {
+    setRedirectCountdown(null);
     logout();
     setProfileData(null);
     setMessage({ type: "success", text: "Đã đăng xuất khỏi hệ thống." });
@@ -246,50 +285,51 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen lg:h-screen w-full flex flex-col lg:flex-row lg:overflow-hidden bg-slate-50 text-slate-800 antialiased">
-      {/* CỘT TRÁI (34%-38% Desktop): BRANDING & TỔNG QUAN PHÂN QUYỀN RBAC */}
-      <aside
-        className="w-full lg:w-[38%] xl:w-[36%] 2xl:w-[34%] lg:h-full text-white px-5 py-5 lg:px-6 lg:py-5 xl:px-8 xl:py-6 flex flex-col justify-between relative overflow-hidden lg:overflow-y-auto shrink-0 shadow-2xl"
+    <div
+      className="min-h-screen lg:h-screen w-full flex flex-col lg:flex-row lg:overflow-hidden text-slate-800 antialiased relative"
+      style={{
+        background:
+          "linear-gradient(145deg, rgb(3, 35, 34) 0%, rgb(6, 64, 61) 35%, rgb(13, 94, 89) 70%, rgb(15, 118, 110) 100%)",
+      }}
+    >
+      {/* Ambient glow layers (Full screen) */}
+      <div
+        className="absolute -top-24 -left-24 w-96 h-96 rounded-full blur-[90px] pointer-events-none"
         style={{
           background:
-            "linear-gradient(145deg, rgb(3, 35, 34) 0%, rgb(6, 64, 61) 35%, rgb(13, 94, 89) 70%, rgb(15, 118, 110) 100%)",
+            "radial-gradient(circle, rgba(20,184,166,0.22) 0%, rgba(13,148,136,0.06) 65%, transparent 80%)",
         }}
-      >
-        {/* Ambient glow layers */}
-        <div
-          className="absolute -top-24 -left-24 w-96 h-96 rounded-full blur-[90px] pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(20,184,166,0.22) 0%, rgba(13,148,136,0.06) 65%, transparent 80%)",
-          }}
-        />
-        <div
-          className="absolute -bottom-24 -right-24 w-96 h-96 rounded-full blur-[80px] pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(14,165,233,0.18) 0%, rgba(15,118,110,0.05) 70%, transparent 80%)",
-          }}
-        />
+      />
+      <div
+        className="absolute -bottom-24 -right-24 w-[28rem] h-[28rem] rounded-full blur-[90px] pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(14,165,233,0.18) 0%, rgba(15,118,110,0.05) 70%, transparent 80%)",
+        }}
+      />
 
-        {/* DNA & Dot Grid Watermark */}
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.06] stroke-white"
-          fill="none"
-          preserveAspectRatio="none"
-          viewBox="0 0 500 800"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M-20,120 Q120,60 220,160 T420,240 T600,180" strokeWidth="1.5" />
-          <path d="M-20,280 Q100,210 240,320 T480,360 T620,300" strokeWidth="1.2" />
-          <path d="M-40,520 Q130,460 270,560 T510,610 T650,540" strokeWidth="1.5" />
-          <path d="M-20,680 Q160,590 310,720 T540,730" strokeWidth="1.2" />
-          <defs>
-            <pattern height="28" id="subtle-dots" patternUnits="userSpaceOnUse" width="28">
-              <circle cx="2" cy="2" fill="rgba(255,255,255,0.45)" r="1" />
-            </pattern>
-          </defs>
-          <rect fill="url(#subtle-dots)" height="100%" opacity="0.5" width="100%" />
-        </svg>
+      {/* DNA & Dot Grid Watermark (Full screen) */}
+      <svg
+        className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.06] stroke-white"
+        fill="none"
+        preserveAspectRatio="none"
+        viewBox="0 0 1200 800"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M-20,120 Q280,60 520,160 T980,240 T1240,180" strokeWidth="1.5" />
+        <path d="M-20,280 Q240,210 560,320 T1020,360 T1260,300" strokeWidth="1.2" />
+        <path d="M-40,520 Q300,460 620,560 T1060,610 T1280,540" strokeWidth="1.5" />
+        <path d="M-20,680 Q320,590 680,720 T1120,730" strokeWidth="1.2" />
+        <defs>
+          <pattern height="28" id="subtle-dots" patternUnits="userSpaceOnUse" width="28">
+            <circle cx="2" cy="2" fill="rgba(255,255,255,0.45)" r="1" />
+          </pattern>
+        </defs>
+        <rect fill="url(#subtle-dots)" height="100%" opacity="0.5" width="100%" />
+      </svg>
+
+      {/* CỘT TRÁI (34%-38% Desktop): BRANDING & TỔNG QUAN PHÂN QUYỀN RBAC */}
+      <aside className="w-full lg:w-[38%] xl:w-[36%] 2xl:w-[34%] lg:h-full text-white px-5 py-5 lg:px-6 lg:py-5 xl:px-8 xl:py-6 flex flex-col justify-between relative z-10 lg:overflow-y-auto shrink-0 lg:border-r lg:border-white/10">
 
         {/* Header / Brand Section */}
         <div className="relative z-10 shrink-0">
@@ -422,23 +462,23 @@ export default function LoginPage() {
       </aside>
 
       {/* CỘT PHẢI (62%-66% Desktop): FORM ĐĂNG NHẬP & PHIÊN LÀM VIỆC */}
-      <main className="w-full lg:w-[62%] xl:w-[64%] 2xl:w-[66%] lg:h-full bg-slate-50 flex flex-col justify-between px-5 py-4 sm:px-8 xl:px-12 lg:overflow-y-auto">
+      <main className="w-full lg:w-[62%] xl:w-[64%] 2xl:w-[66%] lg:h-full bg-transparent flex flex-col justify-between px-5 py-4 sm:px-8 xl:px-12 relative z-10 lg:overflow-y-auto">
         {/* Top Navigation Bar */}
         <div className="w-full max-w-xl mx-auto flex items-center justify-between shrink-0 pb-2">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 hover:text-teal-700 px-2.5 py-1.5 rounded-lg hover:bg-teal-50/70 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-teal-100 hover:text-white px-2.5 py-1.5 rounded-lg hover:bg-white/10 transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Về Trang Chủ
           </Link>
           {isAuthenticated ? (
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 backdrop-blur-sm">
               <ShieldCheck className="w-3.5 h-3.5" />
               Đã xác thực JWT
             </span>
           ) : (
-            <span className="text-[11px] font-mono text-slate-400">
+            <span className="text-[11px] font-mono text-teal-200/75">
               AuthModule • /login
             </span>
           )}
@@ -501,6 +541,15 @@ export default function LoginPage() {
                   </span>
                 </span>
                 <div className="flex items-center gap-2 shrink-0">
+                  {redirectCountdown !== null && (
+                    <button
+                      type="button"
+                      onClick={() => setRedirectCountdown(null)}
+                      className="px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors border border-slate-200"
+                    >
+                      Ở lại trang
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={handleLogout}
@@ -518,6 +567,26 @@ export default function LoginPage() {
                   </Link>
                 </div>
               </div>
+
+              {redirectCountdown !== null && (
+                <div className="mt-3 ml-1 rounded-lg bg-teal-50/90 border border-teal-200 px-3 py-2 space-y-1.5">
+                  <div className="flex items-center justify-between text-xs text-teal-900">
+                    <span className="font-medium flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
+                      Đang chuyển vào Bảng điều khiển hệ thống...
+                    </span>
+                    <span className="font-mono font-bold text-teal-700">
+                      {redirectCountdown}s
+                    </span>
+                  </div>
+                  <div className="w-full h-1.5 bg-teal-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-teal-600 transition-all duration-1000 ease-linear"
+                      style={{ width: `${(redirectCountdown / 5) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -663,15 +732,18 @@ export default function LoginPage() {
                 <span className="text-[11px] text-slate-400 font-mono">1-Click Auto Fill</span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {PRESET_ACCOUNTS.map((preset) => {
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {PRESET_ACCOUNTS.map((preset, idx) => {
                   const isSelected = username === preset.username;
                   return (
                     <button
                       key={preset.username}
                       type="button"
+                      disabled={loading}
                       onClick={() => handleQuickSelect(preset)}
-                      className={`group text-left p-2.5 rounded-lg border transition-all cursor-pointer ${
+                      className={`group text-left p-2.5 rounded-lg border transition-all cursor-pointer disabled:opacity-60 ${
+                        idx === 0 ? "sm:col-span-2" : ""
+                      } ${
                         isSelected
                           ? preset.activeBorderClass
                           : "border-slate-200 bg-white hover:bg-slate-50 hover:border-teal-400"
@@ -701,7 +773,7 @@ export default function LoginPage() {
         </div>
 
         {/* Chân trang phụ */}
-        <footer className="text-center text-xs text-slate-400 shrink-0 py-2">
+        <footer className="text-center text-xs text-teal-100/70 shrink-0 py-2">
           <p>© 2026 QLBV Smart HIS • Khoa CNTT, Đại học Sài Gòn (SGU).</p>
         </footer>
       </main>

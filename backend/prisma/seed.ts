@@ -243,6 +243,34 @@ async function main() {
     },
   });
 
+  // System Admin ADMIN01
+  await prisma.nhanVien.upsert({
+    where: { MaNV: 'ADMIN01' },
+    update: {},
+    create: {
+      MaNV: 'ADMIN01',
+      HoTen: 'Quan Tri Vien He Thong',
+      NgaySinh: new Date('1988-06-15'),
+      GioiTinh: GioiTinhEnum.NAM,
+      CCCD: '079088000005',
+      SoDienThoai: '0908000005',
+      Email: 'admin@hospital.sgu.vn',
+      DiaChi: '273 An Duong Vuong, Quan 5, TP.HCM',
+      NgayVaoLam: new Date('2020-01-01'),
+      HeSoLuong: 5.00,
+      LoaiNV: LoaiNVEnum.HANH_CHINH,
+      MatKhau: passwordHash,
+      MaKhoa: 'K01',
+      nvHanhChinh: {
+        create: {
+          BoPhanPhuTrach: 'Phong CNTT & Quan tri He thong',
+          ChucVuHC: 'Admin Quan tri He thong',
+          BacKyThuat: 4,
+        },
+      },
+    },
+  });
+
   // 5. Phòng (PHONG)
   console.log('5. Seeding Phong...');
   await prisma.phong.upsert({

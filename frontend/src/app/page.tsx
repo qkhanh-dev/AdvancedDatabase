@@ -1,18 +1,23 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Activity,
   Bed,
   ClipboardList,
   CreditCard,
   Hospital,
+  LogOut,
   Pill,
+  ShieldCheck,
   Stethoscope,
   Users,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const subsystems = [
   {
@@ -82,6 +87,41 @@ const subsystems = [
 ];
 
 export default function Home() {
+  const router = useRouter();
+  const { user, isAuthenticated, hydrate, logout } = useAuthStore();
+  const [checkedAuth, setCheckedAuth] = useState(false);
+
+  useEffect(() => {
+    hydrate();
+    setCheckedAuth(true);
+  }, [hydrate]);
+
+  useEffect(() => {
+    if (checkedAuth && !isAuthenticated) {
+      router.replace("/login");
+    }
+  }, [checkedAuth, isAuthenticated, router]);
+
+  const handleLogout = () => {
+    logout();
+    router.replace("/login");
+  };
+
+  if (!checkedAuth || !isAuthenticated || !user) {
+    return (
+      <main className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <div className="p-3 bg-teal-600 text-white rounded-2xl shadow-md animate-pulse">
+            <Hospital className="w-7 h-7" />
+          </div>
+          <p className="text-sm font-medium text-slate-600">
+            Đang kiểm tra phiên đăng nhập...
+          </p>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-slate-50 p-6 md:p-10">
       <div className="max-w-7xl mx-auto space-y-8">
@@ -106,12 +146,31 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="default">Next.js 14 App Router</Badge>
-            <Badge variant="secondary">React 18 & TS</Badge>
-            <Badge variant="secondary">Tailwind CSS</Badge>
-            <Badge variant="secondary">Prisma 7 & PG 16</Badge>
-            <Badge variant="success">ACID Concurrency</Badge>
+          <div className="flex flex-col items-start md:items-end gap-3">
+            <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-teal-50 border border-teal-200 text-xs">
+              <ShieldCheck className="w-4 h-4 text-teal-600 shrink-0" />
+              <div className="text-left">
+                <div className="font-semibold text-slate-900">{user.hoTen}</div>
+                <div className="text-[11px] font-mono text-teal-700">
+                  #{user.maNV} • {user.role}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="ml-2 px-2.5 py-1 rounded-lg text-xs font-semibold text-rose-600 hover:bg-rose-50 border border-rose-200 flex items-center gap-1 transition-colors"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                Đăng xuất
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="default">Next.js 14 App Router</Badge>
+              <Badge variant="secondary">React 18 & TS</Badge>
+              <Badge variant="secondary">Tailwind CSS</Badge>
+              <Badge variant="secondary">Prisma 7 & PG 16</Badge>
+              <Badge variant="success">ACID Concurrency</Badge>
+            </div>
           </div>
         </div>
 
