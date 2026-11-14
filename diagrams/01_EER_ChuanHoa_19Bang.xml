@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mxfile host="app.diagrams.net" modified="2026-11-14T09:50:00.000Z" agent="Antigravity-Agent" version="24.0.0" type="device">
+  <diagram id="diagram_sơ_đồ_eer_chuẩn_hóa_19_thực_thể_-_qlbv_v2.0" name="Sơ đồ EER Chuẩn hóa 19 Thực thể - QLBV v2.0">
+    <mxGraphModel dx="1800" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3200" pageHeight="2400" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="100" value="MÔ HÌNH THỰC THỂ KẾT HỢP MỞ RỘNG (EER DIAGRAM v2.0) - HỆ THỐNG QUẢN LÝ BỆNH VIỆN&lt;br/&gt;&lt;font style='font-size:13px;font-weight:normal;color:#94A3B8;'&gt;Chuẩn hóa 19 Thực thể BCNF | 2 Cây chuyên biệt hóa IS-A | 25 Quan hệ toàn vẹn | Khoa CNTT - ĐH Sài Gòn (SGU)&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#1E293B;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;shadow=1;fontColor=#FFFFFF;fontSize=20;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="30" width="1600" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="grp_cs_vc" value="KHU VỰC 1: HẠ TẦNG &amp; CƠ SỞ VẬT CHẤT" style="swimlane;fontStyle=1;align=left;spacingLeft=10;fillColor=#F0FDFA;strokeColor=#0D9488;strokeWidth=1.5;fontSize=13;fontColor=#134E4A;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="140" width="780" height="620" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_KHOA" value="KHOA
+(Khoa / Phòng ban)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=2;fontColor=#1E3A8A;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="220" width="180" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_PHONG" value="PHONG
+(Buồng bệnh / Phòng khám)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=2;fontColor=#1E3A8A;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="480" y="220" width="200" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_GIUONG" value="GIUONG_BENH
+(Giường bệnh nội trú)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=2;fontColor=#1E3A8A;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="480" y="480" width="200" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="R_KHOA_PHONG" value="Có
+(1:N)" style="rhombus;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#F1F5F9;strokeColor=#64748B;strokeWidth=2;fontColor=#334155;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="340" y="230" width="90" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_kp1" value="(1,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="E_KHOA" target="R_KHOA_PHONG">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_kp2" value="(1,N)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="R_KHOA_PHONG" target="E_PHONG">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="R_PHONG_GIUONG" value="Chứa
+(1:N)" style="rhombus;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#F1F5F9;strokeColor=#64748B;strokeWidth=2;fontColor=#334155;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="535" y="360" width="90" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_pg1" value="(1,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="E_PHONG" target="R_PHONG_GIUONG">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_pg2" value="(0,N)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="R_PHONG_GIUONG" target="E_GIUONG">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="grp_hr" value="KHU VỰC 2: CÂY KẾ THỪA NHÂN SỰ Y TẾ (IS-A: Disjoint, Partial)" style="swimlane;fontStyle=1;align=left;spacingLeft=10;fillColor=#FAF5FF;strokeColor=#9333EA;strokeWidth=1.5;fontSize=13;fontColor=#581C87;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="920" y="140" width="1200" height="620" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_NV" value="NHAN_VIEN
+&lt;&lt;Superclass&gt;&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=2;fontColor=#1E3A8A;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="210" width="220" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="ISA_NV" value="d, p
+(IS-A)" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F3E8FF;strokeColor=#9333EA;strokeWidth=2;fontStyle=1;fontSize=13;fontColor=#581C87;" vertex="1" parent="1">
+          <mxGeometry x="1485" y="330" width="50" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_nv_isa" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9333EA;strokeWidth=2;fontSize=11;fontColor=#581C87;" edge="1" parent="1" source="E_NV" target="ISA_NV">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_BS" value="BAC_SI
+&lt;&lt;Subclass&gt;&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=2;fontColor=#1E3A8A;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="440" width="180" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_DD" value="DIEU_DUONG
+&lt;&lt;Subclass&gt;&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=2;fontColor=#1E3A8A;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1420" y="440" width="180" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_NVHC" value="NV_HANH_CHINH
+&lt;&lt;Subclass&gt;&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=2;fontColor=#1E3A8A;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1840" y="440" width="200" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_isa_bs" value="Kế thừa" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9333EA;strokeWidth=2;fontSize=11;fontColor=#581C87;" edge="1" parent="1" source="ISA_NV" target="E_BS">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_isa_dd" value="Kế thừa" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9333EA;strokeWidth=2;fontSize=11;fontColor=#581C87;" edge="1" parent="1" source="ISA_NV" target="E_DD">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_isa_hc" value="Kế thừa" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9333EA;strokeWidth=2;fontSize=11;fontColor=#581C87;" edge="1" parent="1" source="ISA_NV" target="E_NVHC">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="R_NV_KHOA" value="Trực thuộc
+(N:1)" style="rhombus;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#F1F5F9;strokeColor=#64748B;strokeWidth=2;fontColor=#334155;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="150" width="100" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_nv_k1" value="(1,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="E_NV" target="R_NV_KHOA">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_nv_k2" value="(1,N)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="R_NV_KHOA" target="E_KHOA">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="R_TRUONG_KHOA" value="Làm Trưởng khoa
+(1:1)" style="rhombus;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#F1F5F9;strokeColor=#64748B;strokeWidth=2;fontColor=#334155;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="160" y="440" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_tk1" value="(0,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="E_BS" target="R_TRUONG_KHOA">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_tk2" value="(1,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="R_TRUONG_KHOA" target="E_KHOA">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LICHTRUC" value="LICH_TRUC
+(Bảng thứ 19 - Phân ca)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#FEF3C7;strokeColor=#D97706;strokeWidth=3;fontColor=#92400E;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="2220" y="220" width="200" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="R_PHAN_CONG_TRUC" value="Phân công
+(N:M)" style="rhombus;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#FFEDD5;strokeColor=#EA580C;strokeWidth=3;fontColor=#7C2D12;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1800" y="225" width="110" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_lt1" value="(1,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="E_LICHTRUC" target="R_PHAN_CONG_TRUC">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_lt2" value="(0,N)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="R_PHAN_CONG_TRUC" target="E_NV">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="R_TRUC_TAI_PHONG" value="Trực tại
+(N:1)" style="rhombus;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#F1F5F9;strokeColor=#64748B;strokeWidth=2;fontColor=#334155;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="2265" y="150" width="110" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_ltp1" value="(1,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="E_LICHTRUC" target="R_TRUC_TAI_PHONG">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_ltp2" value="(0,N)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="R_TRUC_TAI_PHONG" target="E_PHONG">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="grp_bn" value="KHU VỰC 3: CÂY KẾ THỪA BỆNH NHÂN (IS-A: Overlapping, Total)" style="swimlane;fontStyle=1;align=left;spacingLeft=10;fillColor=#FEF2F2;strokeColor=#EF4444;strokeWidth=1.5;fontSize=13;fontColor=#7F1D1D;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="800" width="780" height="560" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_BN" value="BENH_NHAN
+&lt;&lt;Superclass&gt;&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=2;fontColor=#1E3A8A;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="350" y="860" width="220" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="ISA_BN" value="o, t
+(IS-A)" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F3E8FF;strokeColor=#9333EA;strokeWidth=2;fontStyle=1;fontSize=13;fontColor=#581C87;" vertex="1" parent="1">
+          <mxGeometry x="435" y="980" width="50" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_bn_isa" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9333EA;strokeWidth=2;fontSize=11;fontColor=#581C87;" edge="1" parent="1" source="E_BN" target="ISA_BN">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_BN_NGOAI" value="BN_NGOAI_TRU
+&lt;&lt;Subclass&gt;&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=2;fontColor=#1E3A8A;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="1090" width="200" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_BN_NOI" value="BN_NOI_TRU
+&lt;&lt;Subclass&gt;&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=2;fontColor=#1E3A8A;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="560" y="1090" width="200" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_isa_bno" value="Kế thừa" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9333EA;strokeWidth=2;fontSize=11;fontColor=#581C87;" edge="1" parent="1" source="ISA_BN" target="E_BN_NGOAI">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_isa_bni" value="Kế thừa" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9333EA;strokeWidth=2;fontSize=11;fontColor=#581C87;" edge="1" parent="1" source="ISA_BN" target="E_BN_NOI">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="R_BS_THEO_DOI" value="Bác sĩ theo dõi
+(1:N)" style="rhombus;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#F1F5F9;strokeColor=#64748B;strokeWidth=2;fontColor=#334155;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="830" y="860" width="130" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_bstd1" value="(0,N)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="E_BS" target="R_BS_THEO_DOI">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_bstd2" value="(1,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="R_BS_THEO_DOI" target="E_BN_NOI">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="grp_pg" value="KHU VỰC 4: QUẢN LÝ NỘI TRÚ &amp; PHÂN GIƯỜNG" style="swimlane;fontStyle=1;align=left;spacingLeft=10;fillColor=#FFFBEB;strokeColor=#F59E0B;strokeWidth=1.5;fontSize=13;fontColor=#78350F;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="920" y="800" width="580" height="560" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_PHANGIUONG" value="PHAN_GIUONG
+(Thực thể kết hợp yếu)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#FEF3C7;strokeColor=#D97706;strokeWidth=3;fontColor=#92400E;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1090" y="960" width="240" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="R_LUU_TRU" value="Lưu trú
+(N:M)" style="rhombus;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#FFEDD5;strokeColor=#EA580C;strokeWidth=3;fontColor=#7C2D12;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="800" y="1095" width="110" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_ltbn1" value="(1,N)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="E_BN_NOI" target="R_LUU_TRU">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_ltbn2" value="(1,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="R_LUU_TRU" target="E_PHANGIUONG">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="R_CAP_GIUONG" value="Cấp giường
+(N:1)" style="rhombus;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#FFEDD5;strokeColor=#EA580C;strokeWidth=3;fontColor=#7C2D12;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1155" y="620" width="110" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_cpg1" value="(1,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="E_PHANGIUONG" target="R_CAP_GIUONG">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_cpg2" value="(0,N)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="R_CAP_GIUONG" target="E_GIUONG">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="grp_lk" value="KHU VỰC 5: KHÁM BỆNH LÂM SÀNG" style="swimlane;fontStyle=1;align=left;spacingLeft=10;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontSize=13;fontColor=#1E3A8A;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="1560" y="800" width="680" height="560" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LUOTKHAM" value="LUOT_KHAM
+(Nhật ký khám chữa bệnh)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=2;fontColor=#1E3A8A;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1780" y="960" width="240" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="R_DK_KHAM" value="Đăng ký khám
+(1:N)" style="rhombus;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#F1F5F9;strokeColor=#64748B;strokeWidth=2;fontColor=#334155;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="880" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_dkk1" value="(0,N)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="E_BN" target="R_DK_KHAM">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_dkk2" value="(1,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="R_DK_KHAM" target="E_LUOTKHAM">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="R_BS_KHAM" value="Bác sĩ khám
+(1:N)" style="rhombus;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#F1F5F9;strokeColor=#64748B;strokeWidth=2;fontColor=#334155;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="680" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_bsk1" value="(0,N)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="E_BS" target="R_BS_KHAM">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_bsk2" value="(1,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="R_BS_KHAM" target="E_LUOTKHAM">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="R_TAI_PHONG_KHAM" value="Tại phòng
+(N:1)" style="rhombus;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#F1F5F9;strokeColor=#64748B;strokeWidth=2;fontColor=#334155;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1845" y="680" width="110" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_tpk1" value="(1,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="E_LUOTKHAM" target="R_TAI_PHONG_KHAM">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_tpk2" value="(0,N)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="R_TAI_PHONG_KHAM" target="E_PHONG">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="grp_pharmacy" value="KHU VỰC 6: DƯỢC PHẨM &amp; KÊ ĐƠN THUỐC" style="swimlane;fontStyle=1;align=left;spacingLeft=10;fillColor=#ECFDF5;strokeColor=#10B981;strokeWidth=1.5;fontSize=13;fontColor=#064E3B;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1420" width="1120" height="600" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_DONTHUOC" value="DON_THUOC
+(Toa thuốc chỉ định)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=2;fontColor=#1E3A8A;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="760" y="1520" width="200" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="R_KE_DON" value="Kê đơn
+(1:0..1)" style="rhombus;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#F1F5F9;strokeColor=#64748B;strokeWidth=2;fontColor=#334155;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="1525" width="110" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_kd1" value="(0,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="E_LUOTKHAM" target="R_KE_DON">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_kd2" value="(1,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="R_KE_DON" target="E_DONTHUOC">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_CT_DON" value="CT_DON_THUOC
+(Chi tiết dược trong toa)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#FEF3C7;strokeColor=#D97706;strokeWidth=3;fontColor=#92400E;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="480" y="1720" width="220" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="R_BAO_GOM_THUOC" value="Bao gồm
+(1:N)" style="rhombus;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#FFEDD5;strokeColor=#EA580C;strokeWidth=3;fontColor=#7C2D12;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="535" y="1580" width="110" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_bgt1" value="(1,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="E_DONTHUOC" target="R_BAO_GOM_THUOC">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_bgt2" value="(1,N)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="R_BAO_GOM_THUOC" target="E_CT_DON">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_THUOC" value="THUOC
+(Danh mục biệt dược)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=2;fontColor=#1E3A8A;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="1720" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="R_THUOC_TRONG_DON" value="Kê thuốc
+(N:1)" style="rhombus;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#F1F5F9;strokeColor=#64748B;strokeWidth=2;fontColor=#334155;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="350" y="1730" width="100" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_ttd1" value="(1,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="E_CT_DON" target="R_THUOC_TRONG_DON">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_ttd2" value="(0,N)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="R_THUOC_TRONG_DON" target="E_THUOC">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="grp_cls" value="KHU VỰC 7: CẬN LÂM SÀNG &amp; DỊCH VỤ KỸ THUẬT" style="swimlane;fontStyle=1;align=left;spacingLeft=10;fillColor=#F0F9FF;strokeColor=#0284C7;strokeWidth=1.5;fontSize=13;fontColor=#0C4A6E;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="1420" width="1000" height="600" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_SUDUNGDV" value="SU_DUNG_DV
+(Chỉ định &amp; Kết quả CLS)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#FEF3C7;strokeColor=#D97706;strokeWidth=3;fontColor=#92400E;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="1720" width="240" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_DICHVU" value="DICH_VU
+(Danh mục xét nghiệm/CĐHA)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=2;fontColor=#1E3A8A;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1940" y="1720" width="240" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="R_CHI_DINH_DV" value="Chỉ định CLS
+(1:N)" style="rhombus;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#FFEDD5;strokeColor=#EA580C;strokeWidth=3;fontColor=#7C2D12;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1680" y="1525" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_cddv1" value="(0,N)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="E_LUOTKHAM" target="R_CHI_DINH_DV">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_cddv2" value="(1,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="R_CHI_DINH_DV" target="E_SUDUNGDV">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="R_DV_KY_THUAT" value="Áp dụng DV
+(N:1)" style="rhombus;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#F1F5F9;strokeColor=#64748B;strokeWidth=2;fontColor=#334155;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1780" y="1730" width="110" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_dvkt1" value="(1,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="E_SUDUNGDV" target="R_DV_KY_THUAT">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_dvkt2" value="(0,N)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="R_DV_KY_THUAT" target="E_DICHVU">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="R_DD_THUC_HIEN" value="KTV / Điều dưỡng thực hiện
+(N:1)" style="rhombus;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#F1F5F9;strokeColor=#64748B;strokeWidth=2;fontColor=#334155;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1475" y="1260" width="150" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_ddth1" value="(1,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="E_SUDUNGDV" target="R_DD_THUC_HIEN">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_ddth2" value="(0,N)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="R_DD_THUC_HIEN" target="E_DD">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="grp_billing" value="KHU VỰC 8: TÀI CHÍNH &amp; QUYẾT TOÁN VIỆN PHÍ" style="swimlane;fontStyle=1;align=left;spacingLeft=10;fillColor=#FEF2F2;strokeColor=#F43F5E;strokeWidth=1.5;fontSize=13;fontColor=#881337;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="2280" y="800" width="820" height="560" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_HOADON" value="HOA_DON
+(Quyết toán viện phí)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=2;fontColor=#1E3A8A;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="2560" y="960" width="220" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="R_THANH_TOAN" value="Quyết toán
+(1:0..1)" style="rhombus;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#F1F5F9;strokeColor=#64748B;strokeWidth=2;fontColor=#334155;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="2360" y="970" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_tt1" value="(0,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="E_LUOTKHAM" target="R_THANH_TOAN">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_tt2" value="(1,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="R_THANH_TOAN" target="E_HOADON">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="R_THU_NGAN_LAP" value="Thu ngân lập
+(N:1)" style="rhombus;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#F1F5F9;strokeColor=#64748B;strokeWidth=2;fontColor=#334155;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="2400" y="680" width="130" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_tnl1" value="(1,1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="E_HOADON" target="R_THU_NGAN_LAP">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_tnl2" value="(0,N)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#0F172A;" edge="1" parent="1" source="R_THU_NGAN_LAP" target="E_NVHC">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend_box" value="CHÚ GIẢI KÝ HIỆU EER:&lt;br/&gt;• Khung bo góc viền xanh: &lt;b&gt;Thực thể mạnh (Strong Entity)&lt;/b&gt;&lt;br/&gt;• Khung viền kép vàng: &lt;b&gt;Thực thể yếu / kết hợp (Weak / Associative Entity)&lt;/b&gt;&lt;br/&gt;• Hình thoi: &lt;b&gt;Mối kết hợp (Relationship)&lt;/b&gt;&lt;br/&gt;• Hình tròn tím: &lt;b&gt;Ràng buộc kế thừa IS-A: (d,p) hoặc (o,t)&lt;/b&gt;&lt;br/&gt;• Bản số tham gia: &lt;b&gt;(min, max)&lt;/b&gt; trên từng nhánh" style="rounded=1;fillColor=#F8FAFC;strokeColor=#64748B;align=left;spacingLeft=12;fontSize=12;fontColor=#1E293B;" vertex="1" parent="1">
+          <mxGeometry x="2360" y="1480" width="480" height="140" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

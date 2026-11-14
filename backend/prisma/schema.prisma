@@ -1,0 +1,426 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// 13 ENUMS CHUẨN HÓA Y TẾ
+// ==========================================
+
+enum LoaiPhongEnum {
+  KHAM
+  NOI_TRU
+  CAP_CUU
+  XET_NGHIEM
+}
+
+enum LoaiGiuongEnum {
+  TIEU_CHUAN
+  VIP
+  CAP_CUU
+  HOI_SUC
+}
+
+enum TrangThaiGiuongEnum {
+  TRONG
+  DANG_SU_DUNG
+  BAO_TRI
+}
+
+enum LoaiNVEnum {
+  BAC_SI
+  DIEU_DUONG
+  HANH_CHINH
+}
+
+enum GioiTinhEnum {
+  NAM
+  NU
+  KHAC
+  CHUA_RO
+}
+
+enum NhomMauEnum {
+  A
+  B
+  AB
+  O
+  CHUA_RO
+}
+
+enum HuongXuTriEnum {
+  KE_DON_VE
+  NHAP_VIEN
+  CHUYEN_VIEN
+}
+
+enum TrangThaiPhatThuocEnum {
+  CHUA_PHAT
+  DA_PHAT
+  DA_HUY
+}
+
+enum LoaiDichVuEnum {
+  XET_NGHIEM
+  CDHA
+  THU_THUAT
+  KHAM
+}
+
+enum PhuongThucTTEnum {
+  TIEN_MAT
+  CHUYEN_KHOAN
+  THE
+}
+
+enum TrangThaiTTEnum {
+  CHUA_THANH_TOAN
+  DA_THANH_TOAN
+}
+
+enum CaTrucEnum {
+  SANG
+  CHIEU
+  TOI
+  DEM
+}
+
+enum TrangThaiDiemDanhEnum {
+  CHUA_DIEM_DANH
+  CO_MAT
+  VANG_MAT
+}
+
+// ==========================================
+// PHÂN HỆ 1: HẠ TẦNG CƠ SỞ VẬT CHẤT
+// ==========================================
+
+model Khoa {
+  MaKhoa          String     @id @db.VarChar(20)
+  TenKhoa         String     @unique @db.VarChar(100)
+  ViTri           String?    @db.VarChar(200)
+  SoDienThoaiKhoa String?    @db.VarChar(20)
+  MaTruongKhoa    String     @unique @db.VarChar(20)
+  NgayBoNhiem     DateTime   @db.Date
+
+  truongKhoa      BacSi      @relation("KhoaTruongKhoa", fields: [MaTruongKhoa], references: [MaNV], onDelete: NoAction, onUpdate: NoAction)
+  phongs          Phong[]
+  nhanViens       NhanVien[]
+
+  @@map("KHOA")
+}
+
+model Phong {
+  MaPhong      String        @id @db.VarChar(20)
+  SoPhong      String        @db.VarChar(20)
+  LoaiPhong    LoaiPhongEnum
+  Tang         Int?          @db.SmallInt
+  SucChuaToiDa Int           @db.SmallInt
+  MaKhoa       String        @db.VarChar(20)
+
+  khoa         Khoa          @relation(fields: [MaKhoa], references: [MaKhoa], onDelete: NoAction, onUpdate: NoAction)
+  giuongBenhs  GiuongBenh[]
+  luotKhams    LuotKham[]
+  lichTrucs    LichTruc[]
+
+  @@unique([MaKhoa, SoPhong])
+  @@map("PHONG")
+}
+
+model GiuongBenh {
+  MaGiuong        String              @id @db.VarChar(20)
+  SoGiuong        String              @db.VarChar(20)
+  LoaiGiuong      LoaiGiuongEnum
+  DonGiaNgay      Decimal             @db.Decimal(18, 2)
+  TrangThaiGiuong TrangThaiGiuongEnum @default(TRONG)
+  MaPhong         String              @db.VarChar(20)
+
+  phong           Phong               @relation(fields: [MaPhong], references: [MaPhong], onDelete: NoAction, onUpdate: NoAction)
+  phanGiuongs     PhanGiuong[]
+
+  @@unique([MaPhong, SoGiuong])
+  @@map("GIUONG_BENH")
+}
+
+// ==========================================
+// PHÂN HỆ 2: NHÂN SỰ Y TẾ (IS-A HIERARCHY)
+// ==========================================
+
+model NhanVien {
+  MaNV        String       @id @db.VarChar(20)
+  HoTen       String       @db.VarChar(150)
+  NgaySinh    DateTime     @db.Date
+  GioiTinh    GioiTinhEnum
+  CCCD        String       @unique @db.VarChar(20)
+  SoDienThoai String       @unique @db.VarChar(20)
+  Email       String?      @db.VarChar(254)
+  DiaChi      String?      @db.VarChar(300)
+  NgayVaoLam  DateTime     @db.Date
+  HeSoLuong   Decimal      @db.Decimal(5, 2)
+  LoaiNV      LoaiNVEnum
+  MatKhau     String?      @db.VarChar(255) // Bcrypt password hash for authentication
+  MaKhoa      String       @db.VarChar(20)
+
+  khoa        Khoa         @relation(fields: [MaKhoa], references: [MaKhoa], onDelete: NoAction, onUpdate: NoAction)
+  bacSi       BacSi?
+  dieuDuong   DieuDuong?
+  nvHanhChinh NvHanhChinh?
+  lichTrucs   LichTruc[]
+
+  @@map("NHAN_VIEN")
+}
+
+model BacSi {
+  MaNV        String     @id @db.VarChar(20)
+  HocVi       String?    @db.VarChar(100)
+  ChuyenKhoa  String?    @db.VarChar(100)
+  SoCCHN      String     @unique @db.VarChar(50)
+  PhuCapKham  Decimal    @default(0.00) @db.Decimal(18, 2)
+
+  nhanVien    NhanVien   @relation(fields: [MaNV], references: [MaNV], onDelete: Cascade, onUpdate: NoAction)
+  khoaTruong  Khoa?      @relation("KhoaTruongKhoa")
+  bnNoiTrus   BnNoiTru[]
+  luotKhams   LuotKham[]
+
+  @@map("BAC_SI")
+}
+
+model DieuDuong {
+  MaNV             String      @id @db.VarChar(20)
+  TrinhDoChuyenMon String?     @db.VarChar(100)
+  SoCCHN_DD        String      @unique @db.VarChar(50)
+  PhuCapTruc       Decimal     @default(0.00) @db.Decimal(18, 2)
+
+  nhanVien         NhanVien    @relation(fields: [MaNV], references: [MaNV], onDelete: Cascade, onUpdate: NoAction)
+  suDungDvs        SuDungDv[]
+
+  @@map("DIEU_DUONG")
+}
+
+model NvHanhChinh {
+  MaNV           String    @id @db.VarChar(20)
+  BoPhanPhuTrach String?   @db.VarChar(100)
+  ChucVuHC       String?   @db.VarChar(50)
+  BacKyThuat     Int?
+
+  nhanVien       NhanVien  @relation(fields: [MaNV], references: [MaNV], onDelete: Cascade, onUpdate: NoAction)
+  hoaDons        HoaDon[]
+
+  @@map("NV_HANH_CHINH")
+}
+
+// ==========================================
+// PHÂN HỆ 3: HỒ SƠ NGƯỜI BỆNH (IS-A HIERARCHY)
+// ==========================================
+
+model BenhNhan {
+  MaBN         String        @id @db.VarChar(20)
+  HoTen        String        @db.VarChar(150)
+  NgaySinh     DateTime      @db.Date
+  GioiTinh     GioiTinhEnum  @default(CHUA_RO)
+  CCCD         String?       @unique @db.VarChar(20)
+  SoDienThoai  String?       @db.VarChar(20)
+  SoBHYT       String?       @unique @db.VarChar(25)
+  MucHuongBHYT Int?
+  DiaChi       String?       @db.VarChar(300)
+  NhomMau      NhomMauEnum?  @default(CHUA_RO)
+  CoNgoaiTru   Boolean       @default(false)
+  CoNoiTru     Boolean       @default(false)
+
+  bnNgoaiTru   BnNgoaiTru?
+  bnNoiTru     BnNoiTru?
+  luotKhams    LuotKham[]
+
+  @@map("BENH_NHAN")
+}
+
+model BnNgoaiTru {
+  MaBN             String    @id @db.VarChar(20)
+  SoSoKhamBenh     String    @unique @db.VarChar(30)
+  NgayDangKyDau    DateTime  @db.Date
+  TinhTrangTheoDoi String?   @db.VarChar(300)
+
+  benhNhan         BenhNhan  @relation(fields: [MaBN], references: [MaBN], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("BN_NGOAI_TRU")
+}
+
+model BnNoiTru {
+  MaBN               String       @id @db.VarChar(20)
+  SoHoSoBenhAn       String       @unique @db.VarChar(30)
+  NgayNhapVien       DateTime
+  NgayXuatVienDuKien DateTime?
+  ChanDoanNhapVien   String       @db.VarChar(255)
+  TinhTrangNhapVien  String       @db.VarChar(100)
+  MaBSTheoDoi        String       @db.VarChar(20)
+
+  benhNhan           BenhNhan     @relation(fields: [MaBN], references: [MaBN], onDelete: Cascade, onUpdate: NoAction)
+  bacSiTheoDoi       BacSi        @relation(fields: [MaBSTheoDoi], references: [MaNV], onDelete: NoAction, onUpdate: NoAction)
+  phanGiuongs        PhanGiuong[]
+
+  @@map("BN_NOI_TRU")
+}
+
+// ==========================================
+// PHÂN HỆ 4: KHÁM BỆNH & KÊ ĐƠN THUỐC
+// ==========================================
+
+model LuotKham {
+  MaLuotKham      String         @id @db.VarChar(20)
+  ThoiGianKham    DateTime
+  TrieuChung      String         @db.VarChar(255)
+  HuyetAp         String?        @db.VarChar(20)
+  NhietDo         Decimal?       @db.Decimal(4, 1)
+  Mach            Int?
+  ChanDoanSoBo    String         @db.VarChar(255)
+  ChanDoanXacDinh String?        @db.VarChar(255)
+  HuongXuTri      HuongXuTriEnum
+  NgayTaiKham     DateTime?      @db.Date
+  MaBN            String         @db.VarChar(20)
+  MaBS            String         @db.VarChar(20)
+  MaPhongKham     String         @db.VarChar(20)
+
+  benhNhan        BenhNhan       @relation(fields: [MaBN], references: [MaBN], onDelete: NoAction, onUpdate: NoAction)
+  bacSi           BacSi          @relation(fields: [MaBS], references: [MaNV], onDelete: NoAction, onUpdate: NoAction)
+  phongKham       Phong          @relation(fields: [MaPhongKham], references: [MaPhong], onDelete: NoAction, onUpdate: NoAction)
+  donThuoc        DonThuoc?
+  suDungDvs       SuDungDv[]
+  hoaDon          HoaDon?
+
+  @@unique([MaBN, ThoiGianKham])
+  @@map("LUOT_KHAM")
+}
+
+model DonThuoc {
+  MaDon              String                 @id @db.VarChar(20)
+  NgayGioKe          DateTime
+  LoiDanBacSi        String?                @db.VarChar(500)
+  TrangThaiPhatThuoc TrangThaiPhatThuocEnum @default(CHUA_PHAT)
+  MaLuotKham         String                 @unique @db.VarChar(20)
+
+  luotKham           LuotKham               @relation(fields: [MaLuotKham], references: [MaLuotKham], onDelete: NoAction, onUpdate: NoAction)
+  ctDonThuocs        CtDonThuoc[]
+
+  @@map("DON_THUOC")
+}
+
+model Thuoc {
+  MaThuoc        String       @id @db.VarChar(20)
+  TenThuoc       String       @unique @db.VarChar(100)
+  HoatChatChinh  String?      @db.VarChar(100)
+  DonViTinh      String       @db.VarChar(20)
+  DonGiaHienHanh Decimal      @db.Decimal(18, 2)
+  SoLuongTon     Int          @default(0)
+  NuocSanXuat    String?      @db.VarChar(50)
+  HanSuDung      DateTime     @db.Date
+
+  ctDonThuocs    CtDonThuoc[]
+
+  @@map("THUOC")
+}
+
+model CtDonThuoc {
+  MaDon      String   @db.VarChar(20)
+  MaThuoc    String   @db.VarChar(20)
+  SoLuong    Int
+  LieuDung   String?  @db.VarChar(100)
+  CachDung   String?  @db.VarChar(100)
+  SoNgayUong Int
+  DonGiaBan  Decimal  @db.Decimal(18, 2)
+
+  donThuoc   DonThuoc @relation(fields: [MaDon], references: [MaDon], onDelete: NoAction, onUpdate: NoAction)
+  thuoc      Thuoc    @relation(fields: [MaThuoc], references: [MaThuoc], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([MaDon, MaThuoc])
+  @@map("CT_DON_THUOC")
+}
+
+// ==========================================
+// PHÂN HỆ 5: CẬN LÂM SÀNG & DỊCH VỤ KỸ THUẬT
+// ==========================================
+
+model DichVu {
+  MaDV            String         @id @db.VarChar(20)
+  TenDV           String         @unique @db.VarChar(100)
+  LoaiDichVu      LoaiDichVuEnum
+  DonViTinhDV     String         @db.VarChar(20)
+  DonGiaHienHanh  Decimal        @db.Decimal(18, 2)
+  ThuocBHYTChiTra Boolean        @default(true)
+
+  suDungDvs       SuDungDv[]
+
+  @@map("DICH_VU")
+}
+
+model SuDungDv {
+  MaLuotKham      String     @db.VarChar(20)
+  MaDV            String     @db.VarChar(20)
+  ThoiGianChiDinh DateTime
+  SoLuong         Int        @default(1)
+  KetQuaCLS       String?    @db.VarChar(500)
+  DonGiaDV        Decimal    @db.Decimal(18, 2)
+  MaKTVThucHien   String?    @db.VarChar(20)
+
+  luotKham        LuotKham   @relation(fields: [MaLuotKham], references: [MaLuotKham], onDelete: NoAction, onUpdate: NoAction)
+  dichVu          DichVu     @relation(fields: [MaDV], references: [MaDV], onDelete: NoAction, onUpdate: NoAction)
+  ktvThucHien     DieuDuong? @relation(fields: [MaKTVThucHien], references: [MaNV], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([MaLuotKham, MaDV, ThoiGianChiDinh])
+  @@map("SU_DUNG_DV")
+}
+
+// ==========================================
+// PHÂN HỆ 6: NỘI TRÚ, TÀI CHÍNH & LỊCH TRỰC
+// ==========================================
+
+model PhanGiuong {
+  MaBN               String     @db.VarChar(20)
+  MaGiuong           String     @db.VarChar(20)
+  NgayBatDau         DateTime
+  NgayKetThuc        DateTime?
+  GiaGiuongNgay      Decimal    @db.Decimal(18, 2)
+  GhiChuChuyenGiuong String?    @db.VarChar(200)
+
+  bnNoiTru           BnNoiTru   @relation(fields: [MaBN], references: [MaBN], onDelete: NoAction, onUpdate: NoAction)
+  giuongBenh         GiuongBenh @relation(fields: [MaGiuong], references: [MaGiuong], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([MaBN, MaGiuong, NgayBatDau])
+  @@unique([MaGiuong, NgayBatDau])
+  @@map("PHAN_GIUONG")
+}
+
+model HoaDon {
+  MaHD            String           @id @db.VarChar(20)
+  NgayLap         DateTime
+  TongTienGoc     Decimal          @db.Decimal(18, 2)
+  TienBHYTChiTra  Decimal          @db.Decimal(18, 2)
+  TienBenhNhanTra Decimal          @db.Decimal(18, 2)
+  PhuongThucTT    PhuongThucTTEnum
+  TrangThaiTT     TrangThaiTTEnum  @default(CHUA_THANH_TOAN)
+  MaLuotKham      String           @unique @db.VarChar(20)
+  MaNVThuNgan     String           @db.VarChar(20)
+
+  luotKham        LuotKham         @relation(fields: [MaLuotKham], references: [MaLuotKham], onDelete: NoAction, onUpdate: NoAction)
+  thuNgan         NvHanhChinh      @relation(fields: [MaNVThuNgan], references: [MaNV], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("HOA_DON")
+}
+
+model LichTruc {
+  MaNV              String                @db.VarChar(20)
+  NgayTruc          DateTime              @db.Date
+  CaTruc            CaTrucEnum
+  MaPhong           String                @db.VarChar(20)
+  VaiTroTruc        String?               @db.VarChar(50)
+  TrangThaiDiemDanh TrangThaiDiemDanhEnum @default(CHUA_DIEM_DANH)
+
+  nhanVien          NhanVien              @relation(fields: [MaNV], references: [MaNV], onDelete: NoAction, onUpdate: NoAction)
+  phong             Phong                 @relation(fields: [MaPhong], references: [MaPhong], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([MaNV, NgayTruc, CaTruc])
+  @@map("LICH_TRUC")
+}

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mxfile host="app.diagrams.net" modified="2026-11-14T09:50:00.000Z" agent="Antigravity-Agent" version="24.0.0" type="device">
+  <diagram id="diagram_sơ_đồ_tuần_tự_khám_bệnh_&amp;_quyết_toán_viện_phí_bhyt" name="Sơ đồ Tuần tự Khám bệnh &amp; Quyết toán Viện phí BHYT">
+    <mxGraphModel dx="1800" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2800" pageHeight="2400" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="100" value="SƠ ĐỒ TRÌNH TỰ (SEQUENCE DIAGRAM): KHÁM BỆNH, KÊ TOA &amp; QUYẾT TOÁN VIỆN PHÍ BHYT&lt;br/&gt;&lt;font style='font-size:13px;font-weight:normal;color:#94A3B8;'&gt;Chu trình khám ngoại trú | Công thức viện phí BHYT (BR03) | Trừ kho thuốc nguyên tử (BR04) | VietQR Idempotency (BR06)&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#1E293B;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;shadow=1;fontColor=#FFFFFF;fontSize=20;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="30" width="1600" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="LL_BN" value=":Bệnh nhân
+(Patient)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;rounded=1;shadow=1;fontStyle=1;fontSize=12;fillColor=#EFF6FF;strokeColor=#3B82F6;fontColor=#1E40AF;" vertex="1" parent="1">
+          <mxGeometry x="100" y="140" width="140" height="2150" as="geometry"/>
+        </mxCell>
+        <mxCell id="LL_NVTD" value=":NV Tiếp đón
+(NV_HANH_CHINH)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;rounded=1;shadow=1;fontStyle=1;fontSize=12;fillColor=#FAF5FF;strokeColor=#A855F7;fontColor=#6B21A8;" vertex="1" parent="1">
+          <mxGeometry x="420" y="140" width="160" height="2150" as="geometry"/>
+        </mxCell>
+        <mxCell id="LL_BS" value=":Bác sĩ khám
+(BAC_SI)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;rounded=1;shadow=1;fontStyle=1;fontSize=12;fillColor=#F0FDFA;strokeColor=#0D9488;fontColor=#134E4A;" vertex="1" parent="1">
+          <mxGeometry x="760" y="140" width="150" height="2150" as="geometry"/>
+        </mxCell>
+        <mxCell id="LL_FE" value=":Next.js UI
+(App Router)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;rounded=1;shadow=1;fontStyle=1;fontSize=12;fillColor=#FEF3C7;strokeColor=#D97706;fontColor=#92400E;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="140" width="150" height="2150" as="geometry"/>
+        </mxCell>
+        <mxCell id="LL_BE" value=":NestJS Backend
+(REST API)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;rounded=1;shadow=1;fontStyle=1;fontSize=12;fillColor=#EEF2FF;strokeColor=#4F46E5;fontColor=#312E81;" vertex="1" parent="1">
+          <mxGeometry x="1440" y="140" width="160" height="2150" as="geometry"/>
+        </mxCell>
+        <mxCell id="LL_DB" value=":PostgreSQL 16
+(Prisma ORM)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;rounded=1;shadow=1;fontStyle=1;fontSize=12;fillColor=#ECFDF5;strokeColor=#059669;fontColor=#064E3B;" vertex="1" parent="1">
+          <mxGeometry x="1780" y="140" width="160" height="2150" as="geometry"/>
+        </mxCell>
+        <mxCell id="LL_TN" value=":Thu ngân / Dược
+(NVHC &amp; Dược sĩ)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;rounded=1;shadow=1;fontStyle=1;fontSize=12;fillColor=#FFF1F2;strokeColor=#E11D48;fontColor=#9F1239;" vertex="1" parent="1">
+          <mxGeometry x="2120" y="140" width="160" height="2150" as="geometry"/>
+        </mxCell>
+        <mxCell id="PHASE_1" value="GIAI ĐOẠN 1: TIẾP ĐÓN NGƯỜI BỆNH &amp; TRA CỨU BHYT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#94A3B8;strokeWidth=1;align=left;spacingLeft=10;fontStyle=1;fontSize=12;fontColor=#334155;" vertex="1" parent="1">
+          <mxGeometry x="80" y="220" width="2250" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="m01" value="1. Xuất trình CCCD / Thẻ BHYT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_BN" target="LL_NVTD">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m02" value="2. Nhập thông tin tra cứu" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_NVTD" target="LL_FE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m03" value="3. POST /api/patients/reception" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_FE" target="LL_BE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m04" value="4. tx.benhNhan.create &amp; bnNgoaiTru" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_BE" target="LL_DB">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m05" value="5. Hồ sơ bệnh nhân hợp lệ (MaBN: BN001)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1.2;dashed=1;endArrow=open;fontSize=10;fontColor=#475569;" edge="1" parent="1" source="LL_DB" target="LL_BE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m06" value="6. Trả về kết quả tiếp đón &amp; Số phòng khám" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1.2;dashed=1;endArrow=open;fontSize=10;fontColor=#475569;" edge="1" parent="1" source="LL_BE" target="LL_FE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m07" value="7. In phiếu STT phòng khám" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_NVTD" target="LL_BN">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="PHASE_2" value="GIAI ĐOẠN 2: KHÁM LÂM SÀNG, ĐO SINH HIỆU &amp; CHẨN ĐOÁN (BR01)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#94A3B8;strokeWidth=1;align=left;spacingLeft=10;fontStyle=1;fontSize=12;fontColor=#334155;" vertex="1" parent="1">
+          <mxGeometry x="80" y="560" width="2250" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="m08" value="8. Vào phòng khám theo STT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_BN" target="LL_BS">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m09" value="9. Đo sinh hiệu (Huyết áp, Mạch, Thân nhiệt)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_BS" target="LL_FE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m10" value="10. POST /api/examinations (Khởi tạo lượt khám)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_FE" target="LL_BE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m11" value="11. INSERT INTO LUOT_KHAM" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_BE" target="LL_DB">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m12" value="12. Cập nhật chẩn đoán ICD (PATCH /diagnose)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_BS" target="LL_FE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m13" value="13. Ghi nhận hướng xử trí: KE_DON_VE" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_FE" target="LL_BE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="PHASE_3" value="GIAI ĐOẠN 3: KÊ TOA THUỐC ĐIỆN TỬ &amp; KIỂM TRA TỒN KHO TỨC THỜI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#94A3B8;strokeWidth=1;align=left;spacingLeft=10;fontStyle=1;fontSize=12;fontColor=#334155;" vertex="1" parent="1">
+          <mxGeometry x="80" y="920" width="2250" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="m14" value="14. Bác sĩ kê đơn thuốc (Danh mục THUOC)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_BS" target="LL_FE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m15" value="15. POST /api/prescriptions (items: [MaThuoc, SoLuong,...])" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_FE" target="LL_BE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m16" value="16. Kiểm tra SoLuongTon &gt;= SoKe &amp; Snapshot DonGiaBan" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_BE" target="LL_DB">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m17" value="17. Tạo DON_THUOC &amp; CT_DON_THUOC (Trạng thái CHUA_PHAT)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_DB" target="LL_BE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m18" value="18. Kê đơn thành công (Mã đơn: DT001)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1.2;dashed=1;endArrow=open;fontSize=10;fontColor=#475569;" edge="1" parent="1" source="LL_BE" target="LL_FE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="PHASE_4" value="GIAI ĐOẠN 4: QUYẾT TOÁN VIỆN PHÍ BHYT &amp; THANH TOÁN VIETQR (BR03, BR06)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#94A3B8;strokeWidth=1;align=left;spacingLeft=10;fontStyle=1;fontSize=12;fontColor=#334155;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1280" width="2250" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="m19" value="19. Bệnh nhân qua quầy thu ngân" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_BN" target="LL_TN">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m20" value="20. Yêu cầu tính viện phí (POST /billing/calculate/LK001)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_TN" target="LL_FE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m21" value="21. Áp dụng BR03: TienBenhNhanTra = TongTienGoc - TienBHYTChiTra" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_FE" target="LL_BE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m22" value="22. Lập hóa đơn HOA_DON (POST /invoices, CHUA_THANH_TOAN)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_BE" target="LL_DB">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m23" value="23. Hiển thị mã VietQR động chứa số tiền &amp; MaHD" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1.2;dashed=1;endArrow=open;fontSize=10;fontColor=#475569;" edge="1" parent="1" source="LL_BE" target="LL_FE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m24" value="24. Quét mã VietQR trên ứng dụng ngân hàng" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_BN" target="LL_FE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m25" value="25. Webhook VietQR (POST /webhook/vietqr, Idempotent BR06)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_FE" target="LL_BE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m26" value="26. Gạch nợ thành công: TrangThaiTT = DA_THANH_TOAN" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_BE" target="LL_DB">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="PHASE_5" value="GIAI ĐOẠN 5: CẤP PHÁT THUỐC TRỪ TỒN KHO NGUYÊN TỬ &amp; IN BIÊN LAI PDF (BR04)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#94A3B8;strokeWidth=1;align=left;spacingLeft=10;fontStyle=1;fontSize=12;fontColor=#334155;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1720" width="2250" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="m27" value="27. Dược sĩ nhận đơn thuốc đã thanh toán" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_BN" target="LL_TN">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m28" value="28. Xác nhận phát thuốc (PATCH /prescriptions/DT001/dispense)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_TN" target="LL_BE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m29" value="29. BEGIN TX -&gt; UPDATE THUOC (decrement SoLuongTon) -&gt; COMMIT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_BE" target="LL_DB">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m30" value="30. Cập nhật TrangThaiPhatThuoc = DA_PHAT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_DB" target="LL_BE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m31" value="31. Xuất biên lai hóa đơn viện phí PDF (GET /invoices/HD001/pdf)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_BE" target="LL_FE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="m32" value="32. Bàn giao dược phẩm &amp; Biên lai viện phí cho người bệnh" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;fontSize=11;fontColor=#1E40AF;" edge="1" parent="1" source="LL_TN" target="LL_BN">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
