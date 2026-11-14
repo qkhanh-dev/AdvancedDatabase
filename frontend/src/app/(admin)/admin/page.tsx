@@ -308,7 +308,7 @@ export default function AdminPage() {
                   />
                 </div>
 
-                <Button type="submit" disabled={loading} className="w-full text-xs bg-blue-600 hover:bg-blue-700">
+                <Button type="submit" size="lg" disabled={loading} className="w-full text-[13px] font-bold bg-blue-600 hover:bg-blue-700">
                   Lưu Phân Công Ca Trực
                 </Button>
               </form>

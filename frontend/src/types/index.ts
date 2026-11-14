@@ -364,6 +364,7 @@ export interface SuDungDv {
   TrangThai?: string;
   dichVu?: DichVu;
   ktvThucHien?: DieuDuong & { nhanVien?: NhanVien };
+  luotKham?: LuotKham;
 }
 
 export interface PhanGiuong {
@@ -374,6 +375,7 @@ export interface PhanGiuong {
   GiaGiuongNgay: string | number;
   GhiChuChuyenGiuong: string | null;
   giuongBenh?: GiuongBenh;
+  bnNoiTru?: BnNoiTru;
 }
 
 export interface HoaDon {

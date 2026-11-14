@@ -243,6 +243,34 @@ async function main() {
     },
   });
 
+  // System Admin ADMIN01
+  await prisma.nhanVien.upsert({
+    where: { MaNV: 'ADMIN01' },
+    update: {},
+    create: {
+      MaNV: 'ADMIN01',
+      HoTen: 'Quan Tri Vien He Thong',
+      NgaySinh: new Date('1988-06-15'),
+      GioiTinh: GioiTinhEnum.NAM,
+      CCCD: '079088000005',
+      SoDienThoai: '0908000005',
+      Email: 'admin@hospital.sgu.vn',
+      DiaChi: '273 An Duong Vuong, Quan 5, TP.HCM',
+      NgayVaoLam: new Date('2020-01-01'),
+      HeSoLuong: 5.00,
+      LoaiNV: LoaiNVEnum.HANH_CHINH,
+      MatKhau: passwordHash,
+      MaKhoa: 'K01',
+      nvHanhChinh: {
+        create: {
+          BoPhanPhuTrach: 'Phong CNTT & Quan tri He thong',
+          ChucVuHC: 'Admin Quan tri He thong',
+          BacKyThuat: 4,
+        },
+      },
+    },
+  });
+
   // 5. Phòng (PHONG)
   console.log('5. Seeding Phong...');
   await prisma.phong.upsert({
@@ -271,36 +299,77 @@ async function main() {
     },
   });
 
-  // 6. Giường bệnh (GIUONG_BENH)
+  await prisma.phong.upsert({
+    where: { MaPhong: 'P03' },
+    update: {},
+    create: {
+      MaPhong: 'P03',
+      SoPhong: 'A202',
+      LoaiPhong: LoaiPhongEnum.NOI_TRU,
+      Tang: 2,
+      SucChuaToiDa: 4,
+      MaKhoa: 'K01',
+    },
+  });
+
+  await prisma.phong.upsert({
+    where: { MaPhong: 'P04' },
+    update: {},
+    create: {
+      MaPhong: 'P04',
+      SoPhong: 'B301',
+      LoaiPhong: LoaiPhongEnum.NOI_TRU,
+      Tang: 3,
+      SucChuaToiDa: 4,
+      MaKhoa: 'K02',
+    },
+  });
+
+  await prisma.phong.upsert({
+    where: { MaPhong: 'P05' },
+    update: {},
+    create: {
+      MaPhong: 'P05',
+      SoPhong: 'C101',
+      LoaiPhong: LoaiPhongEnum.CAP_CUU,
+      Tang: 1,
+      SucChuaToiDa: 4,
+      MaKhoa: 'K01',
+    },
+  });
+
+  // 6. Giường bệnh (GIUONG_BENH) - Đầy đủ 3 trạng thái (TRONG, DANG_SU_DUNG, BAO_TRI) & 4 loại giường
   console.log('6. Seeding GiuongBenh...');
-  await prisma.giuongBenh.upsert({
-    where: { MaGiuong: 'G01' },
-    update: {},
-    create: {
-      MaGiuong: 'G01',
-      SoGiuong: 'Giuong 01',
-      LoaiGiuong: LoaiGiuongEnum.TIEU_CHUAN,
-      DonGiaNgay: 200000,
-      TrangThaiGiuong: TrangThaiGiuongEnum.TRONG,
-      MaPhong: 'P02',
-    },
-  });
+  const sampleBeds = [
+    { MaGiuong: 'G01', SoGiuong: 'Giuong 01', LoaiGiuong: LoaiGiuongEnum.TIEU_CHUAN, DonGiaNgay: 200000, TrangThaiGiuong: TrangThaiGiuongEnum.TRONG, MaPhong: 'P02' },
+    { MaGiuong: 'G02', SoGiuong: 'Giuong 02', LoaiGiuong: LoaiGiuongEnum.VIP, DonGiaNgay: 500000, TrangThaiGiuong: TrangThaiGiuongEnum.TRONG, MaPhong: 'P02' },
+    { MaGiuong: 'G03', SoGiuong: 'Giuong 03', LoaiGiuong: LoaiGiuongEnum.TIEU_CHUAN, DonGiaNgay: 250000, TrangThaiGiuong: TrangThaiGiuongEnum.TRONG, MaPhong: 'P02' },
+    { MaGiuong: 'G04', SoGiuong: 'Giuong 04', LoaiGiuong: LoaiGiuongEnum.TIEU_CHUAN, DonGiaNgay: 250000, TrangThaiGiuong: TrangThaiGiuongEnum.BAO_TRI, MaPhong: 'P02' },
 
-  await prisma.giuongBenh.upsert({
-    where: { MaGiuong: 'G02' },
-    update: {},
-    create: {
-      MaGiuong: 'G02',
-      SoGiuong: 'Giuong 02',
-      LoaiGiuong: LoaiGiuongEnum.VIP,
-      DonGiaNgay: 500000,
-      TrangThaiGiuong: TrangThaiGiuongEnum.TRONG,
-      MaPhong: 'P02',
-    },
-  });
+    { MaGiuong: 'G05', SoGiuong: 'Giuong 01', LoaiGiuong: LoaiGiuongEnum.HOI_SUC, DonGiaNgay: 450000, TrangThaiGiuong: TrangThaiGiuongEnum.DANG_SU_DUNG, MaPhong: 'P03' },
+    { MaGiuong: 'G06', SoGiuong: 'Giuong 02', LoaiGiuong: LoaiGiuongEnum.HOI_SUC, DonGiaNgay: 450000, TrangThaiGiuong: TrangThaiGiuongEnum.TRONG, MaPhong: 'P03' },
+    { MaGiuong: 'G07', SoGiuong: 'Giuong 03', LoaiGiuong: LoaiGiuongEnum.VIP, DonGiaNgay: 650000, TrangThaiGiuong: TrangThaiGiuongEnum.DANG_SU_DUNG, MaPhong: 'P03' },
+    { MaGiuong: 'G08', SoGiuong: 'Giuong 04', LoaiGiuong: LoaiGiuongEnum.VIP, DonGiaNgay: 650000, TrangThaiGiuong: TrangThaiGiuongEnum.TRONG, MaPhong: 'P03' },
 
-  // 7. Bệnh nhân mẫu (BENH_NHAN)
-  console.log('7. Seeding BenhNhan...');
+    { MaGiuong: 'G09', SoGiuong: 'Giuong 01', LoaiGiuong: LoaiGiuongEnum.TIEU_CHUAN, DonGiaNgay: 200000, TrangThaiGiuong: TrangThaiGiuongEnum.TRONG, MaPhong: 'P04' },
+    { MaGiuong: 'G10', SoGiuong: 'Giuong 02', LoaiGiuong: LoaiGiuongEnum.TIEU_CHUAN, DonGiaNgay: 200000, TrangThaiGiuong: TrangThaiGiuongEnum.TRONG, MaPhong: 'P04' },
+    { MaGiuong: 'G11', SoGiuong: 'Giuong 03', LoaiGiuong: LoaiGiuongEnum.VIP, DonGiaNgay: 550000, TrangThaiGiuong: TrangThaiGiuongEnum.BAO_TRI, MaPhong: 'P04' },
+    { MaGiuong: 'G12', SoGiuong: 'Giuong 04', LoaiGiuong: LoaiGiuongEnum.TIEU_CHUAN, DonGiaNgay: 200000, TrangThaiGiuong: TrangThaiGiuongEnum.TRONG, MaPhong: 'P04' },
+
+    { MaGiuong: 'G13', SoGiuong: 'Giuong 01', LoaiGiuong: LoaiGiuongEnum.CAP_CUU, DonGiaNgay: 450000, TrangThaiGiuong: TrangThaiGiuongEnum.TRONG, MaPhong: 'P05' },
+    { MaGiuong: 'G14', SoGiuong: 'Giuong 02', LoaiGiuong: LoaiGiuongEnum.CAP_CUU, DonGiaNgay: 450000, TrangThaiGiuong: TrangThaiGiuongEnum.DANG_SU_DUNG, MaPhong: 'P05' },
+  ];
+
+  for (const bed of sampleBeds) {
+    await prisma.giuongBenh.upsert({
+      where: { MaGiuong: bed.MaGiuong },
+      update: {},
+      create: bed,
+    });
+  }
+
+  // 7. Bệnh nhân mẫu (BENH_NHAN) & Hồ sơ Nội trú mẫu (BN_NOI_TRU, PHAN_GIUONG)
+  console.log('7. Seeding BenhNhan & BnNoiTru...');
   await prisma.benhNhan.upsert({
     where: { MaBN: 'BN001' },
     update: {},
@@ -326,6 +395,132 @@ async function main() {
       },
     },
   });
+
+  const sampleInpatients = [
+    {
+      MaBN: 'BN002',
+      HoTen: 'Vo Hoai Nam',
+      NgaySinh: new Date('1968-05-12'),
+      GioiTinh: GioiTinhEnum.NAM,
+      CCCD: '079068111222',
+      SoDienThoai: '0913111222',
+      SoBHYT: 'HT4796811122233',
+      MucHuongBHYT: 95,
+      DiaChi: '45 Le Loi, Quan 1, TP.HCM',
+      NhomMau: NhomMauEnum.A,
+      SoHoSoBenhAn: 'HSBA-2026-002',
+      ChanDoanNhapVien: 'Dot cap COPD nang, suy ho hap do II',
+      TinhTrangNhapVien: 'Nang',
+      MaBSTheoDoi: 'BS01',
+      MaGiuong: 'G05',
+      GiaGiuongNgay: 450000,
+    },
+    {
+      MaBN: 'BN003',
+      HoTen: 'Le Hoang Yen',
+      NgaySinh: new Date('1997-09-18'),
+      GioiTinh: GioiTinhEnum.NU,
+      CCCD: '079097222333',
+      SoDienThoai: '0914222333',
+      SoBHYT: 'DN4799722233344',
+      MucHuongBHYT: 80,
+      DiaChi: '210 Nguyen Van Cu, Quan 5, TP.HCM',
+      NhomMau: NhomMauEnum.B,
+      SoHoSoBenhAn: 'HSBA-2026-003',
+      ChanDoanNhapVien: 'Sot xuat huyet Dengue ngay thu 4',
+      TinhTrangNhapVien: 'Vua',
+      MaBSTheoDoi: 'BS01',
+      MaGiuong: 'G07',
+      GiaGiuongNgay: 650000,
+    },
+    {
+      MaBN: 'BN004',
+      HoTen: 'Hoang Kim Chi',
+      NgaySinh: new Date('1962-11-02'),
+      GioiTinh: GioiTinhEnum.NU,
+      CCCD: '079062333444',
+      SoDienThoai: '0915333444',
+      SoBHYT: 'CB4796233344455',
+      MucHuongBHYT: 100,
+      DiaChi: '88 Hai Ba Trung, Quan 3, TP.HCM',
+      NhomMau: NhomMauEnum.AB,
+      SoHoSoBenhAn: 'HSBA-2026-004',
+      ChanDoanNhapVien: 'Tang huyet ap cap cuu, theo doi nhoi mau co tim',
+      TinhTrangNhapVien: 'Nguy_kich',
+      MaBSTheoDoi: 'BS02',
+      MaGiuong: 'G14',
+      GiaGiuongNgay: 450000,
+    },
+    {
+      MaBN: 'BN005',
+      HoTen: 'Dang Quoc Thinh',
+      NgaySinh: new Date('1991-04-10'),
+      GioiTinh: GioiTinhEnum.NAM,
+      CCCD: '079091444555',
+      SoDienThoai: '0916444555',
+      SoBHYT: 'DN4799144455566',
+      MucHuongBHYT: 80,
+      DiaChi: '12 Ly Thuong Kiet, Quan 10, TP.HCM',
+      NhomMau: NhomMauEnum.O,
+      SoHoSoBenhAn: 'HSBA-2026-005',
+      ChanDoanNhapVien: 'Viem da day ruot cap tinh, cho phan giuong',
+      TinhTrangNhapVien: 'Nhe',
+      MaBSTheoDoi: 'BS01',
+      MaGiuong: null,
+      GiaGiuongNgay: 0,
+    },
+  ];
+
+  const seedStartDate = new Date('2026-11-12T08:00:00.000Z');
+  for (const sp of sampleInpatients) {
+    await prisma.benhNhan.upsert({
+      where: { MaBN: sp.MaBN },
+      update: {},
+      create: {
+        MaBN: sp.MaBN,
+        HoTen: sp.HoTen,
+        NgaySinh: sp.NgaySinh,
+        GioiTinh: sp.GioiTinh,
+        CCCD: sp.CCCD,
+        SoDienThoai: sp.SoDienThoai,
+        SoBHYT: sp.SoBHYT,
+        MucHuongBHYT: sp.MucHuongBHYT,
+        DiaChi: sp.DiaChi,
+        NhomMau: sp.NhomMau,
+        CoNgoaiTru: false,
+        CoNoiTru: true,
+        bnNoiTru: {
+          create: {
+            SoHoSoBenhAn: sp.SoHoSoBenhAn,
+            NgayNhapVien: seedStartDate,
+            ChanDoanNhapVien: sp.ChanDoanNhapVien,
+            TinhTrangNhapVien: sp.TinhTrangNhapVien,
+            MaBSTheoDoi: sp.MaBSTheoDoi,
+          },
+        },
+      },
+    });
+
+    if (sp.MaGiuong) {
+      await prisma.phanGiuong.upsert({
+        where: {
+          MaBN_MaGiuong_NgayBatDau: {
+            MaBN: sp.MaBN,
+            MaGiuong: sp.MaGiuong,
+            NgayBatDau: seedStartDate,
+          },
+        },
+        update: {},
+        create: {
+          MaBN: sp.MaBN,
+          MaGiuong: sp.MaGiuong,
+          NgayBatDau: seedStartDate,
+          GiaGiuongNgay: sp.GiaGiuongNgay,
+          GhiChuChuyenGiuong: 'Du lieu mau he thong',
+        },
+      });
+    }
+  }
 
   // Re-enable triggers and FK checks
   await prisma.$executeRawUnsafe(`SET session_replication_role = 'origin';`);
