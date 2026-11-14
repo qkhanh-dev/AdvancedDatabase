@@ -3,7 +3,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { VietQrWebhookDto } from './dto/vietqr-webhook.dto';
 import { PhuongThucTTEnum, TrangThaiTTEnum } from '@prisma/client';
-import PDFDocument from 'pdfkit';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const PDFDocument = require('pdfkit');
 
 @Injectable()
 export class BillingService {

@@ -36,7 +36,7 @@ export class DutyScheduleController {
   }
 
   @Patch('attendance')
-  @Roles(Role.ADMIN, Role.DIEU_DUONG)
+  @Roles(Role.ADMIN, Role.DIEU_DUONG, Role.BAC_SI, Role.NV_HANH_CHINH)
   @ApiOperation({ summary: 'Điểm danh ca trực' })
   async updateAttendance(
     @Query('maNV') maNV: string,

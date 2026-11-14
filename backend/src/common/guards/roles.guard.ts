@@ -26,7 +26,8 @@ export class RolesGuard implements CanActivate {
       return true;
     }
 
-    const hasRole = requiredRoles.includes(user.role);
+    const normalizedRole = user.role === 'HANH_CHINH' ? Role.NV_HANH_CHINH : user.role;
+    const hasRole = requiredRoles.includes(normalizedRole);
     if (!hasRole) {
       throw new ForbiddenException('Bạn không đủ quyền hạn chuyên môn');
     }

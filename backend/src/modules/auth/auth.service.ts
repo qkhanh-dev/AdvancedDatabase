@@ -47,8 +47,15 @@ export class AuthService {
     }
 
     let roleName = nhanVien.LoaiNV.toString();
-    if (nhanVien.nvHanhChinh?.BoPhanPhuTrach?.toLowerCase().includes('thu ngân')) {
+    if (roleName === 'HANH_CHINH') {
+      roleName = 'NV_HANH_CHINH';
+    }
+    const boPhan = nhanVien.nvHanhChinh?.BoPhanPhuTrach?.toLowerCase() || '';
+    if (boPhan.includes('thu ngan') || boPhan.includes('thu ngân')) {
       roleName = 'THU_NGAN';
+    }
+    if (nhanVien.nvHanhChinh?.ChucVuHC?.toLowerCase().includes('admin') || nhanVien.MaNV.toUpperCase().includes('ADMIN')) {
+      roleName = 'ADMIN';
     }
 
     const payload = {

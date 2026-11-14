@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -13,6 +13,7 @@ export class AuthController {
 
   @Public()
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Đăng nhập hệ thống y tế', description: 'Cán bộ y tế đăng nhập bằng MaNV, CCCD hoặc Email' })
   @ApiResponse({ status: 200, description: 'Đăng nhập thành công, trả về Access Token và thông tin nhân viên' })
   @ApiResponse({ status: 401, description: 'Thông tin đăng nhập sai' })

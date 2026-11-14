@@ -14,7 +14,7 @@ export class ReportController {
   constructor(private readonly reportService: ReportService) {}
 
   @Get('dashboard')
-  @Roles(Role.ADMIN, Role.BAC_SI, Role.NV_HANH_CHINH, Role.THU_NGAN)
+  @Roles(Role.ADMIN, Role.BAC_SI, Role.DIEU_DUONG, Role.NV_HANH_CHINH, Role.THU_NGAN)
   @ApiOperation({ summary: 'Lấy số liệu tổng quan Dashboard bệnh viện (Doanh thu, công suất giường, ca khám)' })
   async getDashboardSummary() {
     return this.reportService.getDashboardSummary();

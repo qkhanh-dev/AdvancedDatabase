@@ -3,15 +3,19 @@ import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { PatientService } from './patient.service';
 import { ReceptionDto } from './dto/reception.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { Role } from '../../common/enums/role.enum';
 
 @ApiTags('Tiếp đón & Hồ sơ người bệnh (Patient)')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('patients')
 export class PatientController {
   constructor(private readonly patientService: PatientService) {}
 
   @Post('reception')
+  @Roles(Role.ADMIN, Role.NV_HANH_CHINH, Role.THU_NGAN)
   @ApiOperation({ summary: 'Tiếp đón bệnh nhân mới / Tạo hồ sơ' })
   async reception(@Body() dto: ReceptionDto) {
     return this.patientService.reception(dto);
