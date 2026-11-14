@@ -247,9 +247,9 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen lg:h-screen w-full flex flex-col lg:flex-row lg:overflow-hidden bg-slate-50 text-slate-800 antialiased">
-      {/* CỘT TRÁI (40% Desktop): BRANDING & TỔNG QUAN PHÂN QUYỀN RBAC */}
+      {/* CỘT TRÁI (34%-38% Desktop): BRANDING & TỔNG QUAN PHÂN QUYỀN RBAC */}
       <aside
-        className="w-full lg:w-[40%] lg:h-full text-white px-7 py-6 xl:px-11 xl:py-8 flex flex-col justify-between relative overflow-hidden shrink-0 shadow-2xl"
+        className="w-full lg:w-[38%] xl:w-[36%] 2xl:w-[34%] lg:h-full text-white px-5 py-5 lg:px-6 lg:py-5 xl:px-8 xl:py-6 flex flex-col justify-between relative overflow-hidden lg:overflow-y-auto shrink-0 shadow-2xl"
         style={{
           background:
             "linear-gradient(145deg, rgb(3, 35, 34) 0%, rgb(6, 64, 61) 35%, rgb(13, 94, 89) 70%, rgb(15, 118, 110) 100%)",
@@ -293,9 +293,9 @@ export default function LoginPage() {
 
         {/* Header / Brand Section */}
         <div className="relative z-10 shrink-0">
-          <div className="flex items-center gap-3 mb-3.5">
+          <div className="flex items-center gap-2.5 mb-2.5">
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
+              className="w-9 h-9 rounded-xl flex items-center justify-center shadow-lg shrink-0"
               style={{
                 background: "rgba(255, 255, 255, 0.08)",
                 backdropFilter: "blur(12px)",
@@ -303,11 +303,11 @@ export default function LoginPage() {
                 boxShadow: "inset 0 1px 1px rgba(255,255,255,0.25)",
               }}
             >
-              <Hospital className="w-5 h-5 text-teal-200" />
+              <Hospital className="w-4 h-4 text-teal-200" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-lg font-extrabold tracking-tight text-white">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-base xl:text-lg font-extrabold tracking-tight text-white">
                   QLBV • Smart HIS
                 </span>
                 <span
@@ -321,15 +321,15 @@ export default function LoginPage() {
                   v1.0-PROD
                 </span>
               </div>
-              <p className="text-[11px] text-teal-100/75 font-medium tracking-wide">
+              <p className="text-[10px] xl:text-[11px] text-teal-100/75 font-medium tracking-wide truncate">
                 HỆ THỐNG QUẢN LÝ BỆNH VIỆN ĐA KHOA ĐIỆN TỬ
               </p>
             </div>
           </div>
 
-          <div className="mt-2">
+          <div className="mt-1.5">
             <div
-              className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-[11px] text-teal-100 mb-2"
+              className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] xl:text-[11px] text-teal-100 mb-1.5"
               style={{
                 background: "rgba(255, 255, 255, 0.07)",
                 backdropFilter: "blur(8px)",
@@ -339,10 +339,10 @@ export default function LoginPage() {
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               Tiêu chuẩn bảo mật y tế &amp; BYT 4210 / HL7 FHIR
             </div>
-            <h1 className="text-2xl xl:text-[26px] font-extrabold text-white leading-tight tracking-tight">
+            <h1 className="text-lg lg:text-xl xl:text-[22px] font-extrabold text-white leading-snug tracking-tight">
               Nền tảng Quản trị &amp; Điều hành Y tế Toàn diện
             </h1>
-            <p className="text-xs text-teal-100/85 mt-1.5 max-w-lg leading-relaxed">
+            <p className="text-[11px] xl:text-xs text-teal-100/85 mt-1 max-w-md leading-relaxed">
               Tích hợp liên thông Bệnh án điện tử (EMR), Xét nghiệm (LIS), Chẩn đoán hình ảnh (PACS)
               và Cổng giám định BHYT trực tuyến.
             </p>
@@ -350,15 +350,15 @@ export default function LoginPage() {
         </div>
 
         {/* RBAC Roles Matrix */}
-        <div className="relative z-10 my-4 lg:my-auto py-2 shrink-0">
-          <div className="flex items-center justify-between mb-2">
+        <div className="relative z-10 my-3 lg:my-auto py-1.5 shrink-0">
+          <div className="flex items-center justify-between mb-1.5">
             <div className="flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-teal-300" />
-              <h3 className="text-[11px] font-bold tracking-wider uppercase text-teal-200/95">
-                5 Vai Trò Phân Quyền Tự Động (JwtAuthGuard + RolesGuard)
+              <ShieldCheck className="w-3.5 h-3.5 text-teal-300 shrink-0" />
+              <h3 className="text-[10px] xl:text-[11px] font-bold tracking-wider uppercase text-teal-200/95">
+                5 Vai Trò Phân Quyền (RBAC)
               </h3>
             </div>
-            <span className="text-[10px] text-teal-200/70 font-mono">RBAC v1</span>
+            <span className="text-[10px] text-teal-200/70 font-mono">JwtAuthGuard</span>
           </div>
 
           <div className="space-y-1.5">
@@ -367,7 +367,7 @@ export default function LoginPage() {
               return (
                 <div
                   key={item.code}
-                  className="rounded-xl px-3 py-2 flex items-center gap-2.5 transition-colors hover:bg-white/[0.12]"
+                  className="rounded-lg px-2.5 py-1.5 flex items-center gap-2.5 transition-colors hover:bg-white/[0.12]"
                   style={{
                     background: "rgba(255, 255, 255, 0.08)",
                     backdropFilter: "blur(8px)",
@@ -375,14 +375,14 @@ export default function LoginPage() {
                   }}
                 >
                   <div
-                    className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                    className="w-6 h-6 rounded-md flex items-center justify-center shrink-0"
                     style={item.iconStyle}
                   >
                     <IconComp className="w-3.5 h-3.5" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-mono font-bold text-white tracking-wide">
+                      <span className="text-[11px] font-mono font-bold text-white tracking-wide">
                         {item.code}
                       </span>
                       <span
@@ -392,7 +392,7 @@ export default function LoginPage() {
                         {item.badge}
                       </span>
                     </div>
-                    <p className="text-[11px] text-teal-100/75 leading-tight truncate mt-0.5">
+                    <p className="text-[10px] xl:text-[11px] text-teal-100/75 leading-tight truncate mt-0.5">
                       {item.desc}
                     </p>
                   </div>
@@ -404,27 +404,27 @@ export default function LoginPage() {
 
         {/* Footer Info */}
         <div
-          className="relative z-10 pt-3 flex flex-wrap items-center justify-between gap-2 text-[11px] text-teal-100/75 shrink-0"
+          className="relative z-10 pt-2.5 flex flex-wrap items-center justify-between gap-2 text-[10px] xl:text-[11px] text-teal-100/75 shrink-0"
           style={{ borderTop: "1px solid rgba(255, 255, 255, 0.12)" }}
         >
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5 text-teal-300" />
-              Mã hóa AES-256
+              <CheckCircle2 className="w-3 h-3 text-teal-300" />
+              AES-256
             </span>
             <span className="flex items-center gap-1">
-              <Shield className="w-3.5 h-3.5 text-teal-300" />
-              JWT Bearer 8h
+              <Shield className="w-3 h-3 text-teal-300" />
+              JWT 8h
             </span>
           </div>
-          <span>Hotline IT BV: 1900-8899 (Ext. 102)</span>
+          <span>Hotline IT: 1900-8899 (Ext. 102)</span>
         </div>
       </aside>
 
-      {/* CỘT PHẢI (60% Desktop): FORM ĐĂNG NHẬP & PHIÊN LÀM VIỆC */}
-      <main className="w-full lg:w-[60%] lg:h-full bg-slate-50 flex flex-col justify-between px-6 py-5 sm:px-10 xl:px-14 lg:overflow-y-auto">
+      {/* CỘT PHẢI (62%-66% Desktop): FORM ĐĂNG NHẬP & PHIÊN LÀM VIỆC */}
+      <main className="w-full lg:w-[62%] xl:w-[64%] 2xl:w-[66%] lg:h-full bg-slate-50 flex flex-col justify-between px-5 py-4 sm:px-8 xl:px-12 lg:overflow-y-auto">
         {/* Top Navigation Bar */}
-        <div className="w-full max-w-2xl mx-auto flex items-center justify-between shrink-0 pb-2">
+        <div className="w-full max-w-xl mx-auto flex items-center justify-between shrink-0 pb-2">
           <Link
             href="/"
             className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 hover:text-teal-700 px-2.5 py-1.5 rounded-lg hover:bg-teal-50/70 transition-colors"
@@ -445,7 +445,7 @@ export default function LoginPage() {
         </div>
 
         {/* Center Content Wrapper */}
-        <div className="w-full max-w-2xl mx-auto flex flex-col gap-4 my-auto py-1">
+        <div className="w-full max-w-xl mx-auto flex flex-col gap-3.5 my-auto py-1">
           {/* CARD THÔNG BÁO PHIÊN LÀM VIỆC HIỆN TẠI (GET /api/auth/profile) */}
           {isAuthenticated && user && (
             <div className="bg-white border border-teal-200/80 rounded-xl p-4 shadow-sm relative overflow-hidden shrink-0">
