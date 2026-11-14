@@ -1,0 +1,89 @@
+-- Bảng KHOA
+INSERT INTO KHOA (MaKhoa, TenKhoa, DiaDiem, SoDienThoai) VALUES
+('K01', N'Khoa Nội Tổng Hợp', N'Tòa A - Tầng 2', '0283835001'),
+('K02', N'Khoa Xét Nghiệm & Cận Lâm Sàng', N'Tòa B - Tầng 1', '0283835002'),
+('K03', N'Khoa Khám Bệnh', N'Tòa A - Tầng 1', '0283835003');
+
+-- Bảng PHONG
+INSERT INTO PHONG (MaPhong, TenPhong, LoaiPhong, ViTri, MaKhoa) VALUES
+('P101', N'Phòng Khám Nội 1', N'Khám bệnh', N'Tầng 2 - Tòa A', 'K01'),
+('P201', N'Phòng Lưu Trú 201', N'Lưu trú', N'Tầng 2 - Tòa A', 'K01'),
+('P301', N'Phòng Xét Nghiệm Sinh Hóa', N'Cận lâm sàng', N'Tầng 1 - Tòa B', 'K02');
+
+-- Bảng GIUONG_BENH
+INSERT INTO GIUONG_BENH (MaGiuong, SoGiuong, LoaiGiuong, TrangThai, DonGiaNgay, MaPhong) VALUES
+('G201-01', N'Giường 01', N'Giường tiêu chuẩn', N'Đang sử dụng', 350000, 'P201'),
+('G201-02', N'Giường 02', N'Giường tiêu chuẩn', N'Trống', 350000, 'P201'),
+('G201-03', N'Giường 03', N'Giường VIP', N'Trống', 600000, 'P201');
+===================================================================================================================
+-- Bảng cha NHAN_VIEN
+INSERT INTO NHAN_VIEN (MaNV, HoTen, NgaySinh, GioiTinh, CCCD, DiaChi, SoDienThoai, NgayVaoLam) VALUES
+('NV01', N'Nguyễn Văn An', '1980-05-12', N'Nam', '079080001111', N'Quận 5, TP.HCM', '0903111222', '2015-03-01'),
+('NV02', N'Lê Thị Mai', '1992-09-20', N'Nữ', '079092002222', N'Quận 10, TP.HCM', '0914222333', '2019-07-15'),
+('NV03', N'Trần Quốc Bảo', '1995-11-04', N'Nam', '079095003333', N'Quận 1, TP.HCM', '0988333444', '2021-01-10');
+
+-- Bảng con BAC_SI (Kế thừa từ NHAN_VIEN)
+INSERT INTO BAC_SI (MaNV, ChuyenKhoa, TrinhDoHocVan, SoChungChiHanhNghe) VALUES
+('NV01', N'Nội tim mạch', N'Chuyên khoa II', 'CCHN-HCM-01234');
+
+-- Bảng con DIEU_DUONG (Kế thừa từ NHAN_VIEN)
+INSERT INTO DIEU_DUONG (MaNV, CapBac) VALUES
+('NV02', N'Cử nhân Điều dưỡng');
+
+-- Bảng con KY_THUAT_VIEN (Kế thừa từ NHAN_VIEN)
+INSERT INTO KY_THUAT_VIEN (MaNV, ChuyenMonXetNghiem, BTD_ThietBiPhuTrach) VALUES
+('NV03', N'Sinh hóa - Miễn dịch', N'Máy phân tích tự động Roche Cobas');
+===================================================================================================================
+-- Bảng cha BENH_NHAN
+INSERT INTO BENH_NHAN (MaBN, HoTen, NgaySinh, GioiTinh, CCCD, SDT, DiaChi_Duong, DiaChi_Phuong, DiaChi_Quan, NhomMau) VALUES
+('BN101', N'Phạm Minh Tuấn', '1975-04-10', N'Nam', '079075004444', '0938444555', N'123 An Dương Vương', N'Phường Chợ Quán', N'Quận 5', 'O+'),
+('BN102', N'Hoàng Mỹ Linh', '2002-12-18', N'Nữ', '079202005555', '0977555666', N'45 Nguyễn Tri Phương', N'Phường An Đông', N'Quận 10', 'A+');
+
+-- Bảng con BN_NOI_TRU (Kế thừa từ BENH_NHAN)
+INSERT INTO BN_NOI_TRU (MaBN, MaHoSoNoiTru, NgayNhapVien, NguoiNhaLienHe, TinhTrangNhapVien) VALUES
+('BN101', 'HSNT-2026-001', '2026-03-01 08:30:00', N'Phạm Thị Hoa - 0938111999', N'Tăng huyết áp kịch phát, tức ngực');
+
+-- Bảng con BN_NGOAI_TRU (Kế thừa từ BENH_NHAN)
+INSERT INTO BN_NGOAI_TRU (MaBN, SoLanKhamGanNhat, NgayKhamGanNhat) VALUES
+('BN102', 1, '2026-03-02 09:15:00');
+
+-- Bảng THE_BHYT
+INSERT INTO THE_BHYT (MaTheBHYT, MucHuong, NgayBatDau, NgayHetHan, MaBN) VALUES
+('GD479075004444', 80, '2025-01-01', '2026-12-31', 'BN101'),
+('SV479202005555', 80, '2025-01-01', '2026-12-31', 'BN102');
+
+-- Bảng PHAN_GIUONG 
+INSERT INTO PHAN_GIUONG (MaBN, MaGiuong, TuNgay, DenNgay) VALUES
+('BN101', 'G201-01', '2026-03-01 09:00:00', '2026-03-05 14:00:00');
+===============================================================================================================
+-- Bảng LUOT_KHAM
+INSERT INTO LUOT_KHAM (MaLuotKham, NgayGioKham, LyDoKham, TrieuChung, ChanDoanSoBo, TrangThai, MaBN, MaNV) VALUES
+('LK001', '2026-03-01 08:00:00', N'Đau ngực dữ dội', N'Khó thở, mạch nhanh', N'Cơn đau thắt ngực / Tăng huyết áp', N'Đã chuyển nội trú', 'BN101', 'NV01'),
+('LK002', '2026-03-02 09:15:00', N'Chóng mặt kéo dài', N'Buồn nôn khi thay đổi tư thế', N'Rối loạn tiền đình', N'Hoàn thành', 'BN102', 'NV01');
+
+-- Bảng LOAI_XET_NGHIEM
+INSERT INTO LOAI_XET_NGHIEM (MaLoaiXN, TenXN, ChiTieuBinhThuong, DonGia) VALUES
+('XN01', N'Định lượng Glucose máu', N'3.9 - 6.4 mmol/L', 65000),
+('XN02', N'Điện tâm đồ (ECG)', N'Nhịp xoang bình thường', 80000);
+
+-- Bảng PHIEU_XET_NGHIEM
+INSERT INTO PHIEU_XET_NGHIEM (MaPhieuXN, NgayGioXN, NgayGioTraKQ, KetQua, DanhGia, MaLuotKham, MaLoaiXN, MaNV) VALUES
+('PXN01', '2026-03-01 08:45:00', '2026-03-01 10:00:00', N'Glucose: 7.2 mmol/L', N'Chỉ số vượt ngưỡng bình thường', 'LK001', 'XN01', 'NV03'),
+('PXN02', '2026-03-01 08:50:00', '2026-03-01 09:30:00', N'Nhịp tim nhanh 105 lần/phút', N'Thiếu máu cơ tim nhẹ', 'LK001', 'XN02', 'NV03');
+
+-- Bảng THUOC
+INSERT INTO THUOC (MaThuoc, TenThuoc, HoatChat, HamLuong, DonViTinh, DonGia, HuongDanSD) VALUES
+('TH01', N'Amlodipin', N'Amlodipine', N'5mg', N'Viên', 2500, N'Uống sáng 1 viên sau ăn'),
+('TH02', N'Betaserc', N'Betahistine', N'16mg', N'Viên', 6000, N'Uống sáng 1 viên, tối 1 viên sau ăn');
+
+-- Bảng DON_THUOC
+INSERT INTO DON_THUOC (MaDonThuoc, NgayKeDon, LoiDanCuaBacSi, MaLuotKham) VALUES
+('DT001', '2026-03-02', N'Nghỉ ngơi, hạn chế thay đổi tư thế đột ngột, tái khám sau 7 ngày', 'LK002');
+
+-- Bảng CT_DON_THUOC
+INSERT INTO CT_DON_THUOC (MaDonThuoc, MaThuoc, SoLuong, LieuDung) VALUES
+('DT001', 'TH02', 14, N'Uống ngày 2 lần, mỗi lần 1 viên sau khi ăn no');
+
+-- Bảng VIEN_PHI
+INSERT INTO VIEN_PHI (MaHoaDon, NgayLap, HinhThucThanhToan, TrangThaiThanhToan, MaLuotKham) VALUES
+('HD001', '2026-03-02 10:30:00', N'Chuyển khoản', N'Đã thanh toán', 'LK002');
