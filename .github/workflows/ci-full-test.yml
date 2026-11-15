@@ -19,8 +19,6 @@ concurrency:
 
 env:
   DATABASE_URL: postgresql://postgres:postgres123@127.0.0.1:5432/hospital_db?schema=public
-  PORT: 3001
-  NODE_ENV: test
   FRONTEND_URL: http://localhost:3000
   JWT_SECRET: ci-hospital-management-jwt-secret-2026
   JWT_EXPIRES_IN: 1d
@@ -223,30 +221,29 @@ jobs:
 
       - name: Start Backend (:3001) and Frontend (:3000)
         run: |
-          nohup npm --prefix backend run start:prod > /tmp/backend.log 2>&1 &
+          nohup env PORT=3001 NODE_ENV=production npm --prefix backend run start:prod > /tmp/backend.log 2>&1 &
           echo $! > /tmp/backend.pid
-          nohup npm --prefix frontend run start > /tmp/frontend.log 2>&1 &
-          echo $! > /tmp/frontend.pid
-
           echo "Waiting for Backend API on http://localhost:3001/api/docs ..."
           for i in $(seq 1 30); do
-            if curl -fsS http://localhost:3001/api/docs >/dev/null 2>&1; then
+            if curl -fsSL http://localhost:3001/api/docs >/dev/null 2>&1; then
               echo "Backend is ready."
               break
             fi
             sleep 2
           done
-          curl -fsS http://localhost:3001/api/docs >/dev/null
+          curl -fsSL http://localhost:3001/api/docs >/dev/null
 
+          nohup env PORT=3000 NODE_ENV=production npm --prefix frontend run start > /tmp/frontend.log 2>&1 &
+          echo $! > /tmp/frontend.pid
           echo "Waiting for Frontend UI on http://localhost:3000/login ..."
           for i in $(seq 1 30); do
-            if curl -fsS http://localhost:3000/login >/dev/null 2>&1; then
+            if curl -fsSL http://localhost:3000/login >/dev/null 2>&1; then
               echo "Frontend is ready."
               break
             fi
             sleep 2
           done
-          curl -fsS http://localhost:3000/login >/dev/null
+          curl -fsSL http://localhost:3000/login >/dev/null
 
       - name: "[E2E] Run Full-Stack Deep Verification Script"
         working-directory: frontend
