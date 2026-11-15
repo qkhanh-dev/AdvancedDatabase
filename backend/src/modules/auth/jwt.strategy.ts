@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
+import { resolveStaffRole } from '../../common/utils/staff-role.util';
 
 export interface JwtPayload {
   sub: string;
@@ -31,23 +32,19 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       include: {
         bacSi: true,
         dieuDuong: true,
-        nvHanhChinh: true,
+        kyThuatVien: true,
         khoa: true,
       },
     });
 
     if (!nhanVien) {
-      throw new UnauthorizedException('Phiên đăng nhập không hợp lệ hoặc người dùng không tồn tại');
+      throw new UnauthorizedException({
+        ruleCode: 'UNAUTHORIZED',
+        message: 'Phiên đăng nhập không hợp lệ hoặc người dùng không tồn tại',
+      });
     }
 
-    let userRole: string = payload.role;
-    if (!userRole) {
-      userRole = nhanVien.LoaiNV === 'HANH_CHINH' ? 'NV_HANH_CHINH' : nhanVien.LoaiNV.toString();
-      const boPhan = nhanVien.nvHanhChinh?.BoPhanPhuTrach?.toLowerCase() || '';
-      if (boPhan.includes('thu ngan') || boPhan.includes('thu ngân')) {
-        userRole = 'THU_NGAN';
-      }
-    }
+    const userRole = payload.role || resolveStaffRole(nhanVien);
 
     return {
       maNV: nhanVien.MaNV,
@@ -55,7 +52,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       role: userRole,
       maKhoa: nhanVien.MaKhoa,
       tenKhoa: nhanVien.khoa.TenKhoa,
-      detail: nhanVien.bacSi || nhanVien.dieuDuong || nhanVien.nvHanhChinh,
+      detail: nhanVien.bacSi || nhanVien.dieuDuong || nhanVien.kyThuatVien || null,
     };
   }
 }

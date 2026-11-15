@@ -6,26 +6,41 @@ import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/modules/prisma/prisma.service';
 import { HttpExceptionFilter } from '../src/common/filters/http-exception.filter';
 import { PrismaClientExceptionFilter } from '../src/common/filters/prisma-exception.filter';
-import { TrangThaiGiuongEnum, TrangThaiPhatThuocEnum, TrangThaiTTEnum, CaTrucEnum, TrangThaiDiemDanhEnum, PhuongThucTTEnum } from '@prisma/client';
 
-describe('BỘ KIỂM THỬ SÂU TOÀN DIỆN HỆ THỐNG BACKEND QLBV (DEEP E2E TEST SUITE)', () => {
+describe('BỘ KIỂM THỬ SÂU TOÀN DIỆN BACKEND & DB v2.0 (18 BẢNG · 103 CỘT · 20 FK · BR-V2-01..13)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
 
-  // Authentication Tokens
+  let adminToken: string;
   let doctorToken: string;
   let nurseToken: string;
+  let ktvToken: string;
+  let receptionToken: string;
   let cashierToken: string;
 
-  // Shared state variables across test pipeline
-  let createdPatientMaBN: string;
-  let createdExamId: string;
-  let createdPrescriptionId: string;
-  let testMedicineId: string;
-  let initialStock: number;
-  let assignedServiceTimestamp: string;
-  let createdInvoiceId: string;
-  const testDutyDate = '2026-11-20';
+  const prefix = `E2E_${Date.now().toString().slice(-6)}`;
+  const createdIds = {
+    maKhoa: `${prefix}_K`,
+    maPhong: `${prefix}_P`,
+    maGiuong1: `${prefix}_G1`,
+    maGiuong2: `${prefix}_G2`,
+    maNV_BS: `${prefix}_BS`,
+    maNV_Partial: `${prefix}_TP`,
+    maBN: `${prefix}_BN`,
+    maBN2: `${prefix}_BN2`,
+    maTheBHYT: `${prefix}_BHYT`,
+    maDotNT1: `${prefix}_D1`,
+    maDotNT2: `${prefix}_D2`,
+    maDotNT_Race: `${prefix}_DR`,
+    maLuotKham1: `${prefix}_LK1`,
+    maLuotKham2: `${prefix}_LK2`,
+    maDonThuoc1: `${prefix}_DT1`,
+    maDonThuoc2: `${prefix}_DT2`,
+    maPhieuXN1: `${prefix}_PXN1`,
+    maPhieuXN2: `${prefix}_PXN2`,
+    maHoaDon1: `${prefix}_HD1`,
+    maHoaDon2: `${prefix}_HD2`,
+  };
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -33,980 +48,1083 @@ describe('BỘ KIỂM THỬ SÂU TOÀN DIỆN HỆ THỐNG BACKEND QLBV (DEEP E2
     }).compile();
 
     app = moduleFixture.createNestApplication();
-
-    // Replicate main.ts configuration
     app.setGlobalPrefix('api');
     app.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,
         transform: true,
         forbidNonWhitelisted: false,
-        transformOptions: {
-          enableImplicitConversion: true,
-        },
+        transformOptions: { enableImplicitConversion: true },
       }),
     );
     app.useGlobalFilters(new HttpExceptionFilter(), new PrismaClientExceptionFilter());
 
     await app.init();
     prisma = app.get<PrismaService>(PrismaService);
+
+    // Pre-create 2 clean test beds under our test department/room later via API + Prisma
   }, 30000);
 
   afterAll(async () => {
+    if (prisma) {
+      // Clean up test records in reverse dependency order (since all 20 FKs are NO ACTION)
+      const safeRun = async (fn: () => Promise<any>) => {
+        try {
+          await fn();
+        } catch {
+          // ignore cleanup errors if test skipped/failed early
+        }
+      };
+
+      // Note: PAID VIEN_PHI cannot be deleted directly due to BR-V2-08 trigger; test data uses unique E2E_ prefix
+      const triggerPairs: Array<[string, string]> = [
+        ['VIEN_PHI', 'trg_vien_phi_rules'],
+        ['DON_THUOC', 'trg_don_thuoc_lock'],
+        ['CHI_TIET_DON_THUOC', 'trg_ctdt_lock'],
+        ['PHIEU_XET_NGHIEM', 'trg_pxn_lock'],
+      ];
+      for (const [tbl, trg] of triggerPairs) {
+        await safeRun(() => prisma.$executeRawUnsafe(`ALTER TABLE "${tbl}" DISABLE TRIGGER ${trg}`));
+      }
+
+      await safeRun(() =>
+        prisma.vienPhi.deleteMany({ where: { MaHoaDon: { startsWith: prefix } } }),
+      );
+      await safeRun(() =>
+        prisma.phieuXetNghiem.deleteMany({ where: { MaPhieuXN: { startsWith: prefix } } }),
+      );
+      await safeRun(() =>
+        prisma.$transaction([
+          prisma.chiTietDonThuoc.deleteMany({ where: { MaDonThuoc: { startsWith: prefix } } }),
+          prisma.donThuoc.deleteMany({ where: { MaDonThuoc: { startsWith: prefix } } }),
+        ]),
+      );
+      await safeRun(() =>
+        prisma.luotKham.deleteMany({ where: { MaLuotKham: { startsWith: prefix } } }),
+      );
+      await safeRun(() =>
+        prisma.phanGiuong.deleteMany({
+          where: {
+            OR: [
+              { MaDotNT: { startsWith: prefix } },
+              { MaGiuong: { startsWith: prefix } },
+            ],
+          },
+        }),
+      );
+      await safeRun(() =>
+        prisma.dotNoiTru.deleteMany({ where: { MaBN: { startsWith: prefix } } }),
+      );
+      await safeRun(() =>
+        prisma.theBHYT.deleteMany({ where: { MaTheBHYT: { startsWith: prefix } } }),
+      );
+      await safeRun(() =>
+        prisma.benhNhan.deleteMany({ where: { MaBN: { startsWith: prefix } } }),
+      );
+      await safeRun(() =>
+        prisma.bacSi.deleteMany({ where: { MaNV: { startsWith: prefix } } }),
+      );
+      await safeRun(() =>
+        prisma.nhanVien.deleteMany({ where: { MaNV: { startsWith: prefix } } }),
+      );
+      await safeRun(() =>
+        prisma.giuongBenh.deleteMany({ where: { MaGiuong: { startsWith: prefix } } }),
+      );
+      await safeRun(() =>
+        prisma.phong.deleteMany({ where: { MaPhong: { startsWith: prefix } } }),
+      );
+      await safeRun(() =>
+        prisma.khoa.deleteMany({ where: { MaKhoa: { startsWith: prefix } } }),
+      );
+
+      for (const [tbl, trg] of triggerPairs) {
+        await safeRun(() => prisma.$executeRawUnsafe(`ALTER TABLE "${tbl}" ENABLE TRIGGER ${trg}`));
+      }
+    }
+
     if (app) {
       await app.close();
     }
   });
 
   // ==========================================================================
-  // PHÂN HỆ 1: XÁC THỰC VÀ PHÂN QUYỀN RBAC (AUTH & ROLES GUARD)
+  // 1. KIỂM CHỨNG CẤU TRÚC LIVE DATABASE POSTGRESQL (BR-V2-10)
   // ==========================================================================
-  describe('1. Phân hệ Xác thực & Phân quyền RBAC', () => {
-    it('1.1. Bác sĩ (BS01) đăng nhập thành công, nhận JWT Token và vai trò BAC_SI', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/auth/login')
-        .send({ username: 'BS01', password: '123456' })
-        .expect(200);
+  describe('1. Kiểm chứng Live Database v2 (18 bảng · 103 cột · 20 FK NO ACTION · Views · Triggers · CHECK)', () => {
+    it('1.1. Đúng 18 bảng thực thể v2 và 103 cột lưu trữ, không còn bảng v1', async () => {
+      const tables = await prisma.$queryRaw<Array<{ table_name: string }>>`
+        SELECT table_name
+        FROM information_schema.tables
+        WHERE table_schema = 'public' AND table_type = 'BASE TABLE' AND table_name <> '_prisma_migrations'
+        ORDER BY table_name
+      `;
+      expect(tables).toHaveLength(18);
 
-      doctorToken = res.body.access_token;
-      expect(doctorToken).toBeDefined();
-      expect(res.body.user.role).toBe('BAC_SI');
-    });
+      const cols = await prisma.$queryRaw<Array<{ count: bigint }>>`
+        SELECT COUNT(*) AS count
+        FROM information_schema.columns c
+        JOIN information_schema.tables t
+          ON c.table_schema = t.table_schema AND c.table_name = t.table_name
+        WHERE c.table_schema = 'public' AND t.table_type = 'BASE TABLE' AND t.table_name <> '_prisma_migrations'
+      `;
+      expect(Number(cols[0].count)).toBe(103);
 
-    it('1.2. Điều dưỡng (DD01) đăng nhập thành công, nhận vai trò DIEU_DUONG', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/auth/login')
-        .send({ username: 'DD01', password: '123456' })
-        .expect(200);
-
-      nurseToken = res.body.access_token;
-      expect(nurseToken).toBeDefined();
-      expect(res.body.user.role).toBe('DIEU_DUONG');
-    });
-
-    it('1.3. Thu ngân (NV_TN_01) đăng nhập thành công, nhận vai trò THU_NGAN', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/auth/login')
-        .send({ username: 'NV_TN_01', password: '123456' })
-        .expect(200);
-
-      cashierToken = res.body.access_token;
-      expect(cashierToken).toBeDefined();
-      expect(res.body.user.role).toBe('THU_NGAN');
-    });
-
-    it('1.4. Đăng nhập với mật khẩu sai -> Trả về lỗi 401 Unauthorized', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/auth/login')
-        .send({ username: 'BS01', password: 'wrongpassword123' })
-        .expect(401);
-
-      expect(res.body.message).toContain('Thông tin đăng nhập không chính xác');
-    });
-
-    it('1.5. Đăng nhập với tài khoản không tồn tại -> Trả về 401 Unauthorized', async () => {
-      await request(app.getHttpServer())
-        .post('/api/auth/login')
-        .send({ username: 'USER_NON_EXIST', password: 'password123' })
-        .expect(401);
-    });
-
-    it('1.6. Truy cập API bảo vệ /api/auth/profile không có token -> Bị từ chối 401', async () => {
-      await request(app.getHttpServer()).get('/api/auth/profile').expect(401);
-    });
-
-    it('1.7. Truy cập /api/auth/profile với Bearer Token hợp lệ -> 200 OK', async () => {
-      const res = await request(app.getHttpServer())
-        .get('/api/auth/profile')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .expect(200);
-
-      expect(res.body.MaNV).toBe('BS01');
-      expect(res.body.LoaiNV).toBe('BAC_SI');
-    });
-
-    it('1.8. RBAC Chéo: Điều dưỡng (DD01) gọi API Bác sĩ POST /api/examinations -> 403 Forbidden', async () => {
-      await request(app.getHttpServer())
-        .post('/api/examinations')
-        .set('Authorization', `Bearer ${nurseToken}`)
-        .send({
-          maBN: 'BN001',
-          maBS: 'BS01',
-          maPhongKham: 'P01',
-          trieuChung: 'Test',
-          chanDoanSoBo: 'Test',
-          huongXuTri: 'KE_DON_VE',
-        })
-        .expect(403);
-    });
-
-    it('1.9. RBAC Chéo: Bác sĩ (BS01) gọi API Thu ngân POST /api/billing/invoices -> 403 Forbidden', async () => {
-      await request(app.getHttpServer())
-        .post('/api/billing/invoices')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .send({
-          maLuotKham: 'LK001',
-          maNVThuNgan: 'NV_TN_01',
-          phuongThucTT: 'CHUYEN_KHOAN',
-        })
-        .expect(403);
-    });
-  });
-
-  // ==========================================================================
-  // PHÂN HỆ 2: CƠ SỞ VẬT CHẤT & KHOA PHÒNG (DEPARTMENT & ROOM)
-  // ==========================================================================
-  describe('2. Phân hệ Cơ sở vật chất & Khoa phòng', () => {
-    it('2.1. GET /api/departments: Lấy danh sách khoa và thông tin Trưởng khoa', async () => {
-      const res = await request(app.getHttpServer())
-        .get('/api/departments')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .expect(200);
-
-      expect(Array.isArray(res.body)).toBe(true);
-      expect(res.body.length).toBeGreaterThanOrEqual(2);
-      const k01 = res.body.find((k: any) => k.MaKhoa === 'K01');
-      expect(k01).toBeDefined();
-      expect(k01.truongKhoa).toBeDefined();
-    });
-
-    it('2.2. GET /api/departments/:maKhoa: Lấy chi tiết khoa hợp lệ', async () => {
-      const res = await request(app.getHttpServer())
-        .get('/api/departments/K01')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .expect(200);
-
-      expect(res.body.MaKhoa).toBe('K01');
-      expect(res.body.phongs).toBeDefined();
-    });
-
-    it('2.3. GET /api/departments/INVALID_KHOA: Bắt lỗi 404 Not Found', async () => {
-      await request(app.getHttpServer())
-        .get('/api/departments/K99_INVALID')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .expect(404);
-    });
-
-    it('2.4. GET /api/rooms/available: Tra cứu buồng bệnh còn chỗ trống & số giường khả dụng', async () => {
-      const res = await request(app.getHttpServer())
-        .get('/api/rooms/available?maKhoa=K01')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .expect(200);
-
-      expect(Array.isArray(res.body)).toBe(true);
-      const room = res.body.find((r: any) => r.MaPhong === 'P02');
-      if (room) {
-        expect(typeof room.soGiuongConTrong).toBe('number');
+      const legacyNames = ['NV_HANH_CHINH', 'BN_NGOAI_TRU', 'BN_NOI_TRU', 'CT_DON_THUOC', 'DICH_VU', 'SU_DUNG_DV', 'HOA_DON', 'LICH_TRUC'];
+      const actualNames = tables.map((t) => t.table_name);
+      for (const old of legacyNames) {
+        expect(actualNames).not.toContain(old);
       }
     });
 
-    it('2.5. GET /api/beds/map: Sơ đồ trạng thái giường bệnh toàn viện', async () => {
-      const res = await request(app.getHttpServer())
-        .get('/api/beds/map')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .expect(200);
-
-      expect(Array.isArray(res.body)).toBe(true);
-      expect(res.body.length).toBeGreaterThanOrEqual(2);
-      expect(res.body[0].MaGiuong).toBeDefined();
-      expect(res.body[0].TrangThaiGiuong).toBeDefined();
-    });
-  });
-
-  // ==========================================================================
-  // PHÂN HỆ 3: NHÂN SỰ Y TẾ (STAFF)
-  // ==========================================================================
-  describe('3. Phân hệ Nhân sự Y tế', () => {
-    it('3.1. GET /api/staff: Lấy danh sách toàn bộ cán bộ y tế', async () => {
-      const res = await request(app.getHttpServer())
-        .get('/api/staff')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .expect(200);
-
-      expect(Array.isArray(res.body)).toBe(true);
-      expect(res.body.length).toBeGreaterThanOrEqual(4);
+    it('1.2. Đúng 20 khóa ngoại (FK01–FK20) và 100% ON DELETE NO ACTION / ON UPDATE NO ACTION', async () => {
+      const fks = await prisma.$queryRaw<
+        Array<{ constraint_name: string; update_rule: string; delete_rule: string }>
+      >`
+        SELECT rc.constraint_name, rc.update_rule, rc.delete_rule
+        FROM information_schema.referential_constraints rc
+        WHERE rc.constraint_schema = 'public'
+      `;
+      expect(fks).toHaveLength(20);
+      for (const fk of fks) {
+        expect(fk.delete_rule).toBe('NO ACTION');
+        expect(fk.update_rule).toBe('NO ACTION');
+      }
     });
 
-    it('3.2. GET /api/staff/doctors: Lấy danh mục bác sĩ và kiểm tra số CCHN', async () => {
-      const res = await request(app.getHttpServer())
-        .get('/api/staff/doctors')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .expect(200);
-
-      expect(Array.isArray(res.body)).toBe(true);
-      const bs01 = res.body.find((b: any) => b.MaNV === 'BS01');
-      expect(bs01).toBeDefined();
-      expect(bs01.SoCCHN).toBeDefined();
-    });
-
-    it('3.3. GET /api/staff/nurses: Lấy danh mục điều dưỡng', async () => {
-      const res = await request(app.getHttpServer())
-        .get('/api/staff/nurses')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .expect(200);
-
-      expect(Array.isArray(res.body)).toBe(true);
-      const dd01 = res.body.find((d: any) => d.MaNV === 'DD01');
-      expect(dd01).toBeDefined();
-      expect(dd01.SoCCHN_DD).toBeDefined();
-    });
-
-    it('3.4. GET /api/staff/NV_KHONG_TON_TAI: Trả về 404 Not Found', async () => {
-      await request(app.getHttpServer())
-        .get('/api/staff/NV_999999')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .expect(404);
-    });
-  });
-
-  // ==========================================================================
-  // PHÂN HỆ 4: TIẾP ĐÓN BỆNH NHÂN (PATIENT RECEPTION)
-  // ==========================================================================
-  describe('4. Phân hệ Tiếp đón Bệnh nhân', () => {
-    const testCccd = `079${Date.now().toString().slice(-9)}`;
-    const testBhyt = `DN479${Date.now().toString().slice(-10)}`;
-
-    it('4.1. POST /api/patients/reception: Tiếp đón bệnh nhân ngoại trú mới thành công', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/patients/reception')
-        .set('Authorization', `Bearer ${cashierToken}`)
-        .send({
-          hoTen: 'Le Van Test E2E',
-          ngaySinh: '1995-06-15',
-          gioiTinh: 'NAM',
-          cccd: testCccd,
-          soDienThoai: '0988776655',
-          soBHYT: testBhyt,
-          mucHuongBHYT: 80,
-          diaChi: 'Quan 5, TP.HCM',
-          nhomMau: 'O',
-          isNgoaiTru: true,
-        })
-        .expect(201);
-
-      createdPatientMaBN = res.body.MaBN;
-      expect(createdPatientMaBN).toBeDefined();
-      expect(res.body.HoTen).toBe('Le Van Test E2E');
-      expect(res.body.bnNgoaiTru).toBeDefined();
-      expect(res.body.bnNgoaiTru.SoSoKhamBenh).toBeDefined();
-    });
-
-    it('4.2. Ràng buộc duy nhất CCCD (MUT04): Đăng ký lại cùng CCCD -> 400 Bad Request', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/patients/reception')
-        .set('Authorization', `Bearer ${cashierToken}`)
-        .send({
-          hoTen: 'Người Trùng CCCD',
-          ngaySinh: '1990-01-01',
-          gioiTinh: 'NAM',
-          cccd: testCccd,
-          diaChi: 'TP.HCM',
-        })
-        .expect(400);
-
-      expect(res.body.message).toContain('đã tồn tại trong hệ thống');
-    });
-
-    it('4.3. Ràng buộc duy nhất SoBHYT: Đăng ký lại cùng số thẻ BHYT -> 400 Bad Request', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/patients/reception')
-        .set('Authorization', `Bearer ${cashierToken}`)
-        .send({
-          hoTen: 'Người Trùng BHYT',
-          ngaySinh: '1990-01-01',
-          gioiTinh: 'NAM',
-          cccd: `079${Date.now().toString().slice(-9)}`,
-          soBHYT: testBhyt,
-          diaChi: 'TP.HCM',
-        })
-        .expect(400);
-
-      expect(res.body.message).toContain('đã tồn tại trong hệ thống');
-    });
-
-    it('4.4. GET /api/patients/lookup: Tra cứu bệnh nhân theo mã MaBN', async () => {
-      const res = await request(app.getHttpServer())
-        .get(`/api/patients/lookup?q=${createdPatientMaBN}`)
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .expect(200);
-
-      expect(res.body.MaBN).toBe(createdPatientMaBN);
-      expect(res.body.HoTen).toBe('Le Van Test E2E');
-    });
-
-    it('4.5. GET /api/patients/lookup: Tra cứu bệnh nhân theo CCCD', async () => {
-      const res = await request(app.getHttpServer())
-        .get(`/api/patients/lookup?q=${testCccd}`)
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .expect(200);
-
-      expect(res.body.MaBN).toBe(createdPatientMaBN);
-    });
-
-    it('4.6. GET /api/patients: Danh sách phân trang bệnh nhân', async () => {
-      const res = await request(app.getHttpServer())
-        .get('/api/patients?page=1&limit=5')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .expect(200);
-
-      expect(res.body.data).toBeDefined();
-      expect(res.body.total).toBeGreaterThanOrEqual(1);
-    });
-  });
-
-  // ==========================================================================
-  // PHÂN HỆ 5: KHÁM BỆNH & CHẨN ĐOÁN LÂM SÀNG (EXAMINATION WORKFLOW)
-  // ==========================================================================
-  describe('5. Phân hệ Khám bệnh & Chẩn đoán Lâm sàng', () => {
-    it('5.1. Bác sĩ (BS01) khởi tạo lượt khám lâm sàng tại phòng KHAM (P01)', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/examinations')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .send({
-          maBN: createdPatientMaBN,
-          maBS: 'BS01',
-          maPhongKham: 'P01',
-          trieuChung: 'Sot cao, dau dau, ho khan 3 ngay',
-          huyetAp: '120/80',
-          nhietDo: 38.5,
-          mach: 85,
-          chanDoanSoBo: 'Theo doi Viem hong cap / Sot sieu vi',
-          huongXuTri: 'KE_DON_VE',
-        })
-        .expect(201);
-
-      createdExamId = res.body.MaLuotKham;
-      expect(createdExamId).toBeDefined();
-      expect(res.body.MaBN).toBe(createdPatientMaBN);
-      expect(res.body.MaBS).toBe('BS01');
-    });
-
-    it('5.2. Ràng buộc C02 (MUT09): Tạo lượt khám tại phòng NOI_TRU (P02) -> Bị từ chối 400', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/examinations')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .send({
-          maBN: createdPatientMaBN,
-          maBS: 'BS01',
-          maPhongKham: 'P02', // P02 is NOI_TRU
-          trieuChung: 'Test',
-          chanDoanSoBo: 'Test',
-          huongXuTri: 'KE_DON_VE',
-        })
-        .expect(400);
-
-      expect(res.body.message).toContain('Phải là phòng có loại KHAM');
-    });
-
-    it('5.3. Ràng buộc C03 (MUT10): Gán điều dưỡng (DD01) làm bác sĩ khám -> Bị từ chối 400', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/examinations')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .send({
-          maBN: createdPatientMaBN || 'BN001',
-          maBS: 'DD01', // DD01 is DIEU_DUONG
-          maPhongKham: 'P01',
-          trieuChung: 'Test',
-          chanDoanSoBo: 'Test',
-          huongXuTri: 'KE_DON_VE',
-        })
-        .expect(400);
-
-      expect(res.body.message).toContain('không tồn tại trong danh mục Bác sĩ điều trị');
-    });
-
-    it('5.4. PATCH /api/examinations/:id/diagnose: Cập nhật chẩn đoán xác định và hẹn tái khám', async () => {
-      const res = await request(app.getHttpServer())
-        .patch(`/api/examinations/${createdExamId}/diagnose`)
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .send({
-          chanDoanXacDinh: 'Viem phe quan cap J20',
-          huongXuTri: 'KE_DON_VE',
-          ngayTaiKham: '2026-11-21',
-        })
-        .expect(200);
-
-      expect(res.body.ChanDoanXacDinh).toBe('Viem phe quan cap J20');
-      expect(res.body.HuongXuTri).toBe('KE_DON_VE');
-    });
-
-    it('5.5. GET /api/examinations/:id: Lấy chi tiết lượt khám đầy đủ quan hệ', async () => {
-      const res = await request(app.getHttpServer())
-        .get(`/api/examinations/${createdExamId}`)
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .expect(200);
-
-      expect(res.body.MaLuotKham).toBe(createdExamId);
-      expect(res.body.benhNhan).toBeDefined();
-      expect(res.body.bacSi).toBeDefined();
-    });
-  });
-
-  // ==========================================================================
-  // PHÂN HỆ 6: CẬN LÂM SÀNG & DỊCH VỤ KỸ THUẬT (CLINICAL SERVICES)
-  // ==========================================================================
-  describe('6. Phân hệ Cận lâm sàng & Dịch vụ Kỹ thuật', () => {
-    it('6.1. GET /api/services: Danh mục dịch vụ kỹ thuật y tế', async () => {
-      const res = await request(app.getHttpServer())
-        .get('/api/services')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .expect(200);
-
-      expect(Array.isArray(res.body)).toBe(true);
-      expect(res.body.length).toBeGreaterThanOrEqual(3);
-    });
-
-    it('6.2. POST /api/services/assign: Bác sĩ chỉ định dịch vụ CBC (DV01) cho lượt khám', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/services/assign')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .send({
-          maLuotKham: createdExamId,
-          maDV: 'DV01',
-          soLuong: 1,
-        })
-        .expect(201);
-
-      expect(res.body.MaLuotKham).toBe(createdExamId);
-      expect(res.body.MaDV).toBe('DV01');
-      expect(Number(res.body.DonGiaDV)).toBe(80000);
-      assignedServiceTimestamp = res.body.ThoiGianChiDinh;
-      expect(assignedServiceTimestamp).toBeDefined();
-    });
-
-    it('6.3. GET /api/services/pending: Điều dưỡng tra cứu dịch vụ chờ thực hiện (KetQuaCLS null)', async () => {
-      const res = await request(app.getHttpServer())
-        .get('/api/services/pending')
-        .set('Authorization', `Bearer ${nurseToken}`)
-        .expect(200);
-
-      expect(Array.isArray(res.body)).toBe(true);
-      const pendingItem = res.body.find(
-        (s: any) => s.MaLuotKham === createdExamId && s.MaDV === 'DV01',
+    it('1.3. Tồn tại VIEW dẫn xuất, CHECK constraints, Filtered Unique Index BR-V2-12 và Triggers', async () => {
+      const views = await prisma.$queryRaw<Array<{ table_name: string }>>`
+        SELECT table_name FROM information_schema.views WHERE table_schema = 'public'
+      `;
+      expect(views.map((v) => v.table_name)).toEqual(
+        expect.arrayContaining(['V_NHAN_VIEN', 'V_BENH_NHAN', 'V_DON_THUOC', 'V_VIEN_PHI']),
       );
-      expect(pendingItem).toBeDefined();
-    });
 
-    it('6.4. Ràng buộc KTV (P02 / C03): Nhân viên thu ngân (NV_TN_01) cập nhật kết quả -> Bị từ chối 400', async () => {
-      const res = await request(app.getHttpServer())
-        .patch('/api/services/result')
-        .set('Authorization', `Bearer ${nurseToken}`) // Nurse executes, but passes cashier ID
-        .send({
-          maLuotKham: createdExamId,
-          maDV: 'DV01',
-          thoiGianChiDinh: assignedServiceTimestamp,
-          ketQuaCLS: 'Bạch cầu tăng nhẹ',
-          maKTVThucHien: 'NV_TN_01', // Cashier, not nurse!
-        })
-        .expect(400);
+      const partialIdx = await prisma.$queryRaw<Array<{ indexname: string }>>`
+        SELECT indexname FROM pg_indexes
+        WHERE schemaname = 'public' AND indexname = 'UQ_DOT_NOI_TRU_OPEN_MABN'
+      `;
+      expect(partialIdx).toHaveLength(1);
 
-      expect(res.body.message).toContain('không hợp lệ');
-    });
+      const checks = await prisma.$queryRaw<Array<{ conname: string }>>`
+        SELECT conname FROM pg_constraint c
+        JOIN pg_namespace n ON n.oid = c.connamespace
+        WHERE n.nspname = 'public' AND c.contype = 'c'
+      `;
+      expect(checks.length).toBeGreaterThanOrEqual(15);
 
-    it('6.5. PATCH /api/services/result: Điều dưỡng (DD01) cập nhật kết quả xét nghiệm thành công', async () => {
-      const res = await request(app.getHttpServer())
-        .patch('/api/services/result')
-        .set('Authorization', `Bearer ${nurseToken}`)
-        .send({
-          maLuotKham: createdExamId,
-          maDV: 'DV01',
-          thoiGianChiDinh: assignedServiceTimestamp,
-          ketQuaCLS: 'WBC: 11.5 G/L (tang nhe), RBC: 4.8 T/L, HGB: 140 g/L',
-          maKTVThucHien: 'DD01',
-        })
-        .expect(200);
-
-      expect(res.body.KetQuaCLS).toContain('WBC: 11.5');
-      expect(res.body.MaKTVThucHien).toBe('DD01');
+      const triggers = await prisma.$queryRaw<Array<{ tgname: string }>>`
+        SELECT tgname FROM pg_trigger t
+        JOIN pg_class c ON c.oid = t.tgrelid
+        JOIN pg_namespace n ON n.oid = c.relnamespace
+        WHERE n.nspname = 'public' AND NOT t.tgisinternal
+      `;
+      expect(triggers.length).toBeGreaterThanOrEqual(10);
     });
   });
 
   // ==========================================================================
-  // PHÂN HỆ 7: TOA THUỐC & TRỪ TỒN KHO NGUYÊN TỬ (PRESCRIPTION & ATOMIC INVENTORY)
+  // 2. XÁC THỰC & PHÂN QUYỀN RBAC THEO CÂY NHAN_VIEN (d, p)
   // ==========================================================================
-  describe('7. Phân hệ Toa thuốc & Trừ Tồn Kho Nguyên Tử (BR04)', () => {
-    beforeAll(async () => {
-      const med = await prisma.thuoc.findUnique({ where: { MaThuoc: 'TH01' } });
-      testMedicineId = 'TH01';
-      initialStock = med!.SoLuongTon;
+  describe('2. Auth & RBAC (d, p) + Global Error Contract { ruleCode }', () => {
+    it('2.1. Đăng nhập đủ 6 vai trò chuẩn v2 (ADMIN, BAC_SI, DIEU_DUONG, KY_THUAT_VIEN, TIEP_NHAN, THU_NGAN)', async () => {
+      const login = async (username: string) =>
+        request(app.getHttpServer())
+          .post('/api/auth/login')
+          .send({ username, password: '123456' })
+          .expect(200);
+
+      const [admin, doc, nurse, ktv, rec, cash] = await Promise.all([
+        login('ADMIN01'),
+        login('BS01'),
+        login('DD01'),
+        login('KTV01'),
+        login('TT01'),
+        login('NV_TN_01'),
+      ]);
+
+      expect(admin.body.user.role).toBe('ADMIN');
+      expect(doc.body.user.role).toBe('BAC_SI');
+      expect(nurse.body.user.role).toBe('DIEU_DUONG');
+      expect(ktv.body.user.role).toBe('KY_THUAT_VIEN');
+      expect(rec.body.user.role).toBe('TIEP_NHAN');
+      expect(cash.body.user.role).toBe('THU_NGAN');
+      expect(typeof doc.body.user.SoNamCongTac).toBe('number');
+
+      adminToken = admin.body.access_token;
+      doctorToken = doc.body.access_token;
+      nurseToken = nurse.body.access_token;
+      ktvToken = ktv.body.access_token;
+      receptionToken = rec.body.access_token;
+      cashierToken = cash.body.access_token;
     });
 
-    it('7.1. GET /api/prescriptions/medicines: Tra cứu danh mục thuốc và số lượng tồn kho', async () => {
-      const res = await request(app.getHttpServer())
-        .get('/api/prescriptions/medicines')
-        .set('Authorization', `Bearer ${doctorToken}`)
+    it('2.2. GET /api/auth/profile trả SoNamCongTac dẫn xuất; đăng nhập bằng CCCD hoạt động', async () => {
+      const profileRes = await request(app.getHttpServer())
+        .get('/api/auth/profile')
+        .set('Authorization', `Bearer ${ktvToken}`)
         .expect(200);
+      expect(profileRes.body.MaNV).toBe('KTV01');
+      expect(typeof profileRes.body.SoNamCongTac).toBe('number');
+      expect(profileRes.body.kyThuatVien).toBeDefined();
 
-      expect(Array.isArray(res.body)).toBe(true);
-      const th01 = res.body.find((t: any) => t.MaThuoc === 'TH01');
-      expect(th01).toBeDefined();
-      expect(th01.SoLuongTon).toBeGreaterThan(0);
-    });
-
-    it('7.2. Kiểm tra tồn kho tức thời (BR04): Kê đơn với số lượng vượt quá tồn kho -> 400 Bad Request', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/prescriptions')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .send({
-          maLuotKham: createdExamId,
-          items: [
-            {
-              maThuoc: 'TH01',
-              soLuong: 999999, // Impossible stock
-              lieuDung: '1 vien/lan',
-              cachDung: 'Uong sau an',
-              soNgayUong: 7,
-            },
-          ],
-        })
-        .expect(400);
-
-      expect(res.body.message).toContain('không đủ tồn kho');
-    });
-
-    it('7.3. POST /api/prescriptions: Bác sĩ kê toa thuốc hợp lệ (10 viên TH01 + 14 viên TH02)', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/prescriptions')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .send({
-          maLuotKham: createdExamId,
-          loiDanBacSi: 'Uong nhieu nuoc am, nghi ngoi',
-          items: [
-            {
-              maThuoc: 'TH01',
-              soLuong: 10,
-              lieuDung: '1 vien/lan x 2 lan/ngay',
-              cachDung: 'Uong khi sot tren 38.5C',
-              soNgayUong: 5,
-            },
-            {
-              maThuoc: 'TH02',
-              soLuong: 14,
-              lieuDung: '1 vien/lan x 2 lan/ngay',
-              cachDung: 'Uong sau an',
-              soNgayUong: 7,
-            },
-          ],
-        })
-        .expect(201);
-
-      createdPrescriptionId = res.body.MaDon;
-      expect(createdPrescriptionId).toBeDefined();
-      expect(res.body.TrangThaiPhatThuoc).toBe(TrangThaiPhatThuocEnum.CHUA_PHAT);
-      expect(res.body.ctDonThuocs.length).toBe(2);
-      expect(Number(res.body.ctDonThuocs[0].DonGiaBan)).toBe(1500); // Snapshot price
-    });
-
-    it('7.4. Kê đơn lần 2 cho cùng một lượt khám -> Bị từ chối 400 Bad Request', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/prescriptions')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .send({
-          maLuotKham: createdExamId,
-          items: [
-            {
-              maThuoc: 'TH01',
-              soLuong: 5,
-              soNgayUong: 3,
-              lieuDung: '1 vien/lan',
-              cachDung: 'Uong sau an',
-            },
-          ],
-        })
-        .expect(400);
-
-      expect(res.body.message).toContain('đã được kê toa thuốc trước đó');
-    });
-
-    it('7.5. PATCH /api/prescriptions/:id/dispense: Phát thuốc & Trừ tồn kho nguyên tử (BR04)', async () => {
-      const res = await request(app.getHttpServer())
-        .patch(`/api/prescriptions/${createdPrescriptionId}/dispense`)
-        .set('Authorization', `Bearer ${nurseToken}`)
+      // Login by CCCD
+      const cccdRes = await request(app.getHttpServer())
+        .post('/api/auth/login')
+        .send({ username: '079091000006', password: '123456' })
         .expect(200);
-
-      expect(res.body.TrangThaiPhatThuoc).toBe(TrangThaiPhatThuocEnum.DA_PHAT);
-
-      // Verify stock was deducted in database
-      const updatedMed = await prisma.thuoc.findUnique({ where: { MaThuoc: 'TH01' } });
-      expect(updatedMed!.SoLuongTon).toBe(initialStock - 10);
+      expect(cccdRes.body.user.MaNV).toBe('KTV01');
     });
 
-    it('7.6. Thử phát lại toa thuốc đã phát -> Bị từ chối 400 Bad Request', async () => {
+    it('2.3. Error Contract trả về đủ { statusCode, timestamp, path, ruleCode, message }', async () => {
       const res = await request(app.getHttpServer())
-        .patch(`/api/prescriptions/${createdPrescriptionId}/dispense`)
-        .set('Authorization', `Bearer ${nurseToken}`)
-        .expect(400);
+        .post('/api/auth/login')
+        .send({ username: 'BS01', password: 'wrongpassword' })
+        .expect(401);
 
-      expect(res.body.message).toContain('đã được cấp phát trước đó');
+      expect(res.body).toEqual(
+        expect.objectContaining({
+          statusCode: 401,
+          timestamp: expect.any(String),
+          path: '/api/auth/login',
+          ruleCode: 'UNAUTHORIZED',
+          message: expect.any(String),
+        }),
+      );
     });
   });
 
   // ==========================================================================
-  // PHÂN HỆ 8: ĐIỀU TRỊ NỘI TRÚ & PHÂN GIƯỜNG (INPATIENT & ANTI-DOUBLE-BED BR02)
+  // 3. KHOA, PHÒNG, GIƯỜNG BỆNH (BR-V2-11) & NHÂN SỰ DISJOINT (BR-V2-01)
   // ==========================================================================
-  describe('8. Phân hệ Quản lý Nội trú & Phân giường (BR02)', () => {
-    let secondInpatientMaBN: string;
-
-    beforeAll(async () => {
-      // Clean up previous test bed allocations so tests are fully isolated
-      await prisma.phanGiuong.deleteMany({
-        where: {
-          MaGiuong: { in: ['G01', 'G02'] },
-        },
-      });
-      await prisma.giuongBenh.updateMany({
-        where: { MaGiuong: { in: ['G01', 'G02'] } },
-        data: { TrangThaiGiuong: TrangThaiGiuongEnum.TRONG },
-      });
-
-      // Create second patient for anti-double bed contention test
-      const res = await request(app.getHttpServer())
-        .post('/api/patients/reception')
-        .set('Authorization', `Bearer ${cashierToken}`)
-        .send({
-          hoTen: 'Benh Nhan Thu 2 E2E',
-          ngaySinh: '1992-04-10',
-          gioiTinh: 'NU',
-          cccd: `079${Date.now().toString().slice(-9)}_2`,
-          diaChi: 'Quan 1, TP.HCM',
-        });
-      secondInpatientMaBN = res.body.MaBN;
-    });
-
-    it('8.1. POST /api/inpatient/admit: Nhập viện nội trú cho bệnh nhân', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/inpatient/admit')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .send({
-          maBN: createdPatientMaBN,
-          chanDoanNhapVien: 'Viem phoi thuy can theo doi noi tru',
-          tinhTrangNhapVien: 'Vua',
-          maBSTheoDoi: 'BS01',
-          ngayXuatVienDuKien: '2026-11-25',
-        })
-        .expect(201);
-
-      expect(res.body.MaBN).toBe(createdPatientMaBN);
-      expect(res.body.SoHoSoBenhAn).toBeDefined();
-
-      // Verify flag CoNoiTru set to true
-      const patient = await prisma.benhNhan.findUnique({ where: { MaBN: createdPatientMaBN } });
-      expect(patient!.CoNoiTru).toBe(true);
-    });
-
-    it('8.2. Nhập viện lần 2 cho bệnh nhân đã có hồ sơ nội trú -> Bị từ chối 400 Bad Request', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/inpatient/admit')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .send({
-          maBN: createdPatientMaBN,
-          chanDoanNhapVien: 'Test',
-          tinhTrangNhapVien: 'Nhe',
-          maBSTheoDoi: 'BS01',
-        })
-        .expect(400);
-
-      expect(res.body.message).toContain('đã có hồ sơ bệnh án nội trú');
-    });
-
-    it('8.3. Ràng buộc C10: Bệnh nhân chưa làm thủ tục nội trú cố tình phân giường -> 400 Bad Request', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/inpatient/assign-bed')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .send({
-          maBN: secondInpatientMaBN, // Has not been admitted yet!
-          maGiuong: 'G01',
-        })
-        .expect(400);
-
-      expect(res.body.message).toContain('chưa làm thủ tục nhập viện nội trú');
-    });
-
-    it('8.4. POST /api/inpatient/assign-bed: Phân bổ giường G01 thành công (Trạng thái -> DANG_SU_DUNG)', async () => {
-      // Ensure G01 is TRONG
-      await prisma.giuongBenh.update({
-        where: { MaGiuong: 'G01' },
-        data: { TrangThaiGiuong: TrangThaiGiuongEnum.TRONG },
-      });
-
-      const res = await request(app.getHttpServer())
-        .post('/api/inpatient/assign-bed')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .send({
-          maBN: createdPatientMaBN,
-          maGiuong: 'G01',
-          ghiChu: 'Phan buong benh khoa Noi',
-        })
-        .expect(201);
-
-      expect(res.body.MaBN).toBe(createdPatientMaBN);
-      expect(res.body.MaGiuong).toBe('G01');
-
-      // Verify bed status updated in DB
-      const bed = await prisma.giuongBenh.findUnique({ where: { MaGiuong: 'G01' } });
-      expect(bed!.TrangThaiGiuong).toBe(TrangThaiGiuongEnum.DANG_SU_DUNG);
-    });
-
-    it('8.5. Thuật toán chống trùng giường BR02 (MUT11): Phân giường G01 đang có người nằm cho BN khác -> 400', async () => {
-      // Admit second patient first
+  describe('3. Department/Room/Bed (BR-V2-11) & Staff Specialization (BR-V2-01)', () => {
+    it('3.1. CRUD KHOA & PHONG và tạo giường phục vụ test nội trú', async () => {
       await request(app.getHttpServer())
-        .post('/api/inpatient/admit')
-        .set('Authorization', `Bearer ${doctorToken}`)
+        .post('/api/departments')
+        .set('Authorization', `Bearer ${adminToken}`)
         .send({
-          maBN: secondInpatientMaBN,
-          chanDoanNhapVien: 'Theo doi ruot thua',
-          tinhTrangNhapVien: 'Vua',
-          maBSTheoDoi: 'BS02',
-        });
+          maKhoa: createdIds.maKhoa,
+          tenKhoa: 'Khoa Test E2E',
+          diaDiem: 'Tầng 9',
+          soDienThoai: '02839990000',
+        })
+        .expect(201);
 
-      // Try assigning occupied bed G01
-      const res = await request(app.getHttpServer())
-        .post('/api/inpatient/assign-bed')
-        .set('Authorization', `Bearer ${doctorToken}`)
+      await request(app.getHttpServer())
+        .patch(`/api/departments/${createdIds.maKhoa}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({ diaDiem: 'Tầng 9 - Khu Test' })
+        .expect(200);
+
+      const depts = await request(app.getHttpServer())
+        .get('/api/departments')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200);
+      expect(depts.body.some((d: any) => d.MaKhoa === createdIds.maKhoa)).toBe(true);
+
+      await request(app.getHttpServer())
+        .post('/api/rooms')
+        .set('Authorization', `Bearer ${adminToken}`)
         .send({
-          maBN: secondInpatientMaBN,
-          maGiuong: 'G01',
+          maPhong: createdIds.maPhong,
+          maKhoa: createdIds.maKhoa,
+          tenPhong: 'Buồng Test 901',
+          loaiPhong: 'NOI_TRU',
+          viTri: 'Tầng 9',
+        })
+        .expect(201);
+
+      await request(app.getHttpServer())
+        .patch(`/api/rooms/${createdIds.maPhong}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({ viTri: 'Tầng 9 - Cánh Đông' })
+        .expect(200);
+
+      const rooms = await request(app.getHttpServer())
+        .get(`/api/rooms?maKhoa=${createdIds.maKhoa}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200);
+      expect(rooms.body).toHaveLength(1);
+
+      await prisma.giuongBenh.createMany({
+        data: [
+          {
+            MaGiuong: createdIds.maGiuong1,
+            MaPhong: createdIds.maPhong,
+            SoGiuong: '901-1',
+            LoaiGiuong: 'TIEU_CHUAN',
+            TrangThai: 'SAN_SANG',
+            DonGiaNgay: 300000,
+          },
+          {
+            MaGiuong: createdIds.maGiuong2,
+            MaPhong: createdIds.maPhong,
+            SoGiuong: '901-2',
+            LoaiGiuong: 'VIP',
+            TrangThai: 'BAO_TRI',
+            DonGiaNgay: 700000,
+          },
+        ],
+      });
+    });
+
+    it('3.2. BR-V2-11: PATCH /api/beds/:maGiuong/status từ chối DANG_SU_DUNG; cho phép SAN_SANG / BAO_TRI', async () => {
+      await request(app.getHttpServer())
+        .patch(`/api/beds/${createdIds.maGiuong2}/status`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({ trangThai: 'DANG_SU_DUNG' })
+        .expect(400);
+
+      const res = await request(app.getHttpServer())
+        .patch(`/api/beds/${createdIds.maGiuong2}/status`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({ trangThai: 'BAO_TRI' })
+        .expect(200);
+      expect(res.body.TrangThai).toBe('BAO_TRI');
+    });
+
+    it('3.3. BR-V2-01: POST /api/staff tạo bác sĩ và nhân viên partial; chặn >1 nhóm chuyên môn (409 BR-V2-01); trigger DB chặn disjoint', async () => {
+      // Reject creating staff with 2 subtypes
+      const conflictRes = await request(app.getHttpServer())
+        .post('/api/staff')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          maNV: `${prefix}_BAD`,
+          maKhoa: createdIds.maKhoa,
+          hoTen: 'Nhân Viên Trùng Nhóm',
+          ngaySinh: '1990-01-01',
+          gioiTinh: 'NAM',
+          cccd: `999${Date.now().toString().slice(-9)}`,
+          diaChi: 'TP.HCM',
+          soDienThoai: '0909998888',
+          ngayVaoLam: '2022-01-01',
+          bacSi: {
+            chuyenKhoa: 'Nội',
+            trinhDoHocVan: 'BS',
+            soChungChiHanhNghe: `${prefix}_CCHN_BAD1`,
+          },
+          dieuDuong: {
+            capBac: 'Hạng III',
+            chungChiHanhNghe: `${prefix}_CCHN_BAD2`,
+          },
+        })
+        .expect(409);
+      expect(conflictRes.body.ruleCode).toBe('BR-V2-01');
+
+      // Valid BAC_SI
+      const bsRes = await request(app.getHttpServer())
+        .post('/api/staff')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          maNV: createdIds.maNV_BS,
+          maKhoa: createdIds.maKhoa,
+          hoTen: 'BS Test E2E',
+          ngaySinh: '1985-05-05',
+          gioiTinh: 'NAM',
+          cccd: `888${Date.now().toString().slice(-9)}`,
+          diaChi: 'TP.HCM',
+          soDienThoai: '0908887777',
+          ngayVaoLam: '2018-01-01',
+          bacSi: {
+            chuyenKhoa: 'Nội',
+            trinhDoHocVan: 'ThS. BS',
+            soChungChiHanhNghe: `${prefix}_CCHN_BS`,
+          },
+        })
+        .expect(201);
+      expect(typeof bsRes.body.SoNamCongTac).toBe('number');
+
+      // Valid partial staff (TIEP_NHAN)
+      await request(app.getHttpServer())
+        .post('/api/staff')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          maNV: createdIds.maNV_Partial,
+          maKhoa: createdIds.maKhoa,
+          hoTen: 'NV Tiếp Nhận Test',
+          ngaySinh: '1995-05-05',
+          gioiTinh: 'NU',
+          cccd: `777${Date.now().toString().slice(-9)}`,
+          diaChi: 'TP.HCM',
+          soDienThoai: '0907776666',
+          ngayVaoLam: '2022-01-01',
+          role: 'TIEP_NHAN',
+        })
+        .expect(201);
+
+      // Verify DB trigger blocks inserting same MaNV_BS into DIEU_DUONG directly
+      await expect(
+        prisma.dieuDuong.create({
+          data: {
+            MaNV: createdIds.maNV_BS,
+            CapBac: 'Hạng III',
+            ChungChiHanhNghe: `${prefix}_CCHN_TRAP`,
+          },
+        }),
+      ).rejects.toThrow(/BR-V2-01/);
+
+      // Verify GET /api/staff, /doctors, /nurses, /technicians
+      const [all, docs, nurses, techs] = await Promise.all([
+        request(app.getHttpServer()).get('/api/staff').set('Authorization', `Bearer ${adminToken}`).expect(200),
+        request(app.getHttpServer()).get('/api/staff/doctors').set('Authorization', `Bearer ${adminToken}`).expect(200),
+        request(app.getHttpServer()).get('/api/staff/nurses').set('Authorization', `Bearer ${adminToken}`).expect(200),
+        request(app.getHttpServer()).get('/api/staff/technicians').set('Authorization', `Bearer ${adminToken}`).expect(200),
+      ]);
+      expect(all.body.length).toBeGreaterThan(0);
+      expect(docs.body.some((d: any) => d.MaNV === createdIds.maNV_BS)).toBe(true);
+      expect(nurses.body.length).toBeGreaterThan(0);
+      expect(techs.body.length).toBeGreaterThan(0);
+    });
+
+    it('3.4. FK ON DELETE NO ACTION trả về 409 Conflict (FK_NO_ACTION)', async () => {
+      await expect(
+        prisma.khoa.delete({ where: { MaKhoa: createdIds.maKhoa } }),
+      ).rejects.toThrow();
+    });
+  });
+
+  // ==========================================================================
+  // 4. BỆNH NHÂN & THẺ BHYT (BR-V2-06, BR-V2-09)
+  // ==========================================================================
+  describe('4. Patient & BHYT Insurance Cards (BR-V2-06, BR-V2-09)', () => {
+    it('4.1. POST /api/patients tạo BENH_NHAN không tạo BN_NGOAI_TRU, trả về Tuoi dẫn xuất', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/api/patients')
+        .set('Authorization', `Bearer ${receptionToken}`)
+        .send({
+          maBN: createdIds.maBN,
+          hoTen: 'Bệnh Nhân E2E 1',
+          ngaySinh: '1990-06-15',
+          gioiTinh: 'NAM',
+          cccd: `666${Date.now().toString().slice(-9)}`,
+          sdt: '0911222333',
+          diaChiDuong: '10 Võ Văn Tần',
+          diaChiPhuong: 'Phường 6',
+          diaChiQuan: 'Quận 3',
+          nhomMau: 'A',
+        })
+        .expect(201);
+
+      expect(res.body.MaBN).toBe(createdIds.maBN);
+      expect(typeof res.body.Tuoi).toBe('number');
+      expect(res.body.Tuoi).toBeGreaterThan(20);
+
+      await request(app.getHttpServer())
+        .post('/api/patients')
+        .set('Authorization', `Bearer ${receptionToken}`)
+        .send({
+          maBN: createdIds.maBN2,
+          hoTen: 'Bệnh Nhân E2E 2',
+          ngaySinh: '1988-03-10',
+          gioiTinh: 'NU',
+          cccd: `555${Date.now().toString().slice(-9)}`,
+          sdt: '0911222444',
+          diaChiDuong: '20 CMT8',
+          diaChiPhuong: 'Phường 10',
+          diaChiQuan: 'Quận 3',
+          nhomMau: 'O',
+        })
+        .expect(201);
+    });
+
+    it('4.2. BR-V2-06: POST/GET /api/patients/:maBN/insurance-cards kiểm tra MucHuong [0..1] & NgayHetHan >= NgayBatDau', async () => {
+      // MucHuong > 1 rejected (400)
+      await request(app.getHttpServer())
+        .post(`/api/patients/${createdIds.maBN}/insurance-cards`)
+        .set('Authorization', `Bearer ${receptionToken}`)
+        .send({
+          maTheBHYT: `${prefix}_BAD_CARD`,
+          mucHuong: 80,
+          ngayBatDau: '2026-01-01',
+          ngayHetHan: '2026-12-31',
         })
         .expect(400);
 
-      expect(res.body.message).toContain('đang có bệnh nhân khác nằm');
+      // NgayHetHan < NgayBatDau rejected (400 BR-V2-06)
+      const dateErr = await request(app.getHttpServer())
+        .post(`/api/patients/${createdIds.maBN}/insurance-cards`)
+        .set('Authorization', `Bearer ${receptionToken}`)
+        .send({
+          maTheBHYT: `${prefix}_BAD_CARD2`,
+          mucHuong: 0.8,
+          ngayBatDau: '2026-12-31',
+          ngayHetHan: '2026-01-01',
+        })
+        .expect(400);
+      expect(dateErr.body.ruleCode).toBe('BR-V2-06');
+
+      // Valid card
+      await request(app.getHttpServer())
+        .post(`/api/patients/${createdIds.maBN}/insurance-cards`)
+        .set('Authorization', `Bearer ${receptionToken}`)
+        .send({
+          maTheBHYT: createdIds.maTheBHYT,
+          mucHuong: 0.8,
+          ngayBatDau: '2026-01-01',
+          ngayHetHan: '2026-12-31',
+        })
+        .expect(201);
+
+      const cards = await request(app.getHttpServer())
+        .get(`/api/patients/${createdIds.maBN}/insurance-cards?validAt=2026-11-15`)
+        .set('Authorization', `Bearer ${receptionToken}`)
+        .expect(200);
+      expect(cards.body).toHaveLength(1);
+      expect(cards.body[0].MucHuong).toBe(0.8);
+
+      // Lookup by MaTheBHYT
+      const lookup = await request(app.getHttpServer())
+        .get(`/api/patients/lookup?q=${createdIds.maTheBHYT}`)
+        .set('Authorization', `Bearer ${receptionToken}`)
+        .expect(200);
+      expect(lookup.body).toHaveLength(1);
+      expect(lookup.body[0].MaBN).toBe(createdIds.maBN);
+      expect(typeof lookup.body[0].Tuoi).toBe('number');
+    });
+  });
+
+  // ==========================================================================
+  // 5. NỘI TRÚ & PHÂN GIƯỜNG (BR-V2-02, BR-V2-03, BR-V2-11, BR-V2-12 + RACE)
+  // ==========================================================================
+  describe('5. Inpatient Admissions, Bed Allocations, Transfer, Discharge & Concurrency Races', () => {
+    it('5.1. BR-V2-12: Race condition 2 request POST /api/inpatient/admissions song song -> chỉ 1 thành công, 1 bị 409 BR-V2-12', async () => {
+      const [r1, r2] = await Promise.all([
+        request(app.getHttpServer())
+          .post('/api/inpatient/admissions')
+          .set('Authorization', `Bearer ${doctorToken}`)
+          .send({
+            maDotNT: createdIds.maDotNT1,
+            maBN: createdIds.maBN,
+            ngayNhapVien: '2026-11-10',
+            nguoiNhaLienHe: 'Người nhà 1',
+            tinhTrangNhapVien: 'Theo dõi nội trú',
+          }),
+        request(app.getHttpServer())
+          .post('/api/inpatient/admissions')
+          .set('Authorization', `Bearer ${doctorToken}`)
+          .send({
+            maDotNT: createdIds.maDotNT_Race,
+            maBN: createdIds.maBN,
+            ngayNhapVien: '2026-11-10',
+            nguoiNhaLienHe: 'Người nhà 2',
+            tinhTrangNhapVien: 'Theo dõi nội trú song song',
+          }),
+      ]);
+
+      const statuses = [r1.status, r2.status].sort();
+      expect(statuses).toEqual([201, 409]);
+      const failed = r1.status === 409 ? r1 : r2;
+      expect(failed.body.ruleCode).toBe('BR-V2-12');
+
+      // Normalize maDotNT1 to whichever succeeded
+      const actualDot = r1.status === 201 ? createdIds.maDotNT1 : createdIds.maDotNT_Race;
+      createdIds.maDotNT1 = actualDot;
     });
 
-    it('8.6. POST /api/inpatient/transfer-bed: Chuyển bệnh nhân từ G01 sang G02 (G01 -> BAO_TRI, G02 -> DANG_SU_DUNG)', async () => {
-      // Ensure G02 is TRONG
-      await prisma.giuongBenh.update({
-        where: { MaGiuong: 'G02' },
-        data: { TrangThaiGiuong: TrangThaiGiuongEnum.TRONG },
-      });
+    it('5.2. BR-V2-11 & BR-V2-03: Chặn phân giường BAO_TRI; chặn ngày trước nhập viện; race condition phân cùng giường', async () => {
+      // Bed 2 is BAO_TRI -> 409 BR-V2-11
+      const maintRes = await request(app.getHttpServer())
+        .post('/api/inpatient/bed-allocations')
+        .set('Authorization', `Bearer ${nurseToken}`)
+        .send({
+          maDotNT: createdIds.maDotNT1,
+          maGiuong: createdIds.maGiuong2,
+          tuNgay: '2026-11-10',
+        })
+        .expect(409);
+      expect(maintRes.body.ruleCode).toBe('BR-V2-11');
 
-      const res = await request(app.getHttpServer())
+      // TuNgay < NgayNhapVien -> 400 BR-V2-03
+      const earlyRes = await request(app.getHttpServer())
+        .post('/api/inpatient/bed-allocations')
+        .set('Authorization', `Bearer ${nurseToken}`)
+        .send({
+          maDotNT: createdIds.maDotNT1,
+          maGiuong: createdIds.maGiuong1,
+          tuNgay: '2026-11-09',
+        })
+        .expect(400);
+      expect(earlyRes.body.ruleCode).toBe('BR-V2-03');
+
+      // Open admission for maBN2 to test concurrent bed race on maGiuong1
+      await request(app.getHttpServer())
+        .post('/api/inpatient/admissions')
+        .set('Authorization', `Bearer ${doctorToken}`)
+        .send({
+          maDotNT: createdIds.maDotNT2,
+          maBN: createdIds.maBN2,
+          ngayNhapVien: '2026-11-10',
+          nguoiNhaLienHe: 'Người nhà BN2',
+          tinhTrangNhapVien: 'Theo dõi nội trú BN2',
+        })
+        .expect(201);
+
+      const [b1, b2] = await Promise.all([
+        request(app.getHttpServer())
+          .post('/api/inpatient/bed-allocations')
+          .set('Authorization', `Bearer ${nurseToken}`)
+          .send({
+            maDotNT: createdIds.maDotNT1,
+            maGiuong: createdIds.maGiuong1,
+            tuNgay: '2026-11-10',
+          }),
+        request(app.getHttpServer())
+          .post('/api/inpatient/bed-allocations')
+          .set('Authorization', `Bearer ${nurseToken}`)
+          .send({
+            maDotNT: createdIds.maDotNT2,
+            maGiuong: createdIds.maGiuong1,
+            tuNgay: '2026-11-10',
+          }),
+      ]);
+
+      const bedStatuses = [b1.status, b2.status].sort();
+      expect(bedStatuses).toEqual([201, 409]);
+      const failedBed = b1.status === 409 ? b1 : b2;
+      expect(failedBed.body.ruleCode).toBe('BR-V2-03');
+
+      // Ensure maDotNT1 holds maGiuong1 for subsequent transfer/discharge tests
+      if (b2.status === 201) {
+        // swap reference so maDotNT1 refers to the one holding the bed, or discharge maDotNT2
+        await request(app.getHttpServer())
+          .patch(`/api/inpatient/admissions/${createdIds.maDotNT2}/discharge`)
+          .set('Authorization', `Bearer ${doctorToken}`)
+          .send({ ngayRaVien: '2026-11-11' })
+          .expect(200);
+        await request(app.getHttpServer())
+          .post('/api/inpatient/bed-allocations')
+          .set('Authorization', `Bearer ${nurseToken}`)
+          .send({
+            maDotNT: createdIds.maDotNT1,
+            maGiuong: createdIds.maGiuong1,
+            tuNgay: '2026-11-12',
+          })
+          .expect(201);
+      }
+    });
+
+    it('5.3. BR-V2-11 & BR-V2-03: GET /api/beds/map?date=... suy diễn đúng từ PHAN_GIUONG; transfer-bed chặn cùng ngày', async () => {
+      // Verify map shows maGiuong1 occupied at 2026-11-12
+      const mapOccupied = await request(app.getHttpServer())
+        .get(`/api/beds/map?date=2026-11-12&maKhoa=${createdIds.maKhoa}`)
+        .set('Authorization', `Bearer ${nurseToken}`)
+        .expect(200);
+      const g1 = mapOccupied.body.find((b: any) => b.MaGiuong === createdIds.maGiuong1);
+      expect(g1.TrangThai).toBe('SAN_SANG');
+      expect(g1.dangCoNguoiNam).toBe(true);
+
+      // Set maGiuong2 SAN_SANG so we can test transfer-bed
+      await request(app.getHttpServer())
+        .patch(`/api/beds/${createdIds.maGiuong2}/status`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({ trangThai: 'SAN_SANG' })
+        .expect(200);
+
+      // Same-day transfer rejected (400 BR-V2-03)
+      const currentStart = g1.phanGiuongHienTai.TuNgay;
+      await request(app.getHttpServer())
         .post('/api/inpatient/transfer-bed')
-        .set('Authorization', `Bearer ${doctorToken}`)
+        .set('Authorization', `Bearer ${nurseToken}`)
         .send({
-          maBN: createdPatientMaBN,
-          maGiuongMoi: 'G02',
-          lyDoChuyen: 'Chuyen sang phong VIP theo yeu cau',
-        })
-        .expect(201);
-
-      expect(res.body.MaGiuong).toBe('G02');
-
-      // Check DB states
-      const oldBed = await prisma.giuongBenh.findUnique({ where: { MaGiuong: 'G01' } });
-      const newBed = await prisma.giuongBenh.findUnique({ where: { MaGiuong: 'G02' } });
-
-      expect(oldBed!.TrangThaiGiuong).toBe(TrangThaiGiuongEnum.BAO_TRI);
-      expect(newBed!.TrangThaiGiuong).toBe(TrangThaiGiuongEnum.DANG_SU_DUNG);
-    });
-
-    it('8.7. GET /api/inpatient/patients: Lấy danh sách bệnh nhân đang nằm viện', async () => {
-      const res = await request(app.getHttpServer())
-        .get('/api/inpatient/patients')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .expect(200);
-
-      expect(Array.isArray(res.body)).toBe(true);
-      expect(res.body.length).toBeGreaterThanOrEqual(1);
-    });
-  });
-
-  // ==========================================================================
-  // PHÂN HỆ 9: THU NGÂN, TÍNH TOÁN VIỆN PHÍ & CỔNG VIETQR (BR03, BR06)
-  // ==========================================================================
-  describe('9. Phân hệ Quyết toán Viện phí, BHYT & Cổng VietQR (BR03, BR06)', () => {
-    it('9.1. POST /api/billing/calculate/:examId: Tính chi phí tự động và khấu trừ BHYT (BR03)', async () => {
-      const res = await request(app.getHttpServer())
-        .post(`/api/billing/calculate/${createdExamId}`)
-        .set('Authorization', `Bearer ${cashierToken}`)
-        .expect(200);
-
-      expect(res.body.maLuotKham).toBe(createdExamId);
-      expect(res.body.chiTiet.tienKham).toBe(50000);
-      expect(res.body.chiTiet.tienDichVu).toBe(80000); // DV01 (CBC)
-      expect(res.body.chiTiet.tienThuoc).toBe(10 * 1500 + 14 * 3500); // 15000 + 49000 = 64000
-      expect(res.body.tongTienGoc).toBeGreaterThan(0);
-
-      // BHYT 80% on TienKham + TienDichVuBHYT = (50000 + 80000) * 0.8 = 104000
-      expect(res.body.tienBHYTChiTra).toBe(104000);
-      expect(res.body.tienBenhNhanTra).toBe(res.body.tongTienGoc - res.body.tienBHYTChiTra);
-    });
-
-    it('9.2. POST /api/billing/invoices: Thu ngân (NV_TN_01) lập hóa đơn viện phí (Trạng thái CHUA_THANH_TOAN)', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/billing/invoices')
-        .set('Authorization', `Bearer ${cashierToken}`)
-        .send({
-          maLuotKham: createdExamId,
-          maNVThuNgan: 'NV_TN_01',
-          phuongThucTT: PhuongThucTTEnum.CHUYEN_KHOAN,
-        })
-        .expect(201);
-
-      createdInvoiceId = res.body.MaHD;
-      expect(createdInvoiceId).toBeDefined();
-      expect(res.body.TrangThaiTT).toBe(TrangThaiTTEnum.CHUA_THANH_TOAN);
-      expect(Number(res.body.TienBHYTChiTra)).toBe(104000);
-    });
-
-    it('9.3. Lập hóa đơn lần 2 cho cùng một lượt khám -> Bị từ chối 400 Bad Request', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/billing/invoices')
-        .set('Authorization', `Bearer ${cashierToken}`)
-        .send({
-          maLuotKham: createdExamId,
-          maNVThuNgan: 'NV_TN_01',
-          phuongThucTT: PhuongThucTTEnum.TIEN_MAT,
+          maDotNT: createdIds.maDotNT1,
+          maGiuongMoi: createdIds.maGiuong2,
+          ngayChuyen: currentStart,
         })
         .expect(400);
 
-      expect(res.body.message).toContain('đã được lập hóa đơn');
-    });
-
-    it('9.4. POST /api/billing/webhook/vietqr: Gạch nợ tự động qua Webhook VietQR (CHUA_THANH_TOAN -> DA_THANH_TOAN)', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/billing/webhook/vietqr')
+      // Valid next-day transfer
+      await request(app.getHttpServer())
+        .post('/api/inpatient/transfer-bed')
+        .set('Authorization', `Bearer ${nurseToken}`)
         .send({
-          maHD: createdInvoiceId,
-          amount: 100000,
-          transactionId: `TXN_${Date.now()}`,
-          signature: 'HMAC_TEST_SIG',
-        })
-        .expect(200);
-
-      expect(res.body.success).toBe(true);
-      expect(res.body.trangThai).toBe(TrangThaiTTEnum.DA_THANH_TOAN);
-
-      // Verify in DB
-      const invoice = await prisma.hoaDon.findUnique({ where: { MaHD: createdInvoiceId } });
-      expect(invoice!.TrangThaiTT).toBe(TrangThaiTTEnum.DA_THANH_TOAN);
-    });
-
-    it('9.5. Tính Idempotency trong thanh toán (BR06): Gửi lại Webhook lần 2 -> Trả về 200/201 OK mà không cộng trùng', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/billing/webhook/vietqr')
-        .send({
-          maHD: createdInvoiceId,
-          amount: 100000,
-          transactionId: 'TXN_DUPLICATE',
-        })
-        .expect(200);
-
-      expect(res.body.success).toBe(true);
-      expect(res.body.message).toContain('Idempotent response');
-    });
-
-    it('9.6. GET /api/billing/invoices/:id/pdf: Xuất hóa đơn viện phí định dạng PDF stream', async () => {
-      const res = await request(app.getHttpServer())
-        .get(`/api/billing/invoices/${createdInvoiceId}/pdf`)
-        .set('Authorization', `Bearer ${cashierToken}`)
-        .expect(200);
-
-      expect(res.header['content-type']).toBe('application/pdf');
-      expect(res.body).toBeInstanceOf(Buffer);
-      // PDF magic number check
-      expect(res.body.toString('utf-8', 0, 4)).toBe('%PDF');
-    });
-
-    it('9.7. GET /api/billing/invoices/:id: Tra cứu thông tin chi tiết hóa đơn', async () => {
-      const res = await request(app.getHttpServer())
-        .get(`/api/billing/invoices/${createdInvoiceId}`)
-        .set('Authorization', `Bearer ${cashierToken}`)
-        .expect(200);
-
-      expect(res.body.MaHD).toBe(createdInvoiceId);
-      expect(res.body.TrangThaiTT).toBe(TrangThaiTTEnum.DA_THANH_TOAN);
-    });
-  });
-
-  // ==========================================================================
-  // PHÂN HỆ 10: LỊCH TRỰC & CHỐNG TRÙNG CA TRỰC (DUTY SCHEDULE BR05)
-  // ==========================================================================
-  describe('10. Phân hệ Lịch trực & Chống trùng ca trực (BR05)', () => {
-    beforeAll(async () => {
-      await prisma.lichTruc.deleteMany({
-        where: {
-          MaNV: 'BS01',
-          NgayTruc: new Date(testDutyDate),
-        },
-      });
-    });
-
-    it('10.1. POST /api/duty-schedules: Phân công ca trực SÁNG cho Bác sĩ BS01', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/duty-schedules')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .send({
-          maNV: 'BS01',
-          ngayTruc: testDutyDate,
-          caTruc: CaTrucEnum.SANG,
-          maPhong: 'P01',
-          vaiTroTruc: 'Bac si truc kham chinh',
+          maDotNT: createdIds.maDotNT1,
+          maGiuongMoi: createdIds.maGiuong2,
+          ngayChuyen: '2026-11-13',
         })
         .expect(201);
 
-      expect(res.body.MaNV).toBe('BS01');
-      expect(res.body.CaTruc).toBe(CaTrucEnum.SANG);
-      expect(res.body.TrangThaiDiemDanh).toBe(TrangThaiDiemDanhEnum.CHUA_DIEM_DANH);
-    });
-
-    it('10.2. Chống trùng ca trực BR05 (Khóa chính composite MaNV + NgayTruc + CaTruc) -> Bị từ chối 400', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/duty-schedules')
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .send({
-          maNV: 'BS01',
-          ngayTruc: testDutyDate,
-          caTruc: CaTrucEnum.SANG, // Duplicate shift
-          maPhong: 'P02',
-          vaiTroTruc: 'Truc noi tru',
-        })
-        .expect(400);
-
-      expect(res.body.message).toContain('Chống trùng ca trực BR05');
-    });
-
-    it('10.3. GET /api/duty-schedules: Tra cứu lịch trực y bác sĩ theo ngày', async () => {
-      const res = await request(app.getHttpServer())
-        .get(`/api/duty-schedules?startDate=${testDutyDate}&endDate=${testDutyDate}`)
-        .set('Authorization', `Bearer ${doctorToken}`)
+      // At 2026-11-13, g1 is free and g2 is occupied
+      const mapAfter = await request(app.getHttpServer())
+        .get(`/api/beds/map?date=2026-11-13&maKhoa=${createdIds.maKhoa}`)
+        .set('Authorization', `Bearer ${nurseToken}`)
         .expect(200);
-
-      expect(Array.isArray(res.body)).toBe(true);
-      const schedule = res.body.find((s: any) => s.MaNV === 'BS01');
-      expect(schedule).toBeDefined();
-    });
-
-    it('10.4. PATCH /api/duty-schedules/attendance: Điểm danh ca trực thành công (CO_MAT)', async () => {
-      const res = await request(app.getHttpServer())
-        .patch(`/api/duty-schedules/attendance?maNV=BS01&ngayTruc=${testDutyDate}&caTruc=${CaTrucEnum.SANG}&status=${TrangThaiDiemDanhEnum.CO_MAT}`)
-        .set('Authorization', `Bearer ${doctorToken}`)
-        .expect(200);
-
-      expect(res.body.TrangThaiDiemDanh).toBe(TrangThaiDiemDanhEnum.CO_MAT);
+      expect(mapAfter.body.find((b: any) => b.MaGiuong === createdIds.maGiuong1).dangCoNguoiNam).toBe(false);
+      expect(mapAfter.body.find((b: any) => b.MaGiuong === createdIds.maGiuong2).dangCoNguoiNam).toBe(true);
     });
   });
 
   // ==========================================================================
-  // PHÂN HỆ 11: BÁO CÁO & DASHBOARD THỐNG KÊ (REPORTS & ANALYTICS)
+  // 6. KHÁM BỆNH (BR-V2-04), ĐƠN THUỐC (BR-V2-05, 06), XÉT NGHIỆM (BR-V2-07)
   // ==========================================================================
-  describe('11. Phân hệ Báo cáo & Dashboard Thống kê', () => {
-    it('11.1. GET /api/reports/dashboard: Lấy số liệu thống kê tổng hợp toàn viện', async () => {
-      const res = await request(app.getHttpServer())
-        .get('/api/reports/dashboard')
+  describe('6. Examination (BR-V2-04), Prescription (BR-V2-05, 06) & LabTest (BR-V2-07)', () => {
+    it('6.1. BR-V2-04: POST /api/examinations kiểm tra FK11 (MaBN khớp DOT_NOI_TRU & NgayGioKham trong khung)', async () => {
+      // Mismatched MaBN vs MaDotNT -> 409 BR-V2-04
+      const mismatchRes = await request(app.getHttpServer())
+        .post('/api/examinations')
+        .set('Authorization', `Bearer ${doctorToken}`)
+        .send({
+          maLuotKham: `${prefix}_LK_BAD`,
+          maBN: createdIds.maBN2,
+          maNV_BacSi: createdIds.maNV_BS,
+          ngayGioKham: '2026-11-13T10:00:00.000Z',
+          lyDoKham: 'Kiểm tra',
+          trieuChung: 'Sốt',
+          chanDoanSoBo: 'Theo dõi',
+          maDotNT: createdIds.maDotNT1,
+        })
+        .expect(409);
+      expect(mismatchRes.body.ruleCode).toBe('BR-V2-04');
+
+      // Valid inpatient exam on maDotNT1
+      await request(app.getHttpServer())
+        .post('/api/examinations')
+        .set('Authorization', `Bearer ${doctorToken}`)
+        .send({
+          maLuotKham: createdIds.maLuotKham1,
+          maBN: createdIds.maBN,
+          maNV_BacSi: createdIds.maNV_BS,
+          ngayGioKham: '2026-11-14T08:00:00.000Z',
+          lyDoKham: 'Theo dõi nội trú',
+          trieuChung: 'Ho nhẹ',
+          chanDoanSoBo: 'Viêm phế quản',
+          trangThai: 'DANG_KHAM',
+          maDotNT: createdIds.maDotNT1,
+        })
+        .expect(201);
+
+      // Valid outpatient exam (MaDotNT = null)
+      await request(app.getHttpServer())
+        .post('/api/examinations')
+        .set('Authorization', `Bearer ${receptionToken}`)
+        .send({
+          maLuotKham: createdIds.maLuotKham2,
+          maBN: createdIds.maBN,
+          maNV_BacSi: createdIds.maNV_BS,
+          ngayGioKham: '2026-11-15T09:00:00.000Z',
+          lyDoKham: 'Tái khám ngoại trú',
+          trieuChung: 'Đau đầu',
+          chanDoanSoBo: 'Rối loạn tiền đình',
+          maDotNT: null,
+        })
+        .expect(201);
+
+      await request(app.getHttpServer())
+        .patch(`/api/examinations/${createdIds.maLuotKham1}`)
+        .set('Authorization', `Bearer ${doctorToken}`)
+        .send({ chanDoanSoBo: 'Viêm phế quản cấp (cập nhật)', trangThai: 'CHO_XET_NGHIEM' })
+        .expect(200);
+    });
+
+    it('6.2. BR-V2-05, 06, 08: Đơn thuốc 1-0..1, >=1 dòng, SoLuong>0, snapshot DonGiaKe, PATCH & DELETE', async () => {
+      const medsRes = await request(app.getHttpServer())
+        .get('/api/medicines')
         .set('Authorization', `Bearer ${doctorToken}`)
         .expect(200);
+      expect(medsRes.body.length).toBeGreaterThan(0);
+      expect(medsRes.body[0].SoLuongTon).toBeUndefined();
 
-      expect(res.body.overview).toBeDefined();
-      expect(res.body.overview.totalPatients).toBeGreaterThanOrEqual(1);
-      expect(res.body.overview.totalDoctors).toBeGreaterThanOrEqual(2);
-      expect(res.body.overview.totalBeds).toBeGreaterThanOrEqual(2);
-      expect(res.body.overview.bedOccupancyRate).toBeDefined();
+      // Empty items rejected (400)
+      await request(app.getHttpServer())
+        .post('/api/prescriptions')
+        .set('Authorization', `Bearer ${doctorToken}`)
+        .send({
+          maDonThuoc: `${prefix}_DT_EMPTY`,
+          maLuotKham: createdIds.maLuotKham1,
+          loiDanCuaBacSi: 'Test',
+          items: [],
+        })
+        .expect(400);
 
-      expect(res.body.revenue).toBeDefined();
-      expect(typeof res.body.revenue.tongDoanhThu).toBe('number');
-      expect(typeof res.body.revenue.tongBHYTChiTra).toBe('number');
-      expect(typeof res.body.revenue.tongBenhNhanThanhToan).toBe('number');
-      expect(res.body.revenue.soHoaDonDaThu).toBeGreaterThanOrEqual(1);
+      // Valid prescription on LK1: TH01 (1500 * 10 = 15000) + TH02 (3500 * 10 = 35000) = 50000
+      const dtRes = await request(app.getHttpServer())
+        .post('/api/prescriptions')
+        .set('Authorization', `Bearer ${doctorToken}`)
+        .send({
+          maDonThuoc: createdIds.maDonThuoc1,
+          maLuotKham: createdIds.maLuotKham1,
+          ngayKeDon: '2026-11-14',
+          loiDanCuaBacSi: 'Uống sau ăn',
+          items: [
+            { maThuoc: 'TH01', soLuong: 10, lieuDung: '1 viên x 2 lần' },
+            { maThuoc: 'TH02', soLuong: 10, lieuDung: '1 viên x 2 lần' },
+          ],
+        })
+        .expect(201);
+      expect(dtRes.body.TongTienThuoc).toBe(50000);
+
+      // Duplicate prescription for LK1 rejected (409 BR-V2-05)
+      const dupDt = await request(app.getHttpServer())
+        .post('/api/prescriptions')
+        .set('Authorization', `Bearer ${doctorToken}`)
+        .send({
+          maDonThuoc: `${prefix}_DT_DUP`,
+          maLuotKham: createdIds.maLuotKham1,
+          loiDanCuaBacSi: 'Trùng',
+          items: [{ maThuoc: 'TH01', soLuong: 5, lieuDung: '1 viên' }],
+        })
+        .expect(409);
+      expect(dupDt.body.ruleCode).toBe('BR-V2-05');
+
+      // Test create & delete prescription on LK2 before invoice
+      await request(app.getHttpServer())
+        .post('/api/prescriptions')
+        .set('Authorization', `Bearer ${doctorToken}`)
+        .send({
+          maDonThuoc: createdIds.maDonThuoc2,
+          maLuotKham: createdIds.maLuotKham2,
+          ngayKeDon: '2026-11-15',
+          loiDanCuaBacSi: 'Tạm thời',
+          items: [{ maThuoc: 'TH01', soLuong: 4, lieuDung: '1 viên/ngày' }],
+        })
+        .expect(201);
+
+      await request(app.getHttpServer())
+        .delete(`/api/prescriptions/${createdIds.maDonThuoc2}`)
+        .set('Authorization', `Bearer ${doctorToken}`)
+        .expect(200);
+    });
+
+    it('6.3. BR-V2-07: Quy trình 2 bước PHIEU_XET_NGHIEM (start -> complete) chỉ cho KY_THUAT_VIEN', async () => {
+      const typesRes = await request(app.getHttpServer())
+        .get('/api/lab-types')
+        .set('Authorization', `Bearer ${doctorToken}`)
+        .expect(200);
+      expect(typesRes.body.length).toBeGreaterThan(0);
+
+      // Create 2 lab requests for LK1: PXN1 (XN01 = 80k) will be started & completed; PXN2 (XN02 = 120k) stays unstarted (not billed!)
+      await request(app.getHttpServer())
+        .post('/api/lab-requests')
+        .set('Authorization', `Bearer ${doctorToken}`)
+        .send({
+          maPhieuXN: createdIds.maPhieuXN1,
+          maLuotKham: createdIds.maLuotKham1,
+          maLoaiXN: 'XN01',
+        })
+        .expect(201);
+
+      await request(app.getHttpServer())
+        .post('/api/lab-requests')
+        .set('Authorization', `Bearer ${doctorToken}`)
+        .send({
+          maPhieuXN: createdIds.maPhieuXN2,
+          maLuotKham: createdIds.maLuotKham1,
+          maLoaiXN: 'XN02',
+        })
+        .expect(201);
+
+      // DIEU_DUONG cannot start lab request (403 Forbidden)
+      await request(app.getHttpServer())
+        .patch(`/api/lab-requests/${createdIds.maPhieuXN1}/start`)
+        .set('Authorization', `Bearer ${nurseToken}`)
+        .send({})
+        .expect(403);
+
+      // Cannot complete PXN1 before start (no NgayGioXN) -> 400 BR-V2-07
+      const preComplete = await request(app.getHttpServer())
+        .patch(`/api/lab-requests/${createdIds.maPhieuXN1}/complete`)
+        .set('Authorization', `Bearer ${ktvToken}`)
+        .send({ ketQua: 'WBC: 7.0' })
+        .expect(400);
+      expect(preComplete.body.ruleCode).toBe('BR-V2-07');
+
+      // KTV starts PXN1
+      await request(app.getHttpServer())
+        .patch(`/api/lab-requests/${createdIds.maPhieuXN1}/start`)
+        .set('Authorization', `Bearer ${ktvToken}`)
+        .send({ ngayGioXN: '2026-11-14T08:30:00.000Z' })
+        .expect(200);
+
+      // NgayGioTraKQ < NgayGioXN rejected (400 BR-V2-07)
+      const badTime = await request(app.getHttpServer())
+        .patch(`/api/lab-requests/${createdIds.maPhieuXN1}/complete`)
+        .set('Authorization', `Bearer ${ktvToken}`)
+        .send({
+          ngayGioTraKQ: '2026-11-14T08:00:00.000Z',
+          ketQua: 'WBC: 7.2',
+        })
+        .expect(400);
+      expect(badTime.body.ruleCode).toBe('BR-V2-07');
+
+      // KTV completes PXN1
+      const completeRes = await request(app.getHttpServer())
+        .patch(`/api/lab-requests/${createdIds.maPhieuXN1}/complete`)
+        .set('Authorization', `Bearer ${ktvToken}`)
+        .send({
+          ngayGioTraKQ: '2026-11-14T09:00:00.000Z',
+          ketQua: 'WBC: 7.2 G/L, RBC: 4.9 T/L',
+          danhGia: 'Bình thường',
+        })
+        .expect(200);
+      expect(completeRes.body.KetQua).toContain('WBC');
+    });
+  });
+
+  // ==========================================================================
+  // 7. VIỆN PHÍ, BHYT, KHÓA CHI PHÍ SAU THANH TOÁN & BÁO CÁO (BR-V2-08, 13)
+  // ==========================================================================
+  describe('7. Billing (BR-V2-08, BR-V2-13), Discharge (BR-V2-02, 03) & Dashboard Report', () => {
+    it('7.1. BR-V2-08 & BR-V2-13: Preview chỉ tính phiếu có NgayGioXN IS NOT NULL; lập hóa đơn; kiểm tra giảm chi phí vượt TruBHYT trước TT', async () => {
+      // LK1 has DT1 = 50,000 + PXN1 (NgayGioXN != null) = 80,000 (PXN2 = 120,000 NOT started so excluded!)
+      const previewRes = await request(app.getHttpServer())
+        .get(`/api/billing/preview/${createdIds.maLuotKham1}`)
+        .set('Authorization', `Bearer ${cashierToken}`)
+        .expect(200);
+
+      expect(previewRes.body.TongTienThuoc).toBe(50000);
+      expect(previewRes.body.TongTienDichVu).toBe(80000);
+      expect(previewRes.body.TongChiPhi).toBe(130000);
+      expect(previewRes.body.theBHYTHopLe.some((c: any) => c.MaTheBHYT === createdIds.maTheBHYT)).toBe(true);
+
+      // Create invoice with BHYT 0.8 => TruBHYT = 104,000; ThucThu = 26,000
+      const invRes = await request(app.getHttpServer())
+        .post('/api/billing/invoices')
+        .set('Authorization', `Bearer ${cashierToken}`)
+        .send({
+          maHoaDon: createdIds.maHoaDon1,
+          maLuotKham: createdIds.maLuotKham1,
+          ngayLap: '2026-11-14',
+          hinhThucThanhToan: 'TIEN_MAT',
+          maTheBHYT: createdIds.maTheBHYT,
+        })
+        .expect(201);
+
+      expect(invRes.body.TruBHYT).toBe(104000);
+      expect(invRes.body.ThucThu).toBe(26000);
+      expect(invRes.body.TrangThaiThanhToan).toBe('CHUA_THANH_TOAN');
+
+      // BR-V2-13: While CHUA_THANH_TOAN, reducing prescription so total (e.g., 1500 + 80000 = 81500) < TruBHYT (104000) -> 409 BR-V2-13
+      const br13Res = await request(app.getHttpServer())
+        .patch(`/api/prescriptions/${createdIds.maDonThuoc1}`)
+        .set('Authorization', `Bearer ${doctorToken}`)
+        .send({
+          items: [{ maThuoc: 'TH01', soLuong: 1, lieuDung: '1 viên' }],
+        })
+        .expect(409);
+      expect(br13Res.body.ruleCode).toBe('BR-V2-13');
+
+      // Deleting prescription while TruBHYT (104k) > TongTienDichVu (80k) -> 409 BR-V2-13
+      const br13DelRes = await request(app.getHttpServer())
+        .delete(`/api/prescriptions/${createdIds.maDonThuoc1}`)
+        .set('Authorization', `Bearer ${doctorToken}`)
+        .expect(409);
+      expect(br13DelRes.body.ruleCode).toBe('BR-V2-13');
+
+      // Increasing prescription cost (e.g. TH01 x 10 + TH02 x 12 => 57000 + 80000 = 137000 >= 104000) succeeds!
+      const validEdit = await request(app.getHttpServer())
+        .patch(`/api/prescriptions/${createdIds.maDonThuoc1}`)
+        .set('Authorization', `Bearer ${doctorToken}`)
+        .send({
+          items: [
+            { maThuoc: 'TH01', soLuong: 10, lieuDung: '1 viên x 2' },
+            { maThuoc: 'TH02', soLuong: 12, lieuDung: '1 viên x 2' },
+          ],
+        })
+        .expect(200);
+      expect(validEdit.body.TongTienThuoc).toBe(57000);
+    });
+
+    it('7.2. BR-V2-08: PATCH /api/billing/invoices/:id/pay chốt DA_THANH_TOAN và khóa toàn bộ chi phí liên quan (409 BR-V2-08)', async () => {
+      const payRes = await request(app.getHttpServer())
+        .patch(`/api/billing/invoices/${createdIds.maHoaDon1}/pay`)
+        .set('Authorization', `Bearer ${cashierToken}`)
+        .send({ hinhThucThanhToan: 'CHUYEN_KHOAN' })
+        .expect(200);
+
+      expect(payRes.body.TrangThaiThanhToan).toBe('DA_THANH_TOAN');
+      expect(payRes.body.TongTienThuoc).toBe(57000);
+      expect(payRes.body.TongTienDichVu).toBe(80000);
+      expect(payRes.body.TruBHYT).toBe(104000);
+      expect(payRes.body.ThucThu).toBe(33000);
+
+      // Re-paying -> 409 BR-V2-08
+      const repayRes = await request(app.getHttpServer())
+        .patch(`/api/billing/invoices/${createdIds.maHoaDon1}/pay`)
+        .set('Authorization', `Bearer ${cashierToken}`)
+        .send({})
+        .expect(409);
+      expect(repayRes.body.ruleCode).toBe('BR-V2-08');
+
+      // Editing prescription after payment -> 409 BR-V2-08
+      const editRx = await request(app.getHttpServer())
+        .patch(`/api/prescriptions/${createdIds.maDonThuoc1}`)
+        .set('Authorization', `Bearer ${doctorToken}`)
+        .send({ loiDanCuaBacSi: 'Cố tình sửa sau TT' })
+        .expect(409);
+      expect(editRx.body.ruleCode).toBe('BR-V2-08');
+
+      // Adding lab request after payment -> 409 BR-V2-08
+      const addLab = await request(app.getHttpServer())
+        .post('/api/lab-requests')
+        .set('Authorization', `Bearer ${doctorToken}`)
+        .send({
+          maPhieuXN: `${prefix}_PXNLK`,
+          maLuotKham: createdIds.maLuotKham1,
+          maLoaiXN: 'XN01',
+        })
+        .expect(409);
+      expect(addLab.body.ruleCode).toBe('BR-V2-08');
+
+      // Starting PXN2 on paid LK1 -> 409 BR-V2-08
+      const startLab = await request(app.getHttpServer())
+        .patch(`/api/lab-requests/${createdIds.maPhieuXN2}/start`)
+        .set('Authorization', `Bearer ${ktvToken}`)
+        .send({})
+        .expect(409);
+      expect(startLab.body.ruleCode).toBe('BR-V2-08');
+
+      // GET /api/examinations/:id returns all derived fields
+      const examDetail = await request(app.getHttpServer())
+        .get(`/api/examinations/${createdIds.maLuotKham1}`)
+        .set('Authorization', `Bearer ${doctorToken}`)
+        .expect(200);
+      expect(examDetail.body.donThuoc.TongTienThuoc).toBe(57000);
+      expect(examDetail.body.vienPhi.ThucThu).toBe(33000);
+    });
+
+    it('7.3. BR-V2-02 & BR-V2-03: Xuất viện đóng DOT_NOI_TRU và tự động đóng PHAN_GIUONG đang mở trong cùng transaction', async () => {
+      // Discharge date before NgayNhapVien -> 400 BR-V2-02
+      await request(app.getHttpServer())
+        .patch(`/api/inpatient/admissions/${createdIds.maDotNT1}/discharge`)
+        .set('Authorization', `Bearer ${doctorToken}`)
+        .send({ ngayRaVien: '2026-11-01' })
+        .expect(400);
+
+      // Valid discharge at 2026-11-15 -> closes PHAN_GIUONG at DenNgay = 2026-11-16
+      const disRes = await request(app.getHttpServer())
+        .patch(`/api/inpatient/admissions/${createdIds.maDotNT1}/discharge`)
+        .set('Authorization', `Bearer ${doctorToken}`)
+        .send({ ngayRaVien: '2026-11-15' })
+        .expect(200);
+
+      expect(disRes.body.NgayRaVien).toBe('2026-11-15');
+      expect(disRes.body.closedBedAllocations).toHaveLength(1);
+      expect(disRes.body.closedBedAllocations[0].DenNgay).toBe('2026-11-16');
+
+      // After discharge, maGiuong2 is occupied on 2026-11-15 and free on 2026-11-16!
+      const [map15, map16] = await Promise.all([
+        request(app.getHttpServer())
+          .get(`/api/beds/map?date=2026-11-15&maKhoa=${createdIds.maKhoa}`)
+          .set('Authorization', `Bearer ${nurseToken}`)
+          .expect(200),
+        request(app.getHttpServer())
+          .get(`/api/beds/map?date=2026-11-16&maKhoa=${createdIds.maKhoa}`)
+          .set('Authorization', `Bearer ${nurseToken}`)
+          .expect(200),
+      ]);
+      expect(map15.body.find((b: any) => b.MaGiuong === createdIds.maGiuong2).dangCoNguoiNam).toBe(true);
+      expect(map16.body.find((b: any) => b.MaGiuong === createdIds.maGiuong2).dangCoNguoiNam).toBe(false);
+    });
+
+    it('7.4. GET /api/reports/dashboard?date=... tổng hợp từ 18 bảng và V_VIEN_PHI', async () => {
+      const dashRes = await request(app.getHttpServer())
+        .get('/api/reports/dashboard?date=2026-11-15')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200);
+
+      expect(dashRes.body.tongBenhNhan).toBeGreaterThanOrEqual(3);
+      expect(dashRes.body.tongLuotKham).toBeGreaterThanOrEqual(2);
+      expect(typeof dashRes.body.soDotNoiTruDangMo).toBe('number');
+      expect(dashRes.body.congSuatGiuong.tongGiuong).toBeGreaterThanOrEqual(6);
+      expect(dashRes.body.doanhThu.daThanhToan.ThucThu).toBeGreaterThan(0);
     });
   });
 });

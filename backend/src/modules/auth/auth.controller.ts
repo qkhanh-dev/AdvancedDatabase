@@ -14,8 +14,8 @@ export class AuthController {
   @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Đăng nhập hệ thống y tế', description: 'Cán bộ y tế đăng nhập bằng MaNV, CCCD hoặc Email' })
-  @ApiResponse({ status: 200, description: 'Đăng nhập thành công, trả về Access Token và thông tin nhân viên' })
+  @ApiOperation({ summary: 'Đăng nhập hệ thống y tế', description: 'Đăng nhập theo MaNV hoặc CCCD (cây chuyên biệt hóa d, p)' })
+  @ApiResponse({ status: 200, description: 'Đăng nhập thành công, trả về Access Token và thông tin NhanVien' })
   @ApiResponse({ status: 401, description: 'Thông tin đăng nhập sai' })
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
@@ -24,7 +24,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Lấy thông tin tài khoản đang đăng nhập' })
+  @ApiOperation({ summary: 'Lấy thông tin tài khoản đang đăng nhập (kèm SoNamCongTac dẫn xuất)' })
   async getProfile(@CurrentUser('maNV') maNV: string) {
     return this.authService.getProfile(maNV);
   }

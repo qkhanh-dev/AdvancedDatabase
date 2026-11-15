@@ -1,14 +1,13 @@
 import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ExaminationService } from './examination.service';
-import { CreateExaminationDto } from './dto/create-examination.dto';
-import { UpdateDiagnosisDto } from './dto/update-diagnosis.dto';
+import { CreateExaminationDto, UpdateExaminationDto } from './dto/examination.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '../../common/enums/role.enum';
 
-@ApiTags('Khám bệnh & Chẩn đoán (Examination)')
+@ApiTags('Khám bệnh & Lượt khám (Examination)')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('examinations')
@@ -16,36 +15,38 @@ export class ExaminationController {
   constructor(private readonly examinationService: ExaminationService) {}
 
   @Post()
-  @Roles(Role.ADMIN, Role.BAC_SI)
-  @ApiOperation({ summary: 'Bác sĩ khởi tạo lượt khám lâm sàng' })
+  @Roles(Role.ADMIN, Role.TIEP_NHAN, Role.THU_NGAN, Role.BAC_SI)
+  @ApiOperation({ summary: 'Tạo lượt khám LUOT_KHAM (BR-V2-04: FK11 & khung đợt nội trú)' })
   async createExamination(@Body() dto: CreateExaminationDto) {
     return this.examinationService.createExamination(dto);
   }
 
-  @Patch(':id/diagnose')
+  @Patch(':maLuotKham')
   @Roles(Role.ADMIN, Role.BAC_SI)
-  @ApiOperation({ summary: 'Cập nhật chẩn đoán xác định và hướng xử trí' })
-  async updateDiagnosis(
-    @Param('id') id: string,
-    @Body() dto: UpdateDiagnosisDto,
+  @ApiOperation({ summary: 'Cập nhật chẩn đoán, trạng thái hoặc chuyển MaDotNT (BR-V2-04)' })
+  async updateExamination(
+    @Param('maLuotKham') maLuotKham: string,
+    @Body() dto: UpdateExaminationDto,
   ) {
-    return this.examinationService.updateDiagnosis(id, dto);
+    return this.examinationService.updateExamination(maLuotKham, dto);
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Lấy chi tiết lượt khám bệnh' })
-  async getExaminationById(@Param('id') id: string) {
-    return this.examinationService.getExaminationById(id);
+  @Get(':maLuotKham')
+  @ApiOperation({ summary: 'Chi tiết lượt khám kèm đơn thuốc, xét nghiệm và viện phí (kèm thuộc tính dẫn xuất)' })
+  async getExaminationById(@Param('maLuotKham') maLuotKham: string) {
+    return this.examinationService.getExaminationById(maLuotKham);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Lấy danh sách các lượt khám' })
-  @ApiQuery({ name: 'maBS', required: false })
+  @ApiOperation({ summary: 'Danh sách lượt khám' })
+  @ApiQuery({ name: 'maNV_BacSi', required: false })
   @ApiQuery({ name: 'maBN', required: false })
+  @ApiQuery({ name: 'maDotNT', required: false })
   async getAllExaminations(
-    @Query('maBS') maBS?: string,
+    @Query('maNV_BacSi') maNV_BacSi?: string,
     @Query('maBN') maBN?: string,
+    @Query('maDotNT') maDotNT?: string,
   ) {
-    return this.examinationService.getAllExaminations(maBS, maBN);
+    return this.examinationService.getAllExaminations(maNV_BacSi, maBN, maDotNT);
   }
 }

@@ -2,7 +2,8 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
-import * as bcrypt from 'bcrypt';
+import { resolveStaffRole, verifyStaffPassword } from '../../common/utils/staff-role.util';
+import { formatDateOnly } from '../../common/utils/date.util';
 
 @Injectable()
 export class AuthService {
@@ -16,47 +17,37 @@ export class AuthService {
 
     const nhanVien = await this.prisma.nhanVien.findFirst({
       where: {
-        OR: [
-          { MaNV: username },
-          { CCCD: username },
-          { Email: username },
-        ],
+        OR: [{ MaNV: username }, { CCCD: username }],
       },
       include: {
         bacSi: true,
         dieuDuong: true,
-        nvHanhChinh: true,
+        kyThuatVien: true,
         khoa: true,
       },
     });
 
     if (!nhanVien) {
-      throw new UnauthorizedException('Thông tin đăng nhập không chính xác');
+      throw new UnauthorizedException({
+        ruleCode: 'UNAUTHORIZED',
+        message: 'Thông tin đăng nhập không chính xác',
+      });
     }
 
-    // Check password if set; if MatKhau is null in synthetic data, allow default password '123456'
-    let isMatch = false;
-    if (nhanVien.MatKhau) {
-      isMatch = await bcrypt.compare(password, nhanVien.MatKhau);
-    } else {
-      isMatch = password === '123456' || password === 'password123';
-    }
-
+    const isMatch = await verifyStaffPassword(nhanVien.MaNV, password);
     if (!isMatch) {
-      throw new UnauthorizedException('Thông tin đăng nhập không chính xác');
+      throw new UnauthorizedException({
+        ruleCode: 'UNAUTHORIZED',
+        message: 'Thông tin đăng nhập không chính xác',
+      });
     }
 
-    let roleName = nhanVien.LoaiNV.toString();
-    if (roleName === 'HANH_CHINH') {
-      roleName = 'NV_HANH_CHINH';
-    }
-    const boPhan = nhanVien.nvHanhChinh?.BoPhanPhuTrach?.toLowerCase() || '';
-    if (boPhan.includes('thu ngan') || boPhan.includes('thu ngân')) {
-      roleName = 'THU_NGAN';
-    }
-    if (nhanVien.nvHanhChinh?.ChucVuHC?.toLowerCase().includes('admin') || nhanVien.MaNV.toUpperCase().includes('ADMIN')) {
-      roleName = 'ADMIN';
-    }
+    const viewRows = await this.prisma.$queryRaw<Array<{ SoNamCongTac: number }>>`
+      SELECT "SoNamCongTac" FROM "V_NHAN_VIEN" WHERE "MaNV" = ${nhanVien.MaNV}
+    `;
+    const soNamCongTac = viewRows[0]?.SoNamCongTac ?? 0;
+
+    const roleName = resolveStaffRole(nhanVien);
 
     const payload = {
       sub: nhanVien.MaNV,
@@ -73,12 +64,23 @@ export class AuthService {
       user: {
         maNV: nhanVien.MaNV,
         hoTen: nhanVien.HoTen,
-        loaiNV: nhanVien.LoaiNV,
-        role: roleName,
         maKhoa: nhanVien.MaKhoa,
-        tenKhoa: nhanVien.khoa.TenKhoa,
-        email: nhanVien.Email,
         soDienThoai: nhanVien.SoDienThoai,
+        MaNV: nhanVien.MaNV,
+        MaKhoa: nhanVien.MaKhoa,
+        HoTen: nhanVien.HoTen,
+        NgaySinh: formatDateOnly(nhanVien.NgaySinh),
+        GioiTinh: nhanVien.GioiTinh,
+        CCCD: nhanVien.CCCD,
+        DiaChi: nhanVien.DiaChi,
+        SoDienThoai: nhanVien.SoDienThoai,
+        NgayVaoLam: formatDateOnly(nhanVien.NgayVaoLam),
+        SoNamCongTac: soNamCongTac,
+        role: roleName,
+        tenKhoa: nhanVien.khoa.TenKhoa,
+        bacSi: nhanVien.bacSi,
+        dieuDuong: nhanVien.dieuDuong,
+        kyThuatVien: nhanVien.kyThuatVien,
       },
     };
   }
@@ -89,15 +91,38 @@ export class AuthService {
       include: {
         bacSi: true,
         dieuDuong: true,
-        nvHanhChinh: true,
+        kyThuatVien: true,
         khoa: true,
       },
     });
 
     if (!nhanVien) {
-      throw new UnauthorizedException('Người dùng không tồn tại');
+      throw new UnauthorizedException({
+        ruleCode: 'UNAUTHORIZED',
+        message: 'Người dùng không tồn tại',
+      });
     }
 
-    return nhanVien;
+    const viewRows = await this.prisma.$queryRaw<Array<{ SoNamCongTac: number }>>`
+      SELECT "SoNamCongTac" FROM "V_NHAN_VIEN" WHERE "MaNV" = ${maNV}
+    `;
+
+    return {
+      MaNV: nhanVien.MaNV,
+      MaKhoa: nhanVien.MaKhoa,
+      HoTen: nhanVien.HoTen,
+      NgaySinh: formatDateOnly(nhanVien.NgaySinh),
+      GioiTinh: nhanVien.GioiTinh,
+      CCCD: nhanVien.CCCD,
+      DiaChi: nhanVien.DiaChi,
+      SoDienThoai: nhanVien.SoDienThoai,
+      NgayVaoLam: formatDateOnly(nhanVien.NgayVaoLam),
+      SoNamCongTac: viewRows[0]?.SoNamCongTac ?? 0,
+      role: resolveStaffRole(nhanVien),
+      khoa: nhanVien.khoa,
+      bacSi: nhanVien.bacSi,
+      dieuDuong: nhanVien.dieuDuong,
+      kyThuatVien: nhanVien.kyThuatVien,
+    };
   }
 }

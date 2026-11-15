@@ -7,10 +7,9 @@ import { StaffModule } from './modules/staff/staff.module';
 import { PatientModule } from './modules/patient/patient.module';
 import { ExaminationModule } from './modules/examination/examination.module';
 import { PrescriptionModule } from './modules/prescription/prescription.module';
-import { ClinicalServiceModule } from './modules/clinical-service/clinical-service.module';
+import { LabTestModule } from './modules/lab-test/lab-test.module';
 import { InpatientStayModule } from './modules/inpatient-stay/inpatient-stay.module';
 import { BillingModule } from './modules/billing/billing.module';
-import { DutyScheduleModule } from './modules/duty-schedule/duty-schedule.module';
 import { ReportModule } from './modules/report/report.module';
 
 @Module({
@@ -26,10 +25,9 @@ import { ReportModule } from './modules/report/report.module';
     PatientModule,
     ExaminationModule,
     PrescriptionModule,
-    ClinicalServiceModule,
+    LabTestModule,
     InpatientStayModule,
     BillingModule,
-    DutyScheduleModule,
     ReportModule,
   ],
 })

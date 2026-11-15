@@ -1,3 +1,6 @@
+> [!NOTE]
+> **Lưu ý phiên bản:** Tài liệu này mô tả bản `v1.0` (lược đồ 19 bảng cũ trên Prisma/PostgreSQL). Đối với thiết kế **EER v2 (18 bảng · 103 cột · 20 FK · 13 nhóm quy tắc)** và bộ sơ đồ mới trong [docs/diagrams/](file:///d:/Documents/AdvancedDatabase/AdvancedDatabase/docs/diagrams/README.md), vui lòng xem [API_Contract_v2.md](file:///d:/Documents/AdvancedDatabase/AdvancedDatabase/docs/API_Contract_v2.md) và [Business_Rules_v2.md](file:///d:/Documents/AdvancedDatabase/AdvancedDatabase/docs/Business_Rules_v2.md).
+
 # API CONTRACT SPECIFICATION (v1.0)
 ## Hệ Thống Quản Lý Bệnh Viện (Hospital Management System – QLBV)
 ### Tài Liệu Đặc Tả Giao Tiếp Tích Hợp Backend (NestJS) ⟷ Frontend (Next.js)

@@ -1,488 +1,308 @@
 import { api } from "@/lib/api";
 import {
-  Khoa,
-  Phong,
-  GiuongBenh,
-  NhanVien,
+  AuthLoginResponse,
   BacSi,
-  DieuDuong,
   BenhNhan,
-  LuotKham,
-  Thuoc,
-  DonThuoc,
-  DichVu,
-  SuDungDv,
-  PhanGiuong,
-  HoaDon,
-  LichTruc,
-  LoginRequestDto,
-  LoginResponseDto,
-  ReceptionRequestDto,
+  BillingPreviewResponse,
+  CompleteLabRequestDto,
+  CreateAdmissionDto,
+  CreateBedAllocationDto,
+  CreateDepartmentDto,
   CreateExaminationDto,
-  UpdateDiagnosisDto,
-  CreatePrescriptionDto,
-  AssignServiceDto,
-  UpdateServiceResultDto,
-  AdmitPatientDto,
-  AssignBedDto,
-  TransferBedDto,
-  FeeCalculationResponse,
+  CreateInsuranceCardDto,
   CreateInvoiceDto,
-  VietQrWebhookDto,
-  CreateDutyScheduleDto,
-  DashboardSummaryResponse,
-  LoaiNVEnum,
-  CaTrucEnum,
-  TrangThaiDiemDanhEnum,
-  GioiTinhEnum,
-  HuongXuTriEnum,
-  PhuongThucTTEnum,
+  CreateLabRequestDto,
+  CreatePatientDto,
+  CreatePrescriptionDto,
+  CreateRoomDto,
+  CreateStaffDto,
+  DashboardReportResponse,
+  DieuDuong,
+  DischargeAdmissionDto,
+  DonThuoc,
+  DotNoiTru,
+  GiuongBenh,
+  Khoa,
+  KyThuatVien,
+  LoaiXetNghiem,
+  LuotKham,
+  NhanVien,
+  PayInvoiceDto,
+  PhanGiuong,
+  PhieuXetNghiem,
+  Phong,
+  StartLabRequestDto,
+  TheBHYT,
+  Thuoc,
+  TransferBedDto,
+  UpdateBedStatusDto,
+  UpdateDepartmentDto,
+  UpdateExaminationDto,
+  UpdatePrescriptionDto,
+  UpdateRoomDto,
+  VienPhi,
 } from "@/types";
 
 export const hospitalApi = {
-  // 1. Phân hệ Xác thực (Auth)
   auth: {
-    login: async (dto: LoginRequestDto): Promise<LoginResponseDto> => {
-      const payload = {
-        username: dto.username,
-        password: dto.password,
-      };
-      const res = await api.post<LoginResponseDto>("/auth/login", payload);
-      return res.data;
+    login: async (payload: { username: string; password: string }): Promise<AuthLoginResponse> => {
+      const { data } = await api.post("/auth/login", payload);
+      return data;
     },
     getProfile: async (): Promise<NhanVien> => {
-      const res = await api.get<NhanVien>("/auth/profile");
-      return res.data;
+      const { data } = await api.get("/auth/profile");
+      return data;
     },
   },
 
-  // 2. Phân hệ Cơ sở vật chất & Khoa phòng (Department & Room)
   department: {
     getAll: async (): Promise<Khoa[]> => {
-      const res = await api.get<Khoa[]>("/departments");
-      return res.data;
+      const { data } = await api.get("/departments");
+      return data;
     },
-    getById: async (maKhoa: string): Promise<Khoa> => {
-      const res = await api.get<Khoa>(`/departments/${maKhoa}`);
-      return res.data;
+    getOne: async (maKhoa: string): Promise<Khoa> => {
+      const { data } = await api.get(`/departments/${encodeURIComponent(maKhoa)}`);
+      return data;
     },
-    getAvailableRooms: async (maKhoa?: string): Promise<Phong[]> => {
-      const res = await api.get<Phong[]>("/rooms/available", {
-        params: maKhoa ? { maKhoa } : undefined,
+    create: async (dto: CreateDepartmentDto): Promise<Khoa> => {
+      const { data } = await api.post("/departments", dto);
+      return data;
+    },
+    update: async (maKhoa: string, dto: UpdateDepartmentDto): Promise<Khoa> => {
+      const { data } = await api.patch(`/departments/${encodeURIComponent(maKhoa)}`, dto);
+      return data;
+    },
+    getRooms: async (maKhoa?: string): Promise<Phong[]> => {
+      const { data } = await api.get("/rooms", { params: maKhoa ? { maKhoa } : undefined });
+      return data;
+    },
+    createRoom: async (dto: CreateRoomDto): Promise<Phong> => {
+      const { data } = await api.post("/rooms", dto);
+      return data;
+    },
+    updateRoom: async (maPhong: string, dto: UpdateRoomDto): Promise<Phong> => {
+      const { data } = await api.patch(`/rooms/${encodeURIComponent(maPhong)}`, dto);
+      return data;
+    },
+    getBedMap: async (date?: string, maKhoa?: string): Promise<GiuongBenh[]> => {
+      const { data } = await api.get("/beds/map", {
+        params: {
+          ...(date ? { date } : {}),
+          ...(maKhoa ? { maKhoa } : {}),
+        },
       });
-      return res.data;
+      return data;
     },
-    getBedMap: async (): Promise<GiuongBenh[]> => {
-      const res = await api.get<any[]>("/beds/map");
-      return res.data.map((b) => ({
-        ...b,
-        TrangThai: b.TrangThaiGiuong || b.TrangThai,
-      }));
+    updateBedStatus: async (maGiuong: string, dto: UpdateBedStatusDto): Promise<GiuongBenh> => {
+      const { data } = await api.patch(`/beds/${encodeURIComponent(maGiuong)}/status`, dto);
+      return data;
     },
   },
 
-  // 3. Phân hệ Nhân sự y tế (Staff)
   staff: {
-    getAll: async (loaiNV?: LoaiNVEnum, maKhoa?: string): Promise<NhanVien[]> => {
-      const res = await api.get<NhanVien[]>("/staff", {
-        params: { loaiNV, maKhoa },
-      });
-      return res.data;
+    getAll: async (params?: { loaiChuyenMon?: string; maKhoa?: string }): Promise<NhanVien[]> => {
+      const { data } = await api.get("/staff", { params });
+      return data;
     },
     getDoctors: async (): Promise<BacSi[]> => {
-      const res = await api.get<BacSi[]>("/staff/doctors");
-      return res.data;
+      const { data } = await api.get("/staff/doctors");
+      return data;
     },
     getNurses: async (): Promise<DieuDuong[]> => {
-      const res = await api.get<DieuDuong[]>("/staff/nurses");
-      return res.data;
+      const { data } = await api.get("/staff/nurses");
+      return data;
     },
-    getById: async (maNV: string): Promise<NhanVien> => {
-      const res = await api.get<NhanVien>(`/staff/${maNV}`);
-      return res.data;
+    getTechnicians: async (): Promise<KyThuatVien[]> => {
+      const { data } = await api.get("/staff/technicians");
+      return data;
+    },
+    getOne: async (maNV: string): Promise<NhanVien> => {
+      const { data } = await api.get(`/staff/${encodeURIComponent(maNV)}`);
+      return data;
+    },
+    create: async (dto: CreateStaffDto): Promise<NhanVien> => {
+      const { data } = await api.post("/staff", dto);
+      return data;
     },
   },
 
-  // 4. Phân hệ Tiếp đón & Hồ sơ Bệnh nhân (Patient)
   patient: {
-    reception: async (dto: ReceptionRequestDto): Promise<BenhNhan> => {
-      const payload = {
-        maBN: dto.maBN || dto.MaBN,
-        hoTen: dto.hoTen || dto.HoTen || "",
-        ngaySinh: dto.ngaySinh || dto.NgaySinh || "1990-01-01",
-        gioiTinh: dto.gioiTinh || dto.GioiTinh || GioiTinhEnum.NAM,
-        cccd: dto.cccd || dto.CCCD || undefined,
-        soDienThoai: dto.soDienThoai || dto.SoDienThoai || undefined,
-        soBHYT: dto.soBHYT || dto.BHYT || undefined,
-        mucHuongBHYT: dto.mucHuongBHYT || 80,
-        diaChi: dto.diaChi || dto.DiaChi || "TP. Hồ Chí Minh",
-        nhomMau: dto.nhomMau,
-        isNgoaiTru: dto.isNgoaiTru ?? true,
-      };
-      const res = await api.post<BenhNhan>("/patients/reception", payload);
-      return res.data;
+    create: async (dto: CreatePatientDto): Promise<BenhNhan> => {
+      const { data } = await api.post("/patients", dto);
+      return data;
     },
-    lookup: async (query: string): Promise<BenhNhan> => {
-      const res = await api.get<BenhNhan>("/patients/lookup", {
-        params: { q: query },
-      });
-      return res.data;
+    lookup: async (q: string): Promise<BenhNhan[]> => {
+      const { data } = await api.get("/patients/lookup", { params: { q } });
+      return data;
     },
-    getAll: async (page = 1, limit = 20): Promise<{ data: BenhNhan[]; total: number; page: number; totalPages: number }> => {
-      const res = await api.get<{ data: BenhNhan[]; total: number; page: number; totalPages: number }>("/patients", {
-        params: { page, limit },
+    getAll: async (
+      page = 1,
+      limit = 50,
+    ): Promise<{
+      data: BenhNhan[];
+      meta: { total: number; page: number; limit: number; totalPages: number };
+    }> => {
+      const { data } = await api.get("/patients", { params: { page, limit } });
+      return data;
+    },
+    createInsuranceCard: async (maBN: string, dto: CreateInsuranceCardDto): Promise<TheBHYT> => {
+      const { data } = await api.post(
+        `/patients/${encodeURIComponent(maBN)}/insurance-cards`,
+        dto,
+      );
+      return data;
+    },
+    getInsuranceCards: async (maBN: string, validAt?: string): Promise<TheBHYT[]> => {
+      const { data } = await api.get(`/patients/${encodeURIComponent(maBN)}/insurance-cards`, {
+        params: validAt ? { validAt } : undefined,
       });
-      return res.data;
+      return data;
     },
   },
 
-  // 5. Phân hệ Khám bệnh & Chẩn đoán (Examination)
   examination: {
     create: async (dto: CreateExaminationDto): Promise<LuotKham> => {
-      const payload = {
-        maLuotKham: dto.maLuotKham || dto.MaLK,
-        maBN: dto.maBN || dto.MaBN || "",
-        maBS: dto.maBS || dto.MaBS || "BS01",
-        maPhongKham: dto.maPhongKham || dto.MaPhong || "P01",
-        trieuChung: dto.trieuChung || dto.TrieuChung || "Khám thường quy",
-        huyetAp: dto.huyetAp || dto.HuyetAp || "120/80",
-        nhietDo: dto.nhietDo ?? (dto.NhietDo ? Number(dto.NhietDo) : 37),
-        mach: dto.mach ?? (dto.Mach ? Number(dto.Mach) : 80),
-        chanDoanSoBo: dto.chanDoanSoBo || "Viêm đường hô hấp trên",
-        huongXuTri: dto.huongXuTri || HuongXuTriEnum.KE_DON_VE,
-        ngayTaiKham: dto.ngayTaiKham,
-      };
-      const res = await api.post<any>("/examinations", payload);
-      return {
-        ...res.data,
-        MaLK: res.data.MaLuotKham,
-        ChanDoan: res.data.ChanDoanXacDinh || res.data.ChanDoanSoBo,
-        TrangThai: res.data.HuongXuTri,
-      };
+      const { data } = await api.post("/examinations", dto);
+      return data;
     },
-    updateDiagnosis: async (id: string, dto: UpdateDiagnosisDto): Promise<LuotKham> => {
-      const payload = {
-        chanDoanXacDinh: dto.chanDoanXacDinh || dto.ChanDoan || "Viêm họng cấp",
-        huongXuTri: dto.huongXuTri || HuongXuTriEnum.KE_DON_VE,
-        ngayTaiKham: dto.ngayTaiKham,
-      };
-      const res = await api.patch<any>(`/examinations/${id}/diagnose`, payload);
-      return {
-        ...res.data,
-        MaLK: res.data.MaLuotKham,
-        ChanDoan: res.data.ChanDoanXacDinh || res.data.ChanDoanSoBo,
-        TrangThai: res.data.HuongXuTri,
-      };
+    update: async (maLuotKham: string, dto: UpdateExaminationDto): Promise<LuotKham> => {
+      const { data } = await api.patch(`/examinations/${encodeURIComponent(maLuotKham)}`, dto);
+      return data;
     },
-    getById: async (id: string): Promise<LuotKham> => {
-      const res = await api.get<any>(`/examinations/${id}`);
-      return {
-        ...res.data,
-        MaLK: res.data.MaLuotKham,
-        ChanDoan: res.data.ChanDoanXacDinh || res.data.ChanDoanSoBo,
-        TrangThai: res.data.HuongXuTri,
-      };
+    getDetail: async (maLuotKham: string): Promise<LuotKham> => {
+      const { data } = await api.get(`/examinations/${encodeURIComponent(maLuotKham)}`);
+      return data;
     },
-    getAll: async (maBS?: string, maBN?: string): Promise<LuotKham[]> => {
-      const res = await api.get<any[]>("/examinations", {
-        params: { maBS, maBN },
-      });
-      return res.data.map((exam) => ({
-        ...exam,
-        MaLK: exam.MaLuotKham,
-        ChanDoan: exam.ChanDoanXacDinh || exam.ChanDoanSoBo,
-        TrangThai: exam.HuongXuTri,
-      }));
+    getAll: async (params?: { status?: string; maBN?: string }): Promise<LuotKham[]> => {
+      const { data } = await api.get("/examinations", { params });
+      return data;
     },
   },
 
-  // 6. Phân hệ Toa thuốc & Dược phẩm (Prescription)
   prescription: {
-    getAllMedicines: async (): Promise<Thuoc[]> => {
-      const res = await api.get<any[]>("/prescriptions/medicines");
-      return res.data.map((m) => ({
-        ...m,
-        DonGia: m.DonGiaHienHanh,
-      }));
+    getMedicines: async (): Promise<Thuoc[]> => {
+      const { data } = await api.get("/medicines");
+      return data;
     },
     create: async (dto: CreatePrescriptionDto): Promise<DonThuoc> => {
-      const items = (dto.items || dto.ChiTiet || []).map((it) => ({
-        maThuoc: it.maThuoc || it.MaThuoc || "",
-        soLuong: Number(it.soLuong ?? it.SoLuong ?? 1),
-        lieuDung: it.lieuDung || "1 viên x 2 lần/ngày",
-        cachDung: it.cachDung || it.CachDung || "Uống sau ăn",
-        soNgayUong: it.soNgayUong || 5,
-      }));
-
-      const payload = {
-        maDon: dto.maDon,
-        maLuotKham: dto.maLuotKham || dto.MaLK || "",
-        loiDanBacSi: dto.loiDanBacSi || dto.GhiChu || "Dùng thuốc đúng chỉ dẫn",
-        items,
-      };
-      const res = await api.post<any>("/prescriptions", payload);
-      return {
-        ...res.data,
-        MaDT: res.data.MaDon,
-        MaLK: res.data.MaLuotKham,
-        TrangThai: res.data.TrangThaiPhatThuoc,
-        NgayKe: res.data.NgayGioKe,
-        GhiChu: res.data.LoiDanBacSi,
-        ChiTiet: res.data.ctDonThuocs || [],
-      };
+      const { data } = await api.post("/prescriptions", dto);
+      return data;
     },
-    dispense: async (id: string): Promise<DonThuoc> => {
-      const res = await api.patch<any>(`/prescriptions/${id}/dispense`);
-      return {
-        ...res.data,
-        MaDT: res.data.MaDon,
-        MaLK: res.data.MaLuotKham,
-        TrangThai: res.data.TrangThaiPhatThuoc,
-        NgayKe: res.data.NgayGioKe,
-        GhiChu: res.data.LoiDanBacSi,
-        ChiTiet: res.data.ctDonThuocs || [],
-      };
+    update: async (maDonThuoc: string, dto: UpdatePrescriptionDto): Promise<DonThuoc> => {
+      const { data } = await api.patch(`/prescriptions/${encodeURIComponent(maDonThuoc)}`, dto);
+      return data;
     },
-    getById: async (id: string): Promise<DonThuoc> => {
-      const res = await api.get<any>(`/prescriptions/${id}`);
-      return {
-        ...res.data,
-        MaDT: res.data.MaDon,
-        MaLK: res.data.MaLuotKham,
-        TrangThai: res.data.TrangThaiPhatThuoc,
-        NgayKe: res.data.NgayGioKe,
-        GhiChu: res.data.LoiDanBacSi,
-        ChiTiet: res.data.ctDonThuocs || [],
-      };
+    remove: async (maDonThuoc: string): Promise<{ deleted: boolean; MaDonThuoc: string }> => {
+      const { data } = await api.delete(`/prescriptions/${encodeURIComponent(maDonThuoc)}`);
+      return data;
+    },
+    getDetail: async (maDonThuoc: string): Promise<DonThuoc> => {
+      const { data } = await api.get(`/prescriptions/${encodeURIComponent(maDonThuoc)}`);
+      return data;
     },
   },
 
-  // 7. Phân hệ Cận lâm sàng & Dịch vụ Kỹ thuật (Clinical Service)
-  clinicalService: {
-    getAllServices: async (): Promise<DichVu[]> => {
-      const res = await api.get<any[]>("/services");
-      return res.data.map((s) => ({
-        ...s,
-        DonGia: s.DonGiaHienHanh,
-      }));
+  lab: {
+    getTypes: async (): Promise<LoaiXetNghiem[]> => {
+      const { data } = await api.get("/lab-types");
+      return data;
     },
-    assign: async (dto: AssignServiceDto): Promise<SuDungDv> => {
-      const payload = {
-        maLuotKham: dto.maLuotKham || dto.MaLK || "",
-        maDV: dto.maDV || dto.MaDV || "",
-        soLuong: dto.soLuong || 1,
-      };
-      const res = await api.post<any>("/services/assign", payload);
-      return {
-        ...res.data,
-        MaSD: `${res.data.MaLuotKham}_${res.data.MaDV}`,
-        MaLK: res.data.MaLuotKham,
-        ThoiGian: res.data.ThoiGianChiDinh,
-        TrangThai: res.data.KetQuaCLS ? "DA_CO_KET_QUA" : "CHO_THUC_HIEN",
-      };
+    getRequests: async (params?: {
+      status?: "PENDING" | "WAITING" | "IN_PROGRESS" | "COMPLETED";
+      maLuotKham?: string;
+    }): Promise<PhieuXetNghiem[]> => {
+      const { data } = await api.get("/lab-requests", { params });
+      return data;
     },
-    getPending: async (): Promise<SuDungDv[]> => {
-      const res = await api.get<any[]>("/services/pending");
-      return res.data.map((item) => ({
-        ...item,
-        MaSD: `${item.MaLuotKham}_${item.MaDV}`,
-        MaLK: item.MaLuotKham,
-        ThoiGian: item.ThoiGianChiDinh,
-        TrangThai: item.KetQuaCLS ? "DA_CO_KET_QUA" : "CHO_THUC_HIEN",
-      }));
+    createRequest: async (dto: CreateLabRequestDto): Promise<PhieuXetNghiem> => {
+      const { data } = await api.post("/lab-requests", dto);
+      return data;
     },
-    updateResult: async (dto: UpdateServiceResultDto): Promise<SuDungDv> => {
-      // If dto.id is passed as MaLuotKham_MaDV, split it
-      let maLuotKham = dto.maLuotKham;
-      let maDV = dto.maDV;
-      if (dto.id && dto.id.includes("_")) {
-        const parts = dto.id.split("_");
-        maLuotKham = parts[0];
-        maDV = parts[1];
-      }
-
-      const payload = {
-        maLuotKham: maLuotKham || "",
-        maDV: maDV || "",
-        thoiGianChiDinh: dto.thoiGianChiDinh || new Date().toISOString(),
-        ketQuaCLS: dto.ketQuaCLS || dto.KetQua || "",
-        maKTVThucHien: dto.maKTVThucHien || dto.NhanVienThucHien || "DD01",
-      };
-
-      const res = await api.patch<any>("/services/result", payload);
-      return {
-        ...res.data,
-        MaSD: `${res.data.MaLuotKham}_${res.data.MaDV}`,
-        MaLK: res.data.MaLuotKham,
-        ThoiGian: res.data.ThoiGianChiDinh,
-        TrangThai: "DA_CO_KET_QUA",
-      };
+    startRequest: async (
+      maPhieuXN: string,
+      dto: StartLabRequestDto = {},
+    ): Promise<PhieuXetNghiem> => {
+      const { data } = await api.patch(
+        `/lab-requests/${encodeURIComponent(maPhieuXN)}/start`,
+        dto,
+      );
+      return data;
+    },
+    completeRequest: async (
+      maPhieuXN: string,
+      dto: CompleteLabRequestDto,
+    ): Promise<PhieuXetNghiem> => {
+      const { data } = await api.patch(
+        `/lab-requests/${encodeURIComponent(maPhieuXN)}/complete`,
+        dto,
+      );
+      return data;
+    },
+    deleteRequest: async (maPhieuXN: string): Promise<{ deleted: boolean; MaPhieuXN: string }> => {
+      const { data } = await api.delete(`/lab-requests/${encodeURIComponent(maPhieuXN)}`);
+      return data;
     },
   },
 
-  // 8. Phân hệ Điều trị Nội trú & Phân giường (Inpatient Stay)
   inpatient: {
-    admit: async (dto: AdmitPatientDto): Promise<any> => {
-      const payload = {
-        maBN: dto.maBN || dto.MaBN || "",
-        soHoSoBenhAn: dto.soHoSoBenhAn,
-        ngayXuatVienDuKien: dto.ngayXuatVienDuKien,
-        chanDoanNhapVien: dto.chanDoanNhapVien || dto.ChanDoanVaoVien || "Theo dõi điều trị nội trú",
-        tinhTrangNhapVien: dto.tinhTrangNhapVien || "Vua",
-        maBSTheoDoi: dto.maBSTheoDoi || dto.BacSiDieuTri || "BS01",
-      };
-      const res = await api.post("/inpatient/admit", payload);
-      return res.data;
+    getAdmissions: async (openOnly?: boolean, maBN?: string): Promise<DotNoiTru[]> => {
+      const { data } = await api.get("/inpatient/admissions", {
+        params: {
+          ...(openOnly !== undefined ? { openOnly: String(openOnly) } : {}),
+          ...(maBN ? { maBN } : {}),
+        },
+      });
+      return data;
     },
-    assignBed: async (dto: AssignBedDto): Promise<PhanGiuong> => {
-      const payload = {
-        maBN: dto.maBN || dto.MaBN || "",
-        maGiuong: dto.maGiuong || dto.MaGiuong || "",
-        ghiChu: dto.ghiChu,
-      };
-      const res = await api.post<PhanGiuong>("/inpatient/assign-bed", payload);
-      return res.data;
+    admit: async (dto: CreateAdmissionDto): Promise<DotNoiTru> => {
+      const { data } = await api.post("/inpatient/admissions", dto);
+      return data;
     },
-    transferBed: async (dto: TransferBedDto): Promise<PhanGiuong> => {
-      const payload = {
-        maBN: dto.maBN || dto.MaBN || "",
-        maGiuongMoi: dto.maGiuongMoi || dto.GiuongMoi || "",
-        lyDoChuyen: dto.lyDoChuyen || dto.LyDoChuyen || "Chuyển buồng điều trị",
-      };
-      const res = await api.post<PhanGiuong>("/inpatient/transfer-bed", payload);
-      return res.data;
+    allocateBed: async (dto: CreateBedAllocationDto): Promise<PhanGiuong> => {
+      const { data } = await api.post("/inpatient/bed-allocations", dto);
+      return data;
     },
-    getPatients: async (): Promise<any[]> => {
-      const res = await api.get<any[]>("/inpatient/patients");
-      return res.data;
+    transferBed: async (dto: TransferBedDto): Promise<{ closed: PhanGiuong; opened: PhanGiuong }> => {
+      const { data } = await api.post("/inpatient/transfer-bed", dto);
+      return data;
+    },
+    discharge: async (maDotNT: string, dto: DischargeAdmissionDto): Promise<DotNoiTru> => {
+      const { data } = await api.patch(
+        `/inpatient/admissions/${encodeURIComponent(maDotNT)}/discharge`,
+        dto,
+      );
+      return data;
     },
   },
 
-  // 9. Phân hệ Quyết toán Viện phí & Hóa đơn (Billing)
   billing: {
-    calculateFee: async (examId: string): Promise<FeeCalculationResponse> => {
-      const res = await api.post<any>(`/billing/calculate/${examId}`);
-      const data = res.data;
-      return {
-        maLuotKham: data.maLuotKham,
-        examId: data.maLuotKham,
-        patientName: data.benhNhan?.hoTen,
-        bhytNumber: data.benhNhan?.soBHYT,
-        coverageRate: data.benhNhan?.mucHuongBHYT ? data.benhNhan.mucHuongBHYT / 100 : 0,
-        examFee: data.chiTiet?.tienKham || 0,
-        medicineFee: data.chiTiet?.tienThuoc || 0,
-        serviceFee: data.chiTiet?.tienDichVu || 0,
-        totalCost: data.tongTienGoc || 0,
-        bhytPaid: data.tienBHYTChiTra || 0,
-        patientPaid: data.tienBenhNhanTra || 0,
-        benhNhan: data.benhNhan,
-        chiTiet: data.chiTiet,
-        tongTienGoc: data.tongTienGoc,
-        tienBHYTChiTra: data.tienBHYTChiTra,
-        tienBenhNhanTra: data.tienBenhNhanTra,
-      };
+    preview: async (maLuotKham: string): Promise<BillingPreviewResponse> => {
+      const { data } = await api.get(`/billing/preview/${encodeURIComponent(maLuotKham)}`);
+      return data;
     },
-    createInvoice: async (dto: CreateInvoiceDto): Promise<HoaDon> => {
-      const payload = {
-        maHD: dto.maHD,
-        maLuotKham: dto.maLuotKham || dto.MaLK || "",
-        maNVThuNgan: dto.maNVThuNgan || dto.NhanVienThu || "NV_TN_01",
-        phuongThucTT: (dto.phuongThucTT || dto.HinhThucTT || PhuongThucTTEnum.TIEN_MAT) as PhuongThucTTEnum,
-      };
-      const res = await api.post<any>("/billing/invoices", payload);
-      return {
-        ...res.data,
-        MaLK: res.data.MaLuotKham,
-        SoTien: res.data.TienBenhNhanTra,
-        TrangThai: res.data.TrangThaiTT,
-        HinhThucTT: res.data.PhuongThucTT,
-      };
+    createInvoice: async (dto: CreateInvoiceDto): Promise<VienPhi> => {
+      const { data } = await api.post("/billing/invoices", dto);
+      return data;
     },
-    webhookVietQr: async (dto: VietQrWebhookDto): Promise<any> => {
-      const payload = {
-        maHD: dto.maHD || dto.invoiceId || "",
-        amount: Number(dto.amount),
-        transactionId: dto.transactionId,
-        signature: dto.signature,
-      };
-      const res = await api.post("/billing/webhook/vietqr", payload);
-      return res.data;
+    payInvoice: async (maHoaDon: string, dto: PayInvoiceDto = {}): Promise<VienPhi> => {
+      const { data } = await api.patch(
+        `/billing/invoices/${encodeURIComponent(maHoaDon)}/pay`,
+        dto,
+      );
+      return data;
     },
-    getInvoiceById: async (id: string): Promise<HoaDon> => {
-      const res = await api.get<any>(`/billing/invoices/${id}`);
-      return {
-        ...res.data,
-        MaLK: res.data.MaLuotKham,
-        SoTien: res.data.TienBenhNhanTra,
-        TrangThai: res.data.TrangThaiTT,
-        HinhThucTT: res.data.PhuongThucTT,
-      };
-    },
-    downloadPdf: async (id: string): Promise<Blob> => {
-      const res = await api.get(`/billing/invoices/${id}/pdf`, {
-        responseType: "blob",
-      });
-      return res.data;
+    getInvoice: async (maHoaDon: string): Promise<VienPhi> => {
+      const { data } = await api.get(`/billing/invoices/${encodeURIComponent(maHoaDon)}`);
+      return data;
     },
   },
 
-  // 10. Phân hệ Lịch trực & Chấm công (Duty Schedule)
-  dutySchedule: {
-    create: async (dto: CreateDutyScheduleDto): Promise<LichTruc> => {
-      const payload = {
-        maNV: dto.maNV || dto.MaNV || "BS01",
-        ngayTruc: dto.ngayTruc || dto.NgayTruc || new Date().toISOString().split("T")[0],
-        caTruc: dto.caTruc || dto.CaTruc || CaTrucEnum.SANG,
-        maPhong: dto.maPhong || "P01",
-        vaiTroTruc: dto.vaiTroTruc || dto.GhiChu || "Trực thường quy",
-        trangThaiDiemDanh: dto.trangThaiDiemDanh || TrangThaiDiemDanhEnum.CHUA_DIEM_DANH,
-      };
-      const res = await api.post<any>("/duty-schedules", payload);
-      return {
-        ...res.data,
-        GhiChu: res.data.VaiTroTruc,
-      };
-    },
-    getSchedules: async (startDate?: string, endDate?: string, maNV?: string): Promise<LichTruc[]> => {
-      const res = await api.get<any[]>("/duty-schedules", {
-        params: { startDate, endDate, maNV },
-      });
-      return res.data.map((sc) => ({
-        ...sc,
-        GhiChu: sc.VaiTroTruc,
-      }));
-    },
-    updateAttendance: async (
-      maNV: string,
-      ngayTruc: string,
-      caTruc: CaTrucEnum,
-      status: TrangThaiDiemDanhEnum,
-    ): Promise<LichTruc> => {
-      const res = await api.patch<any>("/duty-schedules/attendance", null, {
-        params: { maNV, ngayTruc, caTruc, status },
-      });
-      return {
-        ...res.data,
-        GhiChu: res.data.VaiTroTruc,
-      };
-    },
-  },
-
-  // 11. Phân hệ Báo cáo & Dashboard Thống kê (Reports)
   report: {
-    getDashboardSummary: async (): Promise<DashboardSummaryResponse> => {
-      const res = await api.get<any>("/reports/dashboard");
-      const d = res.data;
-      return {
-        totalRevenue: d.revenue?.tongDoanhThu || 0,
-        todayRevenue: d.revenue?.tongBenhNhanThanhToan || 0,
-        totalExaminations: d.overview?.totalExaminations || 0,
-        activeInpatients: d.overview?.totalInpatients || 0,
-        bedOccupancy: d.overview?.bedOccupancyRate || 0,
-        roomStats: [],
-        overview: d.overview,
-        revenue: d.revenue,
-      };
+    getDashboard: async (date?: string): Promise<DashboardReportResponse> => {
+      const { data } = await api.get("/reports/dashboard", {
+        params: date ? { date } : undefined,
+      });
+      return data;
     },
   },
 };

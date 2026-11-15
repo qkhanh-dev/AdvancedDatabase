@@ -1,0 +1,194 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" type="device" version="24.0.0" designNotes="03 Use Case Tong Quan QLBV v2 — tuan thu tuyet doi 01_EER_hoan_chinh_v2.xml va 02_Relational_Schema_18Bang_v2.xml.&#10;18 bang, NHAN_VIEN (d, p), khong co LICH_TRUC / NV_HANH_CHINH / BN_NGOAI_TRU / SoLuongTon.">
+  <diagram id="usecase-v2" name="03 Use Case QLBV v2">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2400" pageHeight="1650" math="0" shadow="0" background="#FFFFFF">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="HDR_03" value="&lt;b&gt;03 — SƠ ĐỒ USE CASE TỔNG QUAN HỆ THỐNG QUẢN LÝ BỆNH VIỆN (THEO EER v2)&lt;/b&gt;&lt;br&gt;&lt;font style='font-size:13px'&gt;5 Tác nhân (BENH_NHAN &amp;amp; NHAN_VIEN chuyên biệt hóa (d, p)) · 16 Use Case trên 18 bảng chuẩn hóa v2 · Quy tắc 1–13&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#28253D;strokeWidth=2;fontFamily=Recursive;fontSize=18;fontColor=#28253D;align=center;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="25" width="2320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="SYS_BOX" value="HỆ THỐNG QUẢN LÝ BỆNH VIỆN — PHẠM VI 18 BẢNG v2 (QLBV)" style="swimlane;startSize=42;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#28253D;strokeWidth=2;rounded=1;fontFamily=Recursive;fontSize=15;fontStyle=1;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="340" y="130" width="1720" height="1460" as="geometry" />
+        </mxCell>
+        <mxCell id="ACT_BN" value="Bệnh nhân
+(BENH_NHAN)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#F0F9FF;strokeColor=#28253D;strokeWidth=2;fontFamily=Recursive;fontSize=13;fontStyle=1;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="105" y="255" width="60" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ACT_NV_TN" value="NV Tiếp nhận / Thu ngân
+(NHAN_VIEN - Partial)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#F0F9FF;strokeColor=#28253D;strokeWidth=2;fontFamily=Recursive;fontSize=13;fontStyle=1;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="105" y="690" width="60" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ACT_ADMIN" value="Quản trị Hệ thống
+(NHAN_VIEN - Partial)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#F0F9FF;strokeColor=#28253D;strokeWidth=2;fontFamily=Recursive;fontSize=13;fontStyle=1;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="105" y="1210" width="60" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ACT_BS" value="Bác sĩ
+(BAC_SI)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#F0F9FF;strokeColor=#28253D;strokeWidth=2;fontFamily=Recursive;fontSize=13;fontStyle=1;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="2195" y="290" width="60" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ACT_KTV" value="Kỹ thuật viên
+(KY_THUAT_VIEN)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#F0F9FF;strokeColor=#28253D;strokeWidth=2;fontFamily=Recursive;fontSize=13;fontStyle=1;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="2195" y="595" width="60" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ACT_DD" value="Điều dưỡng
+(DIEU_DUONG)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#F0F9FF;strokeColor=#28253D;strokeWidth=2;fontFamily=Recursive;fontSize=13;fontStyle=1;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="2195" y="920" width="60" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="GRP_1" value="PHÂN HỆ 1: BỆNH NHÂN, THẺ BHYT &amp; TIẾP NHẬN (BENH_NHAN, THE_BHYT)" style="swimlane;startSize=36;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#4ADE80;strokeWidth=2;rounded=1;fontFamily=Recursive;fontSize=13;fontStyle=1;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="380" y="195" width="800" height="390" as="geometry" />
+        </mxCell>
+        <mxCell id="UC01" value="&lt;b&gt;UC01:&lt;/b&gt; Tiếp nhận &amp;amp; Quản lý hồ sơ&lt;br&gt;BENH_NHAN (Tuoi() dẫn xuất)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4ADE80;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="420" y="260" width="330" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="UC02" value="&lt;b&gt;UC02:&lt;/b&gt; Quản lý &amp;amp; Kiểm tra thẻ BHYT&lt;br&gt;(THE_BHYT: MucHuong [0,1], còn hạn)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F0F9FF;strokeColor=#38BDF8;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="810" y="260" width="330" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="UC03" value="&lt;b&gt;UC03:&lt;/b&gt; Đăng ký lượt khám ngoại trú&lt;br&gt;(LUOT_KHAM với MaDotNT = NULL)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFF1F2;strokeColor=#FB7185;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="600" y="445" width="360" height="82" as="geometry" />
+        </mxCell>
+        <mxCell id="GRP_2" value="PHÂN HỆ 2: KHÁM BỆNH, ĐƠN THUỐC &amp;amp; XÉT NGHIỆM" style="swimlane;startSize=36;whiteSpace=wrap;html=1;fillColor=#FFF1F2;strokeColor=#FB7185;strokeWidth=2;rounded=1;fontFamily=Recursive;fontSize=13;fontStyle=1;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="195" width="800" height="500" as="geometry" />
+        </mxCell>
+        <mxCell id="UC04" value="&lt;b&gt;UC04:&lt;/b&gt; Khám lâm sàng &amp;amp; Chẩn đoán&lt;br&gt;(LUOT_KHAM: ngoại trú / MaDotNT FK11)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#FB7185;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="260" width="340" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="UC05" value="&lt;b&gt;UC05:&lt;/b&gt; Kê đơn thuốc &amp;amp; Chụp DonGiaKe&lt;br&gt;(DON_THUOC 1–0..1, CHI_TIET_DON_THUOC)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F0FDFA;strokeColor=#2DD4BF;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="1650" y="260" width="330" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="UC06" value="&lt;b&gt;UC06:&lt;/b&gt; Chỉ định phiếu xét nghiệm&lt;br&gt;(PHIEU_XET_NGHIEM: snapshot DonGiaXN)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#4ADE80;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="430" width="340" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="UC07" value="&lt;b&gt;UC07:&lt;/b&gt; Thực hiện XN &amp;amp; Trả kết quả&lt;br&gt;(MaNV_KTV, NgayGioXN, NgayGioTraKQ, KetQua)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ECFEFF;strokeColor=#22D3EE;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="1650" y="560" width="330" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="GRP_3" value="PHÂN HỆ 3: ĐIỀU TRỊ NỘI TRÚ &amp;amp; PHÂN GIƯỜNG (Quy tắc 2, 3, 11, 12)" style="swimlane;startSize=36;whiteSpace=wrap;html=1;fillColor=#F5F3FF;strokeColor=#A78BFA;strokeWidth=2;rounded=1;fontFamily=Recursive;fontSize=13;fontStyle=1;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="725" width="800" height="395" as="geometry" />
+        </mxCell>
+        <mxCell id="UC08" value="&lt;b&gt;UC08:&lt;/b&gt; Mở đợt nội trú &amp;amp; Ra viện&lt;br&gt;(DOT_NOI_TRU: ≤1 đợt mở, không chồng khoảng)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A78BFA;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="795" width="350" height="82" as="geometry" />
+        </mxCell>
+        <mxCell id="UC09" value="&lt;b&gt;UC09:&lt;/b&gt; Tra cứu giường khả dụng ngày D&lt;br&gt;(GIUONG_BENH.TrangThai &amp;amp; PHAN_GIUONG)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F7FEE7;strokeColor=#A3E635;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="1650" y="795" width="330" height="82" as="geometry" />
+        </mxCell>
+        <mxCell id="UC10" value="&lt;b&gt;UC10:&lt;/b&gt; Phân giường &amp;amp; Chuyển giường theo ngày&lt;br&gt;(PHAN_GIUONG [TuNgay, DenNgay) + Khóa đồng thời)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FDF4FF;strokeColor=#E879F9;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="1440" y="975" width="380" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="GRP_4" value="PHÂN HỆ 4: VIỆN PHÍ THEO LƯỢT KHÁM &amp;amp; BHYT (VIEN_PHI - Quy tắc 5, 8, 13)" style="swimlane;startSize=36;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#F87171;strokeWidth=2;rounded=1;fontFamily=Recursive;fontSize=13;fontStyle=1;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="380" y="625" width="800" height="495" as="geometry" />
+        </mxCell>
+        <mxCell id="UC11" value="&lt;b&gt;UC11:&lt;/b&gt; Lập hóa đơn theo lượt khám&lt;br&gt;(VIEN_PHI 1–0..1, VIEW TongTienThuoc + DichVu)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F87171;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="420" y="700" width="350" height="82" as="geometry" />
+        </mxCell>
+        <mxCell id="UC12" value="&lt;b&gt;UC12:&lt;/b&gt; Áp dụng 1 thẻ BHYT &amp;amp; Lưu TruBHYT&lt;br&gt;(0 ≤ TruBHYT ≤ TongTien; tính ThucThu())" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F0F9FF;strokeColor=#38BDF8;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="805" y="700" width="340" height="82" as="geometry" />
+        </mxCell>
+        <mxCell id="UC13" value="&lt;b&gt;UC13:&lt;/b&gt; Chốt thanh toán &amp;amp; Khóa chi phí&lt;br&gt;(Khóa sửa/xóa VIEN_PHI, đơn thuốc, phiếu XN)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FEFCE8;strokeColor=#FACC15;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="590" y="935" width="380" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="GRP_5" value="PHÂN HỆ 5: QUẢN TRỊ DANH MỤC &amp;amp; NHÂN SỰ (KHOA, PHONG, NHAN_VIEN, THUOC, LOAI_XET_NGHIEM)" style="swimlane;startSize=36;whiteSpace=wrap;html=1;fillColor=#FEFCE8;strokeColor=#FACC15;strokeWidth=2;rounded=1;fontFamily=Recursive;fontSize=13;fontStyle=1;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="380" y="1150" width="1640" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="UC14" value="&lt;b&gt;UC14:&lt;/b&gt; Quản lý Khoa, Phòng &amp;amp; Giường bệnh&lt;br&gt;(KHOA, PHONG, GIUONG_BENH.TrangThai)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#818CF8;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="430" y="1235" width="420" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="UC15" value="&lt;b&gt;UC15:&lt;/b&gt; Quản lý Nhân viên &amp;amp; IS-A (d, p)&lt;br&gt;(NHAN_VIEN, BAC_SI, DIEU_DUONG, KY_THUAT_VIEN)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FDF4FF;strokeColor=#E879F9;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="985" y="1235" width="430" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="UC16" value="&lt;b&gt;UC16:&lt;/b&gt; Quản lý Danh mục Thuốc &amp;amp; Loại XN&lt;br&gt;(THUOC.DonGia, LOAI_XET_NGHIEM.DonGia)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ECFEFF;strokeColor=#22D3EE;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="1550" y="1235" width="420" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="NOTE_03" value="&lt;b&gt;LƯU Ý TUÂN THỦ SƠ ĐỒ 01 &amp;amp; 02 (18 BẢNG v2):&lt;/b&gt; • Không tồn tại bảng LICH_TRUC, NV_HANH_CHINH, BN_NGOAI_TRU, DICH_VU/SU_DUNG_DV hay CHI_TIET_VIEN_PHI. • Chuyên biệt hóa NHAN_VIEN là &lt;b&gt;disjoint, partial (d, p)&lt;/b&gt; nên cho phép nhân viên tiếp nhận/thu ngân/quản trị ngoài 3 bảng con. • THUOC không lưu cột tồn kho; VIEN_PHI tính theo từng LUOT_KHAM (thuốc + XN đã thực hiện), không gộp tiền giường hay quyết toán cả đợt nội trú." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F9FF;strokeColor=#38BDF8;strokeWidth=2;align=left;spacingLeft=16;spacingRight=16;fontFamily=Recursive;fontSize=12;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="380" y="1430" width="1640" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="E_INC_03_01" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;strokeWidth=1.5;strokeColor=#475569;fontFamily=Recursive;fontSize=11;fontColor=#334155;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="UC03" target="UC01">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_EXT_02_01" value="&lt;&lt;extend&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;strokeWidth=1.5;strokeColor=#475569;fontFamily=Recursive;fontSize=11;fontColor=#334155;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="UC02" target="UC01">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_EXT_05_04" value="&lt;&lt;extend&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;strokeWidth=1.5;strokeColor=#475569;fontFamily=Recursive;fontSize=11;fontColor=#334155;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="UC05" target="UC04">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_EXT_06_04" value="&lt;&lt;extend&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;strokeWidth=1.5;strokeColor=#475569;fontFamily=Recursive;fontSize=11;fontColor=#334155;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="UC06" target="UC04">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_INC_07_06" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;strokeWidth=1.5;strokeColor=#475569;fontFamily=Recursive;fontSize=11;fontColor=#334155;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="UC07" target="UC06">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_INC_10_09" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;strokeWidth=1.5;strokeColor=#475569;fontFamily=Recursive;fontSize=11;fontColor=#334155;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="UC10" target="UC09">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_INC_10_08" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;strokeWidth=1.5;strokeColor=#475569;fontFamily=Recursive;fontSize=11;fontColor=#334155;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="UC10" target="UC08">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_INC_11_12" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;strokeWidth=1.5;strokeColor=#475569;fontFamily=Recursive;fontSize=11;fontColor=#334155;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="UC11" target="UC12">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_INC_13_11" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;strokeWidth=1.5;strokeColor=#475569;fontFamily=Recursive;fontSize=11;fontColor=#334155;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="UC13" target="UC11">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_ACT_0" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=1.8;strokeColor=#334155;" edge="1" parent="1" source="ACT_BN" target="UC01">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_ACT_1" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=1.8;strokeColor=#334155;" edge="1" parent="1" source="ACT_BN" target="UC03">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_ACT_2" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=1.8;strokeColor=#334155;" edge="1" parent="1" source="ACT_BN" target="UC13">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_ACT_3" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=1.8;strokeColor=#334155;" edge="1" parent="1" source="ACT_NV_TN" target="UC01">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_ACT_4" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=1.8;strokeColor=#334155;" edge="1" parent="1" source="ACT_NV_TN" target="UC02">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_ACT_5" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=1.8;strokeColor=#334155;" edge="1" parent="1" source="ACT_NV_TN" target="UC03">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_ACT_6" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=1.8;strokeColor=#334155;" edge="1" parent="1" source="ACT_NV_TN" target="UC11">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_ACT_7" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=1.8;strokeColor=#334155;" edge="1" parent="1" source="ACT_NV_TN" target="UC12">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_ACT_8" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=1.8;strokeColor=#334155;" edge="1" parent="1" source="ACT_NV_TN" target="UC13">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_ACT_9" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=1.8;strokeColor=#334155;" edge="1" parent="1" source="ACT_ADMIN" target="UC14">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_ACT_10" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=1.8;strokeColor=#334155;" edge="1" parent="1" source="ACT_ADMIN" target="UC15">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_ACT_11" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=1.8;strokeColor=#334155;" edge="1" parent="1" source="ACT_ADMIN" target="UC16">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_ACT_12" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=1.8;strokeColor=#334155;" edge="1" parent="1" source="ACT_BS" target="UC04">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_ACT_13" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=1.8;strokeColor=#334155;" edge="1" parent="1" source="ACT_BS" target="UC05">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_ACT_14" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=1.8;strokeColor=#334155;" edge="1" parent="1" source="ACT_BS" target="UC06">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_ACT_15" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=1.8;strokeColor=#334155;" edge="1" parent="1" source="ACT_BS" target="UC08">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_ACT_16" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=1.8;strokeColor=#334155;" edge="1" parent="1" source="ACT_KTV" target="UC07">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_ACT_17" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=1.8;strokeColor=#334155;" edge="1" parent="1" source="ACT_DD" target="UC08">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_ACT_18" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=1.8;strokeColor=#334155;" edge="1" parent="1" source="ACT_DD" target="UC09">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_ACT_19" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=1.8;strokeColor=#334155;" edge="1" parent="1" source="ACT_DD" target="UC10">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

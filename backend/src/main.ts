@@ -9,17 +9,14 @@ async function bootstrap() {
   const logger = new Logger('HospitalBackendBootstrap');
   const app = await NestFactory.create(AppModule);
 
-  // Global prefix
   app.setGlobalPrefix('api');
 
-  // CORS
   app.enableCors({
     origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   });
 
-  // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -31,44 +28,41 @@ async function bootstrap() {
     }),
   );
 
-  // Global exception filters
   app.useGlobalFilters(
     new HttpExceptionFilter(),
     new PrismaClientExceptionFilter(),
   );
 
-  // Swagger OpenAPI Documentation
   const config = new DocumentBuilder()
-    .setTitle('Hospital Management System API (QLBV)')
+    .setTitle('Hospital Management System API v2.0 (QLBV)')
     .setDescription(
       'Hệ Thống Quản Lý Bệnh Viện - Khoa CNTT, Đại học Sài Gòn (SGU)\n' +
-      'Chuẩn hóa 19 bảng BCNF, 25 Ràng buộc toàn vẹn và 10 Phân hệ nghiệp vụ y tế.',
+      'Chuẩn hóa v2: 18 bảng, 103 cột, 20 khóa ngoại (NO ACTION), 6 thuộc tính dẫn xuất (VIEW/Query), 13 nhóm quy tắc (BR-V2-01..13).',
     )
     .setVersion('2.0')
     .addBearerAuth()
     .addTag('Xác thực hệ thống (Auth)')
     .addTag('Cơ sở vật chất & Khoa phòng (Department & Room)')
     .addTag('Nhân sự y tế (Staff)')
-    .addTag('Tiếp đón & Hồ sơ người bệnh (Patient)')
-    .addTag('Khám bệnh & Chẩn đoán (Examination)')
-    .addTag('Dược phẩm & Toa thuốc (Prescription & Pharmacy)')
-    .addTag('Cận lâm sàng & Dịch vụ kỹ thuật (Clinical Services)')
+    .addTag('Tiếp đón, Bệnh nhân & Thẻ BHYT (Patient & Insurance)')
+    .addTag('Khám bệnh & Lượt khám (Examination)')
+    .addTag('Dược phẩm & Đơn thuốc (Medicines & Prescriptions)')
+    .addTag('Xét nghiệm & Phiếu xét nghiệm (Lab Tests)')
     .addTag('Điều trị Nội trú & Phân giường (Inpatient)')
-    .addTag('Thu ngân & Quyết toán viện phí (Billing & Invoices)')
-    .addTag('Lịch trực & Phân ca y bác sĩ (Duty Schedules)')
+    .addTag('Viện phí & Thanh toán (Billing)')
     .addTag('Báo cáo thống kê & Dashboard (Reports)')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document, {
-    customSiteTitle: 'QLBV API Documentation',
+    customSiteTitle: 'QLBV API v2.0 Documentation',
   });
 
   const port = process.env.PORT || 3001;
   await app.listen(port);
 
   logger.log(`=======================================================`);
-  logger.log(`🚀 Hospital Management Backend running on: http://localhost:${port}/api`);
+  logger.log(`🚀 Hospital Management Backend v2.0 running on: http://localhost:${port}/api`);
   logger.log(`📑 Swagger Documentation available at: http://localhost:${port}/api/docs`);
   logger.log(`=======================================================`);
 }

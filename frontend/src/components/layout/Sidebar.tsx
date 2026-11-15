@@ -10,7 +10,6 @@ import {
   FlaskConical,
   LayoutDashboard,
   LogOut,
-  Pill,
   Stethoscope,
   UserPlus,
   Users,
@@ -30,6 +29,15 @@ interface NavGroup {
   items: NavItem[];
 }
 
+const ALL_ROLES = [
+  RoleEnum.ADMIN,
+  RoleEnum.BAC_SI,
+  RoleEnum.DIEU_DUONG,
+  RoleEnum.KY_THUAT_VIEN,
+  RoleEnum.TIEP_NHAN,
+  RoleEnum.THU_NGAN,
+];
+
 const NAV_GROUPS: NavGroup[] = [
   {
     group: "TỔNG QUAN",
@@ -38,15 +46,7 @@ const NAV_GROUPS: NavGroup[] = [
         label: "Bảng điều khiển",
         href: "/",
         icon: LayoutDashboard,
-        roles: [
-          RoleEnum.ADMIN,
-          RoleEnum.QUAN_TRI,
-          RoleEnum.BAC_SI,
-          RoleEnum.DIEU_DUONG,
-          RoleEnum.NV_HANH_CHINH,
-          RoleEnum.THU_NGAN,
-          RoleEnum.DUOC_SI,
-        ],
+        roles: ALL_ROLES,
       },
     ],
   },
@@ -57,92 +57,70 @@ const NAV_GROUPS: NavGroup[] = [
         label: "Tiếp đón & Hồ sơ BN",
         href: "/reception",
         icon: UserPlus,
-        roles: [
-          RoleEnum.ADMIN,
-          RoleEnum.QUAN_TRI,
-          RoleEnum.NV_HANH_CHINH,
-          RoleEnum.THU_NGAN,
-        ],
+        roles: [RoleEnum.ADMIN, RoleEnum.TIEP_NHAN, RoleEnum.THU_NGAN],
       },
       {
         label: "Khám lâm sàng & Kê đơn",
         href: "/clinical",
         icon: Stethoscope,
-        roles: [RoleEnum.ADMIN, RoleEnum.QUAN_TRI, RoleEnum.BAC_SI],
+        roles: [RoleEnum.ADMIN, RoleEnum.BAC_SI],
       },
       {
-        label: "Cận lâm sàng & XN",
+        label: "Xét nghiệm & KQ CLS",
         href: "/laboratory",
         icon: FlaskConical,
-        roles: [RoleEnum.ADMIN, RoleEnum.QUAN_TRI, RoleEnum.DIEU_DUONG],
+        roles: [
+          RoleEnum.ADMIN,
+          RoleEnum.KY_THUAT_VIEN,
+          RoleEnum.BAC_SI,
+          RoleEnum.DIEU_DUONG,
+        ],
       },
     ],
   },
   {
-    group: "ĐIỀU TRỊ & HẬU CẦN",
+    group: "ĐIỀU TRỊ NỘI TRÚ",
     items: [
       {
         label: "Nội trú & Sơ đồ giường",
         href: "/inpatient",
         icon: BedDouble,
-        roles: [
-          RoleEnum.ADMIN,
-          RoleEnum.QUAN_TRI,
-          RoleEnum.BAC_SI,
-          RoleEnum.DIEU_DUONG,
-        ],
-      },
-      {
-        label: "Kho dược & Phát thuốc",
-        href: "/pharmacy",
-        icon: Pill,
-        roles: [
-          RoleEnum.ADMIN,
-          RoleEnum.QUAN_TRI,
-          RoleEnum.DIEU_DUONG,
-          RoleEnum.NV_HANH_CHINH,
-          RoleEnum.DUOC_SI,
-        ],
+        roles: [RoleEnum.ADMIN, RoleEnum.BAC_SI, RoleEnum.DIEU_DUONG],
       },
     ],
   },
   {
-    group: "TÀI CHÍNH & VẬN HÀNH",
+    group: "TÀI CHÍNH & QUẢN TRỊ",
     items: [
       {
         label: "Thu ngân & Viện phí",
         href: "/cashier",
         icon: CreditCard,
-        roles: [
-          RoleEnum.ADMIN,
-          RoleEnum.QUAN_TRI,
-          RoleEnum.THU_NGAN,
-          RoleEnum.NV_HANH_CHINH,
-        ],
+        roles: [RoleEnum.ADMIN, RoleEnum.THU_NGAN, RoleEnum.TIEP_NHAN],
       },
       {
-        label: "Quản trị & Lịch trực",
+        label: "Quản trị Hệ thống",
         href: "/admin",
         icon: Users,
-        roles: [RoleEnum.ADMIN, RoleEnum.QUAN_TRI],
+        roles: [RoleEnum.ADMIN],
       },
     ],
   },
 ];
 
-const ROLE_LABELS: Record<string, string> = {
-  ADMIN: "Quản trị hệ thống",
-  QUAN_TRI: "Quản trị viên",
-  BAC_SI: "Bác sĩ Lâm sàng",
-  DIEU_DUONG: "Điều dưỡng / KTV CLS",
-  NV_HANH_CHINH: "NV Hành chính",
-  THU_NGAN: "Thu ngân",
-  DUOC_SI: "Dược sĩ",
+export const ROLE_LABELS: Record<RoleEnum, string> = {
+  [RoleEnum.ADMIN]: "Quản trị viên (Partial)",
+  [RoleEnum.BAC_SI]: "Bác sĩ Lâm sàng",
+  [RoleEnum.DIEU_DUONG]: "Điều dưỡng Nội trú",
+  [RoleEnum.KY_THUAT_VIEN]: "Kỹ thuật viên CLS",
+  [RoleEnum.TIEP_NHAN]: "Nhân viên Tiếp nhận",
+  [RoleEnum.THU_NGAN]: "Thu ngân Viện phí",
 };
 
 function getInitials(name?: string | null): string {
-  if (!name) return "NV";
-  const parts = name.trim().split(/\s+/);
+  const clean = (name ?? "").trim();
+  if (!clean) return "NV";
+  const parts = clean.split(/\s+/);
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
   return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
 }
@@ -167,22 +145,20 @@ export function Sidebar({ mobile = false }: { mobile?: boolean } = {}) {
       } flex-col justify-between select-none shadow-[0_1px_8px_rgba(0,0,0,0.03)]`}
     >
       <div className="flex flex-col min-h-0 flex-1">
-        {/* Brand Header */}
         <div className="h-14 flex items-center gap-2.5 px-3.5 border-b border-[#bcc9c6]/30 shrink-0">
           <div className="w-8 h-8 rounded-lg bg-[#00685f] text-white flex items-center justify-center shadow-xs shrink-0">
             <Activity className="w-4 h-4" />
           </div>
           <div className="flex flex-col min-w-0">
             <span className="text-[13px] font-bold text-[#0b1c30] truncate leading-tight">
-              QLBV • Smart HIS
+              QLBV • Smart HIS v2
             </span>
             <span className="text-[10px] text-[#3d4947] truncate leading-none mt-0.5">
-              Bệnh viện Đa khoa Số 1
+              18 Bảng · BR-V2-01..13
             </span>
           </div>
         </div>
 
-        {/* Grouped Navigation */}
         <div className="overflow-y-auto px-2.5 py-2.5 space-y-3 flex-1 min-h-0">
           {visibleNavGroups.map((group) => (
             <div key={group.group} className="space-y-1">
@@ -195,8 +171,7 @@ export function Sidebar({ mobile = false }: { mobile?: boolean } = {}) {
                   const active =
                     item.href === "/"
                       ? pathname === "/"
-                      : pathname === item.href ||
-                        pathname.startsWith(`${item.href}/`);
+                      : pathname === item.href || pathname.startsWith(`${item.href}/`);
                   return (
                     <Link
                       key={item.href}
@@ -218,13 +193,10 @@ export function Sidebar({ mobile = false }: { mobile?: boolean } = {}) {
         </div>
       </div>
 
-      {/* Bottom RBAC User Card */}
       <div className="p-2.5 border-t border-[#bcc9c6]/30 bg-[#eff4ff]/60 shrink-0">
         <div className="p-2.5 bg-white rounded-lg border border-[#bcc9c6]/40 flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <span className="text-[9.5px] uppercase font-bold text-[#6d7a77]">
-              RBAC Phân quyền
-            </span>
+            <span className="text-[9.5px] uppercase font-bold text-[#6d7a77]">RBAC (d, p)</span>
             <span className="px-1.5 py-0.5 rounded-full bg-[#89f5e7] text-[#005049] font-mono text-[9.5px] font-semibold">
               {user?.role}
             </span>
@@ -238,7 +210,7 @@ export function Sidebar({ mobile = false }: { mobile?: boolean } = {}) {
                 {user?.hoTen || user?.maNV}
               </span>
               <span className="text-[9.5px] text-[#3d4947] truncate">
-                {ROLE_LABELS[user?.role || ""] || user?.role}
+                {user?.role ? ROLE_LABELS[user.role] || user.role : ""}
               </span>
             </div>
           </div>

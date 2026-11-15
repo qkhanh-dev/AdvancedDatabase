@@ -1,158 +1,225 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { ReceptionDto } from './dto/reception.dto';
+import { CreateInsuranceCardDto, CreatePatientDto } from './dto/patient.dto';
+import { formatDateOnly, parseDateOnlyUtc } from '../../common/utils/date.util';
 
 @Injectable()
 export class PatientService {
   constructor(private prisma: PrismaService) {}
 
-  async reception(dto: ReceptionDto) {
-    const maBN = dto.maBN || `BN${Date.now().toString().slice(-8)}`;
+  private async getAgeMap(): Promise<Map<string, number>> {
+    const rows = await this.prisma.$queryRaw<Array<{ MaBN: string; Tuoi: number }>>`
+      SELECT "MaBN", "Tuoi" FROM "V_BENH_NHAN"
+    `;
+    const map = new Map<string, number>();
+    for (const r of rows) {
+      map.set(r.MaBN, Number(r.Tuoi));
+    }
+    return map;
+  }
 
-    return this.prisma.$transaction(async (tx) => {
-      // Check existing patient with CCCD or SoBHYT if provided
-      if (dto.cccd) {
-        const exist = await tx.benhNhan.findUnique({ where: { CCCD: dto.cccd } });
-        if (exist) {
-          throw new BadRequestException(`Bệnh nhân với CCCD ${dto.cccd} đã tồn tại trong hệ thống (Mã: ${exist.MaBN})`);
-        }
-      }
+  private serializePatient(bn: any, ageMap: Map<string, number>) {
+    return {
+      MaBN: bn.MaBN,
+      HoTen: bn.HoTen,
+      NgaySinh: formatDateOnly(bn.NgaySinh),
+      GioiTinh: bn.GioiTinh,
+      CCCD: bn.CCCD,
+      SDT: bn.SDT,
+      DiaChi_Duong: bn.DiaChi_Duong,
+      DiaChi_Phuong: bn.DiaChi_Phuong,
+      DiaChi_Quan: bn.DiaChi_Quan,
+      NhomMau: bn.NhomMau,
+      Tuoi: ageMap.get(bn.MaBN) ?? 0,
+      ...(bn.theBHYTs
+        ? {
+            theBHYTs: bn.theBHYTs.map((t: any) => ({
+              MaTheBHYT: t.MaTheBHYT,
+              MaBN: t.MaBN,
+              MucHuong: Number(t.MucHuong),
+              NgayBatDau: formatDateOnly(t.NgayBatDau),
+              NgayHetHan: formatDateOnly(t.NgayHetHan),
+            })),
+          }
+        : {}),
+      ...(bn.dotNoiTrus
+        ? {
+            dotNoiTrus: bn.dotNoiTrus.map((d: any) => ({
+              ...d,
+              NgayNhapVien: formatDateOnly(d.NgayNhapVien),
+              NgayRaVien: formatDateOnly(d.NgayRaVien),
+            })),
+          }
+        : {}),
+      ...(bn.luotKhams ? { luotKhams: bn.luotKhams } : {}),
+    };
+  }
 
-      if (dto.soBHYT) {
-        const exist = await tx.benhNhan.findUnique({ where: { SoBHYT: dto.soBHYT } });
-        if (exist) {
-          throw new BadRequestException(`Bệnh nhân với số BHYT ${dto.soBHYT} đã tồn tại trong hệ thống`);
-        }
-      }
+  // BR-V2-09: Tạo hồ sơ BENH_NHAN, KHÔNG tạo BN_NGOAI_TRU
+  async createPatient(dto: CreatePatientDto) {
+    const maBN = dto.maBN || `BN_${Date.now().toString().slice(-8)}`;
 
-      const benhNhan = await tx.benhNhan.create({
-        data: {
-          MaBN: maBN,
-          HoTen: dto.hoTen,
-          NgaySinh: new Date(dto.ngaySinh),
-          GioiTinh: dto.gioiTinh,
-          CCCD: dto.cccd || null,
-          SoDienThoai: dto.soDienThoai || null,
-          SoBHYT: dto.soBHYT || null,
-          MucHuongBHYT: dto.mucHuongBHYT || null,
-          DiaChi: dto.diaChi,
-          NhomMau: dto.nhomMau || null,
-          CoNgoaiTru: dto.isNgoaiTru ?? true,
-          CoNoiTru: false,
-        },
-      });
-
-      if (dto.isNgoaiTru ?? true) {
-        await tx.bnNgoaiTru.create({
-          data: {
-            MaBN: maBN,
-            SoSoKhamBenh: `SO_${maBN}`,
-            NgayDangKyDau: new Date(),
-            TinhTrangTheoDoi: 'Hồ sơ khám ngoại trú mới tạo',
-          },
-        });
-      }
-
-      return tx.benhNhan.findUnique({
-        where: { MaBN: maBN },
-        include: {
-          bnNgoaiTru: true,
-          bnNoiTru: true,
-        },
-      });
+    const created = await this.prisma.benhNhan.create({
+      data: {
+        MaBN: maBN,
+        HoTen: dto.hoTen,
+        NgaySinh: parseDateOnlyUtc(dto.ngaySinh),
+        GioiTinh: dto.gioiTinh,
+        CCCD: dto.cccd,
+        SDT: dto.sdt,
+        DiaChi_Duong: dto.diaChiDuong,
+        DiaChi_Phuong: dto.diaChiPhuong,
+        DiaChi_Quan: dto.diaChiQuan,
+        NhomMau: dto.nhomMau,
+      },
+      include: { theBHYTs: true },
     });
+
+    const ageMap = await this.getAgeMap();
+    return this.serializePatient(created, ageMap);
   }
 
   async lookup(query: string) {
-    if (!query) {
-      throw new BadRequestException('Vui lòng cung cấp MaBN, CCCD hoặc SoBHYT để tra cứu');
+    const q = (query || '').trim();
+    if (!q) {
+      throw new BadRequestException({
+        ruleCode: 'VALIDATION_ERROR',
+        message: 'Vui lòng cung cấp từ khóa tra cứu q',
+      });
     }
 
-    const patient = await this.prisma.benhNhan.findFirst({
+    const patients = await this.prisma.benhNhan.findMany({
       where: {
         OR: [
-          { MaBN: query },
-          { CCCD: query },
-          { SoBHYT: query },
-          { SoDienThoai: query },
+          { MaBN: { equals: q, mode: 'insensitive' } },
+          { CCCD: { equals: q } },
+          { SDT: { equals: q } },
+          { HoTen: { contains: q, mode: 'insensitive' } },
+          { theBHYTs: { some: { MaTheBHYT: { equals: q, mode: 'insensitive' } } } },
         ],
       },
       include: {
-        bnNgoaiTru: true,
-        bnNoiTru: {
-          include: {
-            bacSiTheoDoi: {
-              include: {
-                nhanVien: true,
-              },
-            },
-            phanGiuongs: {
-              include: {
-                giuongBenh: {
-                  include: {
-                    phong: true,
-                  },
-                },
-              },
-            },
-          },
-        },
+        theBHYTs: { orderBy: { NgayHetHan: 'desc' } },
+        dotNoiTrus: { orderBy: { NgayNhapVien: 'desc' } },
         luotKhams: {
-          orderBy: { ThoiGianKham: 'desc' },
-          include: {
-            bacSi: {
-              include: {
-                nhanVien: true,
-              },
-            },
-            phongKham: true,
-            donThuoc: {
-              include: {
-                ctDonThuocs: {
-                  include: {
-                    thuoc: true,
-                  },
-                },
-              },
-            },
-            suDungDvs: {
-              include: {
-                dichVu: true,
-              },
-            },
-            hoaDon: true,
-          },
+          orderBy: { NgayGioKham: 'desc' },
+          include: { bacSi: { include: { nhanVien: true } } },
         },
       },
     });
 
-    if (!patient) {
-      throw new NotFoundException(`Không tìm thấy bệnh nhân khớp với từ khóa: ${query}`);
-    }
-
-    return patient;
+    const ageMap = await this.getAgeMap();
+    return patients.map((p) => this.serializePatient(p, ageMap));
   }
 
   async getAllPatients(page = 1, limit = 20) {
-    const skip = (page - 1) * limit;
-    const [data, total] = await Promise.all([
+    const safePage = Math.max(1, page || 1);
+    const safeLimit = Math.min(100, Math.max(1, limit || 20));
+    const skip = (safePage - 1) * safeLimit;
+
+    const [total, data] = await Promise.all([
+      this.prisma.benhNhan.count(),
       this.prisma.benhNhan.findMany({
         skip,
-        take: limit,
-        orderBy: { MaBN: 'desc' },
-        include: {
-          bnNgoaiTru: true,
-          bnNoiTru: true,
-        },
+        take: safeLimit,
+        include: { theBHYTs: true },
+        orderBy: { MaBN: 'asc' },
       }),
-      this.prisma.benhNhan.count(),
     ]);
 
+    const ageMap = await this.getAgeMap();
     return {
-      data,
       total,
-      page,
-      totalPages: Math.ceil(total / limit),
+      page: safePage,
+      limit: safeLimit,
+      data: data.map((p) => this.serializePatient(p, ageMap)),
     };
+  }
+
+  // BR-V2-06: THE_BHYT (MucHuong trong [0, 1], NgayHetHan >= NgayBatDau)
+  async createInsuranceCard(maBN: string, dto: CreateInsuranceCardDto) {
+    const patient = await this.prisma.benhNhan.findUnique({ where: { MaBN: maBN } });
+    if (!patient) {
+      throw new NotFoundException({
+        ruleCode: 'NOT_FOUND',
+        message: `Bệnh nhân ${maBN} không tồn tại`,
+      });
+    }
+
+    const start = parseDateOnlyUtc(dto.ngayBatDau);
+    const end = parseDateOnlyUtc(dto.ngayHetHan);
+
+    if (end < start) {
+      throw new BadRequestException({
+        ruleCode: 'BR-V2-06',
+        message: 'Ngày hết hạn thẻ BHYT phải >= ngày bắt đầu (BR-V2-06)',
+      });
+    }
+
+    if (dto.mucHuong < 0 || dto.mucHuong > 1) {
+      throw new BadRequestException({
+        ruleCode: 'BR-V2-06',
+        message: 'Mức hưởng BHYT phải nằm trong đoạn [0, 1] (BR-V2-06)',
+      });
+    }
+
+    const created = await this.prisma.theBHYT.create({
+      data: {
+        MaTheBHYT: dto.maTheBHYT,
+        MaBN: maBN,
+        MucHuong: dto.mucHuong,
+        NgayBatDau: start,
+        NgayHetHan: end,
+      },
+    });
+
+    return {
+      MaTheBHYT: created.MaTheBHYT,
+      MaBN: created.MaBN,
+      MucHuong: Number(created.MucHuong),
+      NgayBatDau: formatDateOnly(created.NgayBatDau),
+      NgayHetHan: formatDateOnly(created.NgayHetHan),
+    };
+  }
+
+  async getInsuranceCards(maBN: string, validAt?: string) {
+    const patient = await this.prisma.benhNhan.findUnique({ where: { MaBN: maBN } });
+    if (!patient) {
+      throw new NotFoundException({
+        ruleCode: 'NOT_FOUND',
+        message: `Bệnh nhân ${maBN} không tồn tại`,
+      });
+    }
+
+    let where: any = { MaBN: maBN };
+    if (validAt) {
+      let targetDate: Date;
+      try {
+        targetDate = parseDateOnlyUtc(validAt);
+      } catch {
+        throw new BadRequestException({
+          ruleCode: 'VALIDATION_ERROR',
+          message: `Định dạng validAt không hợp lệ (cần YYYY-MM-DD): ${validAt}`,
+        });
+      }
+      where = {
+        MaBN: maBN,
+        NgayBatDau: { lte: targetDate },
+        NgayHetHan: { gte: targetDate },
+      };
+    }
+
+    const cards = await this.prisma.theBHYT.findMany({
+      where,
+      orderBy: { NgayHetHan: 'desc' },
+    });
+
+    return cards.map((c) => ({
+      MaTheBHYT: c.MaTheBHYT,
+      MaBN: c.MaBN,
+      MucHuong: Number(c.MucHuong),
+      NgayBatDau: formatDateOnly(c.NgayBatDau),
+      NgayHetHan: formatDateOnly(c.NgayHetHan),
+    }));
   }
 }
