@@ -1,655 +1,527 @@
 // ============================================================================
-// HỆ THỐNG QUẢN LÝ BỆNH VIỆN (QLBV) - FRONTEND TYPES (MÔ HÌNH BCNF VÀ API DTO)
+// ENUMS & MIỀN GIÁ TRỊ CHUẨN v2 (18 BẢNG · 13 NHÓM QUY TẮC · API_Contract_v2)
 // ============================================================================
 
-export enum LoaiPhongEnum {
-  KHAM = 'KHAM',
-  NOI_TRU = 'NOI_TRU',
-  CAP_CUU = 'CAP_CUU',
-  XET_NGHIEM = 'XET_NGHIEM',
-}
-
-export enum LoaiGiuongEnum {
-  TIEU_CHUAN = 'TIEU_CHUAN',
-  VIP = 'VIP',
-  CAP_CUU = 'CAP_CUU',
-  HOI_SUC = 'HOI_SUC',
-}
-
-export enum TrangThaiGiuongEnum {
-  TRONG = 'TRONG',
-  DANG_SU_DUNG = 'DANG_SU_DUNG',
-  BAO_TRI = 'BAO_TRI',
-}
-
-export enum LoaiNVEnum {
-  BAC_SI = 'BAC_SI',
-  DIEU_DUONG = 'DIEU_DUONG',
-  HANH_CHINH = 'HANH_CHINH',
-}
-
 export enum GioiTinhEnum {
-  NAM = 'NAM',
-  NU = 'NU',
-  KHAC = 'KHAC',
-  CHUA_RO = 'CHUA_RO',
-}
-
-export enum NhomMauEnum {
-  A = 'A',
-  B = 'B',
-  AB = 'AB',
-  O = 'O',
-  CHUA_RO = 'CHUA_RO',
-}
-
-export enum HuongXuTriEnum {
-  KE_DON_VE = 'KE_DON_VE',
-  NHAP_VIEN = 'NHAP_VIEN',
-  CHUYEN_VIEN = 'CHUYEN_VIEN',
-}
-
-export enum TrangThaiPhatThuocEnum {
-  CHUA_PHAT = 'CHUA_PHAT',
-  DA_PHAT = 'DA_PHAT',
-  DA_HUY = 'DA_HUY',
-}
-
-export enum LoaiDichVuEnum {
-  XET_NGHIEM = 'XET_NGHIEM',
-  CDHA = 'CDHA',
-  THU_THUAT = 'THU_THUAT',
-  KHAM = 'KHAM',
-}
-
-export enum PhuongThucTTEnum {
-  TIEN_MAT = 'TIEN_MAT',
-  CHUYEN_KHOAN = 'CHUYEN_KHOAN',
-  THE = 'THE',
-}
-
-export enum TrangThaiTTEnum {
-  CHUA_THANH_TOAN = 'CHUA_THANH_TOAN',
-  DA_THANH_TOAN = 'DA_THANH_TOAN',
-}
-
-export enum CaTrucEnum {
-  SANG = 'SANG',
-  CHIEU = 'CHIEU',
-  TOI = 'TOI',
-  DEM = 'DEM',
-}
-
-export enum TrangThaiDiemDanhEnum {
-  CHUA_DIEM_DANH = 'CHUA_DIEM_DANH',
-  CO_MAT = 'CO_MAT',
-  VANG_MAT = 'VANG_MAT',
-  VANG = 'VANG',
-  DI_TRE = 'DI_TRE',
+  NAM = "NAM",
+  NU = "NU",
+  KHAC = "KHAC",
 }
 
 export enum RoleEnum {
-  ADMIN = 'ADMIN',
-  BAC_SI = 'BAC_SI',
-  DIEU_DUONG = 'DIEU_DUONG',
-  NV_HANH_CHINH = 'NV_HANH_CHINH',
-  THU_NGAN = 'THU_NGAN',
-  DUOC_SI = 'DUOC_SI',
-  QUAN_TRI = 'QUAN_TRI',
+  ADMIN = "ADMIN",
+  BAC_SI = "BAC_SI",
+  DIEU_DUONG = "DIEU_DUONG",
+  KY_THUAT_VIEN = "KY_THUAT_VIEN",
+  TIEP_NHAN = "TIEP_NHAN",
+  THU_NGAN = "THU_NGAN",
 }
 
-export enum LoaiTiepNhanEnum {
-  DUNG_TUYEN = 'DUNG_TUYEN',
-  TRAI_TUYEN = 'TRAI_TUYEN',
-  CAP_CUU = 'CAP_CUU',
-  KHONG_BHYT = 'KHONG_BHYT',
+// BR-V2-11: Chỉ phản ánh tình trạng khai thác; có người nằm được suy diễn từ PHAN_GIUONG theo ngày
+export enum TrangThaiGiuongEnum {
+  SAN_SANG = "SAN_SANG",
+  BAO_TRI = "BAO_TRI",
+  NGUNG_SU_DUNG = "NGUNG_SU_DUNG",
 }
 
 export enum TrangThaiKhamEnum {
-  CHO_KHAM = 'CHO_KHAM',
-  DANG_KHAM = 'DANG_KHAM',
-  HOAN_THANH = 'HOAN_THANH',
-  NHAP_VIEN = 'NHAP_VIEN',
-  CHUYEN_VIEN = 'CHUYEN_VIEN',
-}
-
-export enum TrangThaiDonThuocEnum {
-  CHUA_PHAT = 'CHUA_PHAT',
-  DA_PHAT = 'DA_PHAT',
-  DA_HUY = 'DA_HUY',
-}
-
-export enum TrangThaiDichVuEnum {
-  CHO_THUC_HIEN = 'CHO_THUC_HIEN',
-  DA_CO_KET_QUA = 'DA_CO_KET_QUA',
-  DA_HUY = 'DA_HUY',
+  CHO_KHAM = "CHO_KHAM",
+  DANG_KHAM = "DANG_KHAM",
+  CHO_XET_NGHIEM = "CHO_XET_NGHIEM",
+  HOAN_TAT = "HOAN_TAT",
+  HUY = "HUY",
 }
 
 export enum HinhThucTTEnum {
-  TIEN_MAT = 'TIEN_MAT',
-  CHUYEN_KHOAN = 'CHUYEN_KHOAN',
-  THE_ATM = 'THE_ATM',
-  DONG_CHI_TRA = 'DONG_CHI_TRA',
+  TIEN_MAT = "TIEN_MAT",
+  CHUYEN_KHOAN = "CHUYEN_KHOAN",
+  THE = "THE",
 }
 
-export enum TrangThaiHoaDonEnum {
-  CHUA_THANH_TOAN = 'CHUA_THANH_TOAN',
-  DA_THANH_TOAN = 'DA_THANH_TOAN',
-  DA_HUY = 'DA_HUY',
+export enum TrangThaiTTEnum {
+  CHUA_THANH_TOAN = "CHUA_THANH_TOAN",
+  DA_THANH_TOAN = "DA_THANH_TOAN",
+}
+
+export type LoaiChuyenMonFilter = "BAC_SI" | "DIEU_DUONG" | "KY_THUAT_VIEN" | "KHAC";
+
+// ============================================================================
+// GLOBAL ERROR CONTRACT (API_Contract_v2 Mục 4)
+// ============================================================================
+
+export interface ApiErrorResponse {
+  statusCode: number;
+  timestamp: string;
+  path: string;
+  ruleCode: string;
+  message: string | string[];
 }
 
 // ============================================================================
-// THỰC THỂ CƠ SỞ DỮ LIỆU BCNF
+// 18 THỰC THỂ LƯU TRỮ (103 CỘT) + 6 THUỘC TÍNH DẪN XUẤT (VIEW / QUERY)
 // ============================================================================
 
 export interface Khoa {
   MaKhoa: string;
   TenKhoa: string;
-  ViTri: string | null;
-  SoDienThoaiKhoa: string | null;
-  MaTruongKhoa: string;
-  NgayBoNhiem: string;
-  truongKhoa?: BacSi;
+  DiaDiem: string;
+  SoDienThoai: string;
+  phongs?: Phong[];
   _count?: {
-    phongs: number;
     nhanViens: number;
+    phongs: number;
   };
 }
 
 export interface Phong {
   MaPhong: string;
-  SoPhong: string;
-  LoaiPhong: LoaiPhongEnum;
-  Tang: number | null;
-  SucChuaToiDa: number;
   MaKhoa: string;
-  khoa?: { TenKhoa: string };
-  soGiuongConTrong?: number;
-  tongSoGiuong?: number;
+  TenPhong: string;
+  LoaiPhong: string;
+  ViTri: string;
+  khoa?: Khoa;
   giuongBenhs?: GiuongBenh[];
 }
 
 export interface GiuongBenh {
   MaGiuong: string;
-  SoGiuong: string;
-  LoaiGiuong: LoaiGiuongEnum;
-  DonGiaNgay: string | number;
-  TrangThaiGiuong: TrangThaiGiuongEnum;
   MaPhong: string;
-  phong?: Phong & { khoa?: { TenKhoa: string } };
-  phanGiuongs?: PhanGiuong[];
-  // alias for convenience
-  TrangThai?: TrangThaiGiuongEnum;
-}
-
-export interface NhanVien {
-  MaNV: string;
-  HoTen: string;
-  NgaySinh: string;
-  GioiTinh: GioiTinhEnum;
-  CCCD: string;
-  SoDienThoai: string;
-  Email: string | null;
-  DiaChi: string | null;
-  NgayVaoLam: string;
-  HeSoLuong: string | number;
-  LoaiNV: LoaiNVEnum;
-  MaKhoa: string;
-  khoa?: { TenKhoa: string };
-  bacSi?: BacSi | null;
-  dieuDuong?: DieuDuong | null;
-  nvHanhChinh?: NvHanhChinh | null;
+  SoGiuong: string;
+  LoaiGiuong: string;
+  TrangThai: TrangThaiGiuongEnum | string;
+  DonGiaNgay: number | string;
+  phong?: Phong;
+  date?: string;
+  // Thuộc tính suy diễn tại ngày tra cứu D từ PHAN_GIUONG (không lưu cột):
+  dangCoNguoiNam?: boolean;
+  phanGiuongHienTai?: PhanGiuong | null;
 }
 
 export interface BacSi {
   MaNV: string;
-  HocVi: string | null;
-  ChuyenKhoa: string | null;
-  SoCCHN: string;
-  PhuCapKham: string | number;
+  ChuyenKhoa: string;
+  TrinhDoHocVan: string;
+  SoChungChiHanhNghe: string;
   nhanVien?: NhanVien;
-  NhanVien?: NhanVien;
 }
 
 export interface DieuDuong {
   MaNV: string;
-  TrinhDoChuyenMon: string | null;
-  SoCCHN_DD: string;
-  PhuCapTruc: string | number;
+  CapBac: string;
+  ChungChiHanhNghe: string;
   nhanVien?: NhanVien;
-  NhanVien?: NhanVien;
 }
 
-export interface NvHanhChinh {
+export interface KyThuatVien {
   MaNV: string;
-  BoPhanPhuTrach: string | null;
-  ChucVuHC: string | null;
-  BacKyThuat: number | null;
+  ChuyenMonXetNghiem: string;
+  BTD_ThietBiPhuTrach: string;
   nhanVien?: NhanVien;
-  NhanVien?: NhanVien;
+}
+
+export interface NhanVien {
+  MaNV: string;
+  MaKhoa: string;
+  HoTen: string;
+  NgaySinh: string;
+  GioiTinh: string;
+  CCCD: string;
+  DiaChi: string;
+  SoDienThoai: string;
+  NgayVaoLam: string;
+  SoNamCongTac?: number; // Dẫn xuất (V_NHAN_VIEN)
+  role?: RoleEnum;
+  khoa?: Khoa;
+  bacSi?: BacSi | null;
+  dieuDuong?: DieuDuong | null;
+  kyThuatVien?: KyThuatVien | null;
+}
+
+export interface TheBHYT {
+  MaTheBHYT: string;
+  MaBN: string;
+  MucHuong: number | string; // DECIMAL(5,4) trong [0, 1]
+  NgayBatDau: string;
+  NgayHetHan: string;
 }
 
 export interface BenhNhan {
   MaBN: string;
   HoTen: string;
   NgaySinh: string;
-  GioiTinh: GioiTinhEnum;
-  CCCD: string | null;
-  SoDienThoai: string | null;
-  SoBHYT: string | null;
-  BHYT?: string | null;
-  MucHuongBHYT: number | null;
-  DiaChi: string | null;
-  NhomMau: NhomMauEnum | null;
-  CoNgoaiTru: boolean;
-  CoNoiTru: boolean;
-  bnNgoaiTru?: BnNgoaiTru | null;
-  bnNoiTru?: BnNoiTru | null;
+  GioiTinh: string;
+  CCCD: string;
+  SDT: string;
+  DiaChi_Duong: string;
+  DiaChi_Phuong: string;
+  DiaChi_Quan: string;
+  NhomMau: string;
+  Tuoi?: number; // Dẫn xuất (V_BENH_NHAN)
+  theBHYTs?: TheBHYT[];
+  dotNoiTrus?: DotNoiTru[];
   luotKhams?: LuotKham[];
 }
 
-export interface BnNgoaiTru {
+export interface DotNoiTru {
+  MaDotNT: string;
   MaBN: string;
-  SoSoKhamBenh: string;
-  NgayDangKyDau: string;
-  TinhTrangTheoDoi: string | null;
-}
-
-export interface BnNoiTru {
-  MaBN: string;
-  SoHoSoBenhAn: string;
   NgayNhapVien: string;
-  NgayXuatVienDuKien: string | null;
-  ChanDoanNhapVien: string;
+  NguoiNhaLienHe: string;
   TinhTrangNhapVien: string;
-  MaBSTheoDoi: string;
+  NgayRaVien: string | null;
   benhNhan?: BenhNhan;
-  bacSiTheoDoi?: BacSi & { nhanVien?: NhanVien };
   phanGiuongs?: PhanGiuong[];
+  luotKhams?: LuotKham[];
 }
 
-export interface LuotKham {
-  MaLuotKham: string;
-  MaLK?: string;
-  ThoiGianKham: string;
-  TrieuChung: string;
-  HuyetAp: string | null;
-  NhietDo: string | number | null;
-  Mach: number | null;
-  ChanDoanSoBo: string;
-  ChanDoanXacDinh: string | null;
-  ChanDoan?: string | null;
-  MaICD?: string | null;
-  HuongXuTri: HuongXuTriEnum;
-  TrangThai?: string;
-  HuongDieuTri?: string;
-  NgayTaiKham: string | null;
-  MaBN: string;
-  MaBS: string;
-  MaPhongKham: string;
-  MaPhong?: string;
-  benhNhan?: BenhNhan;
-  bacSi?: BacSi & { nhanVien?: NhanVien };
-  phongKham?: Phong;
-  donThuoc?: DonThuoc | null;
-  suDungDvs?: SuDungDv[];
-  hoaDon?: HoaDon | null;
+export interface PhanGiuong {
+  MaDotNT: string;
+  MaGiuong: string;
+  TuNgay: string;
+  DenNgay: string | null;
+  dotNoiTru?: DotNoiTru;
+  giuongBenh?: GiuongBenh;
 }
 
 export interface Thuoc {
   MaThuoc: string;
   TenThuoc: string;
-  HoatChatChinh: string | null;
+  HoatChat: string;
+  HamLuong: string;
   DonViTinh: string;
-  DonGiaHienHanh: string | number;
-  DonGia?: string | number;
-  SoLuongTon: number;
-  HamLuong?: string | null;
-  NuocSanXuat: string | null;
-  HanSuDung: string;
+  DonGia: number | string;
+  HuongDanSD: string;
 }
 
-export interface CtDonThuoc {
-  MaDon: string;
+export interface ChiTietDonThuoc {
+  MaDonThuoc: string;
   MaThuoc: string;
   SoLuong: number;
-  LieuDung: string | null;
-  CachDung: string | null;
-  SoNgayUong: number;
-  DonGiaBan: string | number;
+  LieuDung: string;
+  DonGiaKe: number | string; // Giá lịch sử snapshot tại thời điểm kê đơn
   thuoc?: Thuoc;
-  Thuoc?: Thuoc;
 }
 
 export interface DonThuoc {
-  MaDon: string;
-  MaDT?: string;
-  NgayGioKe: string;
-  NgayKe?: string;
-  LoiDanBacSi: string | null;
-  GhiChu?: string | null;
-  TrangThaiPhatThuoc: TrangThaiPhatThuocEnum;
-  TrangThai?: TrangThaiPhatThuocEnum;
+  MaDonThuoc: string;
   MaLuotKham: string;
-  MaLK?: string;
-  MaBS?: string;
-  ctDonThuocs?: CtDonThuoc[];
-  ChiTiet?: CtDonThuoc[];
+  NgayKeDon: string;
+  LoiDanCuaBacSi: string;
+  TongTienThuoc?: number; // Dẫn xuất (V_DON_THUOC)
+  chiTietDonThuocs?: ChiTietDonThuoc[];
 }
 
-export interface DichVu {
-  MaDV: string;
-  TenDV: string;
-  LoaiDichVu: LoaiDichVuEnum;
-  DonViTinhDV: string;
-  DonGiaHienHanh: string | number;
-  DonGia?: string | number;
-  ThuocBHYTChiTra: boolean;
+export interface LoaiXetNghiem {
+  MaLoaiXN: string;
+  TenXN: string;
+  ChiTieuBinhThuong: string;
+  DonGia: number | string;
 }
 
-export interface SuDungDv {
+export interface PhieuXetNghiem {
+  MaPhieuXN: string;
   MaLuotKham: string;
-  MaLK?: string;
-  MaDV: string;
-  MaSD?: string;
-  ThoiGianChiDinh: string;
-  ThoiGian?: string;
-  SoLuong: number;
-  KetQuaCLS: string | null;
-  KetQua?: string | null;
-  DonGiaDV: string | number;
-  MaKTVThucHien: string | null;
-  BacSiChiDinh?: string;
-  GhiChu?: string;
-  TrangThai?: string;
-  dichVu?: DichVu;
-  ktvThucHien?: DieuDuong & { nhanVien?: NhanVien };
+  MaLoaiXN: string;
+  MaNV_KTV: string | null;
+  NgayGioXN: string | null;
+  NgayGioTraKQ: string | null;
+  KetQua: string | null;
+  DanhGia: string | null;
+  DonGiaXN: number | string; // Giá lịch sử snapshot tại thời điểm chỉ định
+  loaiXetNghiem?: LoaiXetNghiem;
+  kyThuatVien?: KyThuatVien | null;
   luotKham?: LuotKham;
 }
 
-export interface PhanGiuong {
-  MaBN: string;
-  MaGiuong: string;
-  NgayBatDau: string;
-  NgayKetThuc: string | null;
-  GiaGiuongNgay: string | number;
-  GhiChuChuyenGiuong: string | null;
-  giuongBenh?: GiuongBenh;
-  bnNoiTru?: BnNoiTru;
-}
-
-export interface HoaDon {
-  MaHD: string;
+export interface VienPhi {
+  MaHoaDon: string;
+  MaLuotKham: string;
+  MaTheBHYT?: string | null;
+  MaNV_ThuNgan: string;
   NgayLap: string;
-  TongTienGoc: string | number;
-  TienBHYTChiTra: string | number;
-  TienBenhNhanTra: string | number;
-  SoTien?: string | number;
-  PhuongThucTT: PhuongThucTTEnum;
-  HinhThucTT?: PhuongThucTTEnum | HinhThucTTEnum;
-  TrangThaiTT: TrangThaiTTEnum;
-  TrangThai?: TrangThaiTTEnum | TrangThaiHoaDonEnum;
-  MaLuotKham: string;
-  MaLK?: string;
-  MaNVThuNgan: string;
-  NhanVienThu?: string;
+  HinhThucThanhToan: HinhThucTTEnum | string;
+  TruBHYT: number | string;
+  TrangThaiThanhToan: TrangThaiTTEnum | string;
+  TongTienThuoc?: number; // Dẫn xuất (V_VIEN_PHI)
+  TongTienDichVu?: number; // Dẫn xuất (V_VIEN_PHI)
+  ThucThu?: number; // Dẫn xuất (V_VIEN_PHI)
+  theBHYT?: TheBHYT | null;
+  nhanVienThuNgan?: NhanVien | null;
   luotKham?: LuotKham;
-  thuNgan?: NvHanhChinh & { nhanVien?: NhanVien };
 }
 
-export interface LichTruc {
-  MaNV: string;
-  NgayTruc: string;
-  CaTruc: CaTrucEnum;
-  MaPhong: string;
-  MaKhoa?: string;
-  VaiTroTruc: string | null;
-  GhiChu?: string | null;
-  TrangThaiDiemDanh: TrangThaiDiemDanhEnum;
-  nhanVien?: NhanVien;
-  phong?: Phong;
+export interface LuotKham {
+  MaLuotKham: string;
+  MaBN: string;
+  MaNV_BacSi: string;
+  NgayGioKham: string;
+  LyDoKham: string;
+  TrieuChung: string;
+  ChanDoanSoBo: string;
+  TrangThai: TrangThaiKhamEnum | string;
+  MaDotNT: string | null;
+  benhNhan?: BenhNhan;
+  bacSi?: BacSi;
+  dotNoiTru?: DotNoiTru | null;
+  donThuoc?: DonThuoc | null;
+  phieuXetNghiems?: PhieuXetNghiem[];
+  vienPhi?: VienPhi | null;
 }
 
 // ============================================================================
-// DTO REQUESTS VÀ SPECIAL RESPONSES
+// AUTH, BILLING PREVIEW & REPORT PAYLOADS
+// ============================================================================
+
+export interface AuthUserPayload {
+  maNV: string;
+  hoTen: string;
+  maKhoa: string;
+  soDienThoai: string;
+  MaNV: string;
+  MaKhoa: string;
+  HoTen: string;
+  NgaySinh: string;
+  GioiTinh: string;
+  CCCD: string;
+  DiaChi: string;
+  SoDienThoai: string;
+  NgayVaoLam: string;
+  SoNamCongTac: number;
+  role: RoleEnum;
+  tenKhoa: string;
+  bacSi?: BacSi | null;
+  dieuDuong?: DieuDuong | null;
+  kyThuatVien?: KyThuatVien | null;
+}
+
+export interface AuthLoginResponse {
+  access_token: string;
+  user: AuthUserPayload;
+}
+
+export interface BillingPreviewResponse {
+  MaLuotKham: string;
+  MaBN: string;
+  NgayKham: string;
+  TongTienThuoc: number;
+  TongTienDichVu: number;
+  TongChiPhi: number;
+  theBHYTHopLe: TheBHYT[];
+  vienPhi: VienPhi | null;
+}
+
+export interface RevenueGroupSummary {
+  soHoaDon: number;
+  TongTienThuoc: number;
+  TongTienDichVu: number;
+  TruBHYT: number;
+  ThucThu: number;
+}
+
+export interface DashboardReportResponse {
+  date: string;
+  tongBenhNhan: number;
+  tongLuotKham: number;
+  soDotNoiTruDangMo: number;
+  congSuatGiuong: {
+    tongGiuong: number;
+    giuongSanSang: number;
+    giuongBaoTri: number;
+    giuongNgungSuDung: number;
+    giuongDangCoNguoiNam: number;
+    tyLeLapDay: number;
+  };
+  doanhThu: {
+    TongTienThuoc: number;
+    TongTienDichVu: number;
+    TruBHYT: number;
+    ThucThu: number;
+    daThanhToan: RevenueGroupSummary;
+    chuaThanhToan: RevenueGroupSummary;
+  };
+}
+
+// ============================================================================
+// REQUEST DTOs (camelCase chuẩn DTO NestJS v2)
 // ============================================================================
 
 export interface LoginRequestDto {
   username: string;
   password: string;
-  role?: RoleEnum;
 }
 
-export interface LoginResponseDto {
-  access_token: string;
-  user: {
-    maNV: string;
-    hoTen: string;
-    loaiNV: LoaiNVEnum;
-    role: RoleEnum;
-    maKhoa: string;
-    tenKhoa: string;
-    email: string | null;
-    soDienThoai: string;
+export interface CreateDepartmentDto {
+  maKhoa: string;
+  tenKhoa: string;
+  diaDiem: string;
+  soDienThoai: string;
+}
+
+export interface UpdateDepartmentDto {
+  tenKhoa?: string;
+  diaDiem?: string;
+  soDienThoai?: string;
+}
+
+export interface CreateRoomDto {
+  maPhong: string;
+  maKhoa: string;
+  tenPhong: string;
+  loaiPhong: string;
+  viTri: string;
+}
+
+export interface UpdateRoomDto {
+  maKhoa?: string;
+  tenPhong?: string;
+  loaiPhong?: string;
+  viTri?: string;
+}
+
+export interface UpdateBedStatusDto {
+  trangThai: TrangThaiGiuongEnum;
+  donGiaNgay?: number;
+}
+
+export interface CreateStaffDto {
+  maNV: string;
+  maKhoa: string;
+  hoTen: string;
+  ngaySinh: string;
+  gioiTinh: GioiTinhEnum | string;
+  cccd: string;
+  diaChi: string;
+  soDienThoai: string;
+  ngayVaoLam: string;
+  role?: RoleEnum;
+  password?: string;
+  bacSi?: {
+    chuyenKhoa: string;
+    trinhDoHocVan: string;
+    soChungChiHanhNghe: string;
+  };
+  dieuDuong?: {
+    capBac: string;
+    chungChiHanhNghe: string;
+  };
+  kyThuatVien?: {
+    chuyenMonXetNghiem: string;
+    btdThietBiPhuTrach: string;
   };
 }
 
-export interface ReceptionRequestDto {
+export interface CreatePatientDto {
   maBN?: string;
-  MaBN?: string;
-  hoTen?: string;
-  HoTen?: string;
-  ngaySinh?: string;
-  NgaySinh?: string;
-  gioiTinh?: GioiTinhEnum;
-  GioiTinh?: GioiTinhEnum;
-  cccd?: string;
-  CCCD?: string;
-  soDienThoai?: string;
-  SoDienThoai?: string;
-  soBHYT?: string;
-  BHYT?: string;
-  mucHuongBHYT?: number;
-  diaChi?: string;
-  DiaChi?: string;
-  nhomMau?: NhomMauEnum;
-  isNgoaiTru?: boolean;
-  MaKhoa?: string;
-  LyDoKham?: string;
-  LoaiTiepNhan?: LoaiTiepNhanEnum;
+  hoTen: string;
+  ngaySinh: string;
+  gioiTinh: GioiTinhEnum | string;
+  cccd: string;
+  sdt: string;
+  diaChiDuong: string;
+  diaChiPhuong: string;
+  diaChiQuan: string;
+  nhomMau: string;
+}
+
+export interface CreateInsuranceCardDto {
+  maTheBHYT: string;
+  mucHuong: number;
+  ngayBatDau: string;
+  ngayHetHan: string;
 }
 
 export interface CreateExaminationDto {
   maLuotKham?: string;
-  MaLK?: string;
-  maBN?: string;
-  MaBN?: string;
-  maBS?: string;
-  MaBS?: string;
-  maPhongKham?: string;
-  MaPhong?: string;
-  trieuChung?: string;
-  TrieuChung?: string;
-  huyetAp?: string;
-  HuyetAp?: string;
-  nhietDo?: number;
-  NhietDo?: number;
-  mach?: number;
-  Mach?: number;
-  chanDoanSoBo?: string;
-  huongXuTri?: HuongXuTriEnum;
-  ngayTaiKham?: string;
+  maBN: string;
+  maNV_BacSi: string;
+  ngayGioKham?: string;
+  lyDoKham: string;
+  trieuChung: string;
+  chanDoanSoBo: string;
+  trangThai?: TrangThaiKhamEnum;
+  maDotNT?: string | null;
 }
 
-export interface UpdateDiagnosisDto {
-  chanDoanXacDinh?: string;
-  ChanDoan?: string;
-  MaICD?: string;
-  huongXuTri?: HuongXuTriEnum;
-  TrangThai?: string;
-  HuongDieuTri?: string;
-  HuyetAp?: string;
-  Mach?: number;
-  NhietDo?: number;
-  ngayTaiKham?: string;
+export interface UpdateExaminationDto {
+  lyDoKham?: string;
+  trieuChung?: string;
+  chanDoanSoBo?: string;
+  trangThai?: TrangThaiKhamEnum;
+  maDotNT?: string | null;
 }
 
 export interface PrescriptionItemDto {
-  maThuoc?: string;
-  MaThuoc?: string;
-  soLuong?: number;
-  SoLuong?: number;
-  lieuDung?: string;
-  cachDung?: string;
-  CachDung?: string;
-  soNgayUong?: number;
+  maThuoc: string;
+  soLuong: number;
+  lieuDung: string;
 }
 
 export interface CreatePrescriptionDto {
-  maDon?: string;
-  maLuotKham?: string;
-  MaLK?: string;
-  MaBS?: string;
-  loiDanBacSi?: string;
-  GhiChu?: string;
+  maDonThuoc?: string;
+  maLuotKham: string;
+  ngayKeDon?: string;
+  loiDanCuaBacSi: string;
+  items: PrescriptionItemDto[];
+}
+
+export interface UpdatePrescriptionDto {
+  ngayKeDon?: string;
+  loiDanCuaBacSi?: string;
   items?: PrescriptionItemDto[];
-  ChiTiet?: PrescriptionItemDto[];
 }
 
-export interface AssignServiceDto {
-  maLuotKham?: string;
-  MaLK?: string;
-  maDV?: string;
-  MaDV?: string;
-  soLuong?: number;
-  BacSiChiDinh?: string;
-  GhiChu?: string;
+export interface CreateLabRequestDto {
+  maPhieuXN?: string;
+  maLuotKham: string;
+  maLoaiXN: string;
 }
 
-export interface UpdateServiceResultDto {
-  id?: string;
-  maLuotKham?: string;
-  maDV?: string;
-  thoiGianChiDinh?: string;
-  ketQuaCLS?: string;
-  KetQua?: string;
-  maKTVThucHien?: string;
-  NhanVienThucHien?: string;
+export interface StartLabRequestDto {
+  maNV_KTV?: string;
+  ngayGioXN?: string;
 }
 
-export interface AdmitPatientDto {
-  maBN?: string;
-  MaBN?: string;
-  soHoSoBenhAn?: string;
-  ngayXuatVienDuKien?: string;
-  chanDoanNhapVien?: string;
-  ChanDoanVaoVien?: string;
-  tinhTrangNhapVien?: string;
-  maBSTheoDoi?: string;
-  KhoaDieuTri?: string;
-  BacSiDieuTri?: string;
+export interface CompleteLabRequestDto {
+  maNV_KTV?: string;
+  ngayGioXN?: string;
+  ngayGioTraKQ?: string;
+  ketQua: string;
+  danhGia?: string | null;
 }
 
-export interface AssignBedDto {
-  maBN?: string;
-  MaBN?: string;
-  maGiuong?: string;
-  MaGiuong?: string;
-  ghiChu?: string;
+export interface CreateAdmissionDto {
+  maDotNT?: string;
+  maBN: string;
+  ngayNhapVien: string;
+  nguoiNhaLienHe: string;
+  tinhTrangNhapVien: string;
+}
+
+export interface CreateBedAllocationDto {
+  maDotNT: string;
+  maGiuong: string;
+  tuNgay: string;
+  denNgay?: string | null;
 }
 
 export interface TransferBedDto {
-  maBN?: string;
-  MaBN?: string;
-  maGiuongMoi?: string;
-  GiuongMoi?: string;
-  GiuongCu?: string;
-  lyDoChuyen?: string;
-  LyDoChuyen?: string;
+  maDotNT: string;
+  maGiuongMoi: string;
+  ngayChuyen: string;
 }
 
-export interface FeeCalculationResponse {
-  maLuotKham?: string;
-  examId?: string;
-  patientName?: string;
-  bhytNumber?: string | null;
-  coverageRate?: number;
-  examFee?: number;
-  medicineFee?: number;
-  serviceFee?: number;
-  totalCost?: number;
-  bhytPaid?: number;
-  patientPaid?: number;
-  benhNhan?: {
-    maBN: string;
-    hoTen: string;
-    soBHYT: string | null;
-    mucHuongBHYT: number;
-  };
-  chiTiet?: {
-    tienKham: number;
-    tienThuoc: number;
-    tienDichVu: number;
-    tienGiuong: number;
-  };
-  tongTienGoc?: number;
-  tienBHYTChiTra?: number;
-  tienBenhNhanTra?: number;
+export interface DischargeAdmissionDto {
+  ngayRaVien: string;
 }
 
 export interface CreateInvoiceDto {
-  maHD?: string;
-  maLuotKham?: string;
-  MaLK?: string;
-  maNVThuNgan?: string;
-  NhanVienThu?: string;
-  phuongThucTT?: PhuongThucTTEnum;
-  HinhThucTT?: HinhThucTTEnum | PhuongThucTTEnum;
+  maHoaDon?: string;
+  maLuotKham: string;
+  ngayLap?: string;
+  hinhThucThanhToan: HinhThucTTEnum;
+  maTheBHYT?: string | null;
 }
 
-export interface VietQrWebhookDto {
-  maHD?: string;
-  invoiceId?: string;
-  amount: number;
-  transactionId: string;
-  signature?: string;
-}
-
-export interface CreateDutyScheduleDto {
-  maNV?: string;
-  MaNV?: string;
-  ngayTruc?: string;
-  NgayTruc?: string;
-  caTruc?: CaTrucEnum;
-  CaTruc?: CaTrucEnum;
-  maPhong?: string;
-  MaKhoa?: string;
-  vaiTroTruc?: string;
-  GhiChu?: string;
-  trangThaiDiemDanh?: TrangThaiDiemDanhEnum;
-}
-
-export interface DashboardSummaryResponse {
-  totalRevenue?: number;
-  todayRevenue?: number;
-  totalExaminations?: number;
-  activeInpatients?: number;
-  bedOccupancy?: number | string;
-  roomStats?: any[];
-  overview?: {
-    totalPatients: number;
-    totalInpatients: number;
-    totalDoctors: number;
-    totalBeds: number;
-    occupiedBeds: number;
-    bedOccupancyRate: string;
-    totalExaminations: number;
-  };
-  revenue?: {
-    tongDoanhThu: number;
-    tongBHYTChiTra: number;
-    tongBenhNhanThanhToan: number;
-    soHoaDonDaThu: number;
-    soHoaDonChuaThu: number;
-  };
+export interface PayInvoiceDto {
+  hinhThucThanhToan?: HinhThucTTEnum;
 }

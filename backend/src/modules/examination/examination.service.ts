@@ -1,148 +1,253 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateExaminationDto } from './dto/create-examination.dto';
-import { UpdateDiagnosisDto } from './dto/update-diagnosis.dto';
+import { CreateExaminationDto, UpdateExaminationDto } from './dto/examination.dto';
+import { TrangThaiLuotKham } from '../../common/enums/role.enum';
+import { addUtcDays, formatDateOnly, parseDateOnlyUtc } from '../../common/utils/date.util';
 
 @Injectable()
 export class ExaminationService {
   constructor(private prisma: PrismaService) {}
 
+  private async validateDotNoiTruConstraint(
+    maDotNT: string,
+    maBN: string,
+    ngayGioKham: Date,
+  ) {
+    const dot = await this.prisma.dotNoiTru.findUnique({ where: { MaDotNT: maDotNT } });
+    if (!dot) {
+      throw new NotFoundException({
+        ruleCode: 'NOT_FOUND',
+        message: `Đợt nội trú ${maDotNT} không tồn tại`,
+      });
+    }
+
+    if (dot.MaBN !== maBN) {
+      throw new ConflictException({
+        ruleCode: 'BR-V2-04',
+        message: `Đợt nội trú ${maDotNT} thuộc bệnh nhân ${dot.MaBN}, không khớp bệnh nhân ${maBN} (FK11)`,
+      });
+    }
+
+    const startDay = parseDateOnlyUtc(dot.NgayNhapVien);
+    if (ngayGioKham < startDay) {
+      throw new BadRequestException({
+        ruleCode: 'BR-V2-04',
+        message: `NgayGioKham (${ngayGioKham.toISOString()}) phải >= đầu ngày NgayNhapVien (${formatDateOnly(startDay)})`,
+      });
+    }
+
+    if (dot.NgayRaVien) {
+      const endExclusive = addUtcDays(parseDateOnlyUtc(dot.NgayRaVien), 1);
+      if (ngayGioKham >= endExclusive) {
+        throw new BadRequestException({
+          ruleCode: 'BR-V2-04',
+          message: `NgayGioKham (${ngayGioKham.toISOString()}) phải < đầu ngày NgayRaVien + 1 (${formatDateOnly(endExclusive)})`,
+        });
+      }
+    }
+  }
+
   async createExamination(dto: CreateExaminationDto) {
-    const maLK = dto.maLuotKham || `LK${Date.now().toString().slice(-8)}`;
+    const [patient, doctor] = await Promise.all([
+      this.prisma.benhNhan.findUnique({ where: { MaBN: dto.maBN } }),
+      this.prisma.bacSi.findUnique({ where: { MaNV: dto.maNV_BacSi } }),
+    ]);
 
-    // Verify room is KHAM (C02/Business Rule)
-    const phong = await this.prisma.phong.findUnique({
-      where: { MaPhong: dto.maPhongKham },
-    });
-    if (!phong || phong.LoaiPhong !== 'KHAM') {
-      throw new BadRequestException(`Phòng khám ${dto.maPhongKham} không hợp lệ (Phải là phòng có loại KHAM)`);
+    if (!patient) {
+      throw new NotFoundException({
+        ruleCode: 'NOT_FOUND',
+        message: `Bệnh nhân ${dto.maBN} không tồn tại`,
+      });
+    }
+    if (!doctor) {
+      throw new NotFoundException({
+        ruleCode: 'NOT_FOUND',
+        message: `Bác sĩ ${dto.maNV_BacSi} không tồn tại`,
+      });
     }
 
-    // Verify Doctor is BAC_SI (C03)
-    const bacSi = await this.prisma.bacSi.findUnique({
-      where: { MaNV: dto.maBS },
-    });
-    if (!bacSi) {
-      throw new BadRequestException(`Bác sĩ ${dto.maBS} không tồn tại trong danh mục Bác sĩ điều trị`);
+    const ngayGioKham = dto.ngayGioKham ? new Date(dto.ngayGioKham) : new Date();
+    if (Number.isNaN(ngayGioKham.getTime())) {
+      throw new BadRequestException({
+        ruleCode: 'VALIDATION_ERROR',
+        message: 'NgayGioKham không hợp lệ',
+      });
     }
 
-    return this.prisma.luotKham.create({
+    if (dto.maDotNT) {
+      await this.validateDotNoiTruConstraint(dto.maDotNT, dto.maBN, ngayGioKham);
+    }
+
+    const maLuotKham = dto.maLuotKham || `LK_${Date.now().toString().slice(-8)}`;
+
+    const created = await this.prisma.luotKham.create({
       data: {
-        MaLuotKham: maLK,
-        ThoiGianKham: new Date(),
-        TrieuChung: dto.trieuChung,
-        HuyetAp: dto.huyetAp || null,
-        NhietDo: dto.nhietDo || null,
-        Mach: dto.mach || null,
-        ChanDoanSoBo: dto.chanDoanSoBo,
-        HuongXuTri: dto.huongXuTri,
-        NgayTaiKham: dto.ngayTaiKham ? new Date(dto.ngayTaiKham) : null,
+        MaLuotKham: maLuotKham,
         MaBN: dto.maBN,
-        MaBS: dto.maBS,
-        MaPhongKham: dto.maPhongKham,
+        MaNV_BacSi: dto.maNV_BacSi,
+        NgayGioKham: ngayGioKham,
+        LyDoKham: dto.lyDoKham,
+        TrieuChung: dto.trieuChung,
+        ChanDoanSoBo: dto.chanDoanSoBo,
+        TrangThai: dto.trangThai ?? TrangThaiLuotKham.CHO_KHAM,
+        MaDotNT: dto.maDotNT ?? null,
       },
       include: {
         benhNhan: true,
-        bacSi: {
-          include: {
-            nhanVien: true,
-          },
-        },
-        phongKham: true,
+        bacSi: { include: { nhanVien: true } },
+        dotNoiTru: true,
       },
     });
+
+    return this.getExaminationById(created.MaLuotKham);
   }
 
-  async updateDiagnosis(id: string, dto: UpdateDiagnosisDto) {
-    const exam = await this.prisma.luotKham.findUnique({
-      where: { MaLuotKham: id },
+  async updateExamination(maLuotKham: string, dto: UpdateExaminationDto) {
+    const existing = await this.prisma.luotKham.findUnique({
+      where: { MaLuotKham: maLuotKham },
     });
-    if (!exam) {
-      throw new NotFoundException(`Lượt khám ${id} không tồn tại`);
+    if (!existing) {
+      throw new NotFoundException({
+        ruleCode: 'NOT_FOUND',
+        message: `Lượt khám ${maLuotKham} không tồn tại`,
+      });
     }
 
-    return this.prisma.luotKham.update({
-      where: { MaLuotKham: id },
+    if (dto.maDotNT !== undefined && dto.maDotNT !== null) {
+      await this.validateDotNoiTruConstraint(dto.maDotNT, existing.MaBN, existing.NgayGioKham);
+    }
+
+    await this.prisma.luotKham.update({
+      where: { MaLuotKham: maLuotKham },
       data: {
-        ChanDoanXacDinh: dto.chanDoanXacDinh,
-        HuongXuTri: dto.huongXuTri,
-        NgayTaiKham: dto.ngayTaiKham ? new Date(dto.ngayTaiKham) : null,
-      },
-      include: {
-        benhNhan: true,
-        bacSi: {
-          include: { nhanVien: true },
-        },
-        donThuoc: true,
-        suDungDvs: {
-          include: { dichVu: true },
-        },
+        ...(dto.lyDoKham !== undefined ? { LyDoKham: dto.lyDoKham } : {}),
+        ...(dto.trieuChung !== undefined ? { TrieuChung: dto.trieuChung } : {}),
+        ...(dto.chanDoanSoBo !== undefined ? { ChanDoanSoBo: dto.chanDoanSoBo } : {}),
+        ...(dto.trangThai !== undefined ? { TrangThai: dto.trangThai } : {}),
+        ...(dto.maDotNT !== undefined ? { MaDotNT: dto.maDotNT } : {}),
       },
     });
+
+    return this.getExaminationById(maLuotKham);
   }
 
-  async getExaminationById(id: string) {
+  async getExaminationById(maLuotKham: string) {
     const exam = await this.prisma.luotKham.findUnique({
-      where: { MaLuotKham: id },
+      where: { MaLuotKham: maLuotKham },
       include: {
-        benhNhan: true,
-        bacSi: {
-          include: { nhanVien: true },
-        },
-        phongKham: true,
+        benhNhan: { include: { theBHYTs: true } },
+        bacSi: { include: { nhanVien: true } },
+        dotNoiTru: true,
         donThuoc: {
           include: {
-            ctDonThuocs: {
-              include: { thuoc: true },
-            },
+            chiTietDonThuocs: { include: { thuoc: true } },
           },
         },
-        suDungDvs: {
+        phieuXetNghiems: {
           include: {
-            dichVu: true,
-            ktvThucHien: {
-              include: { nhanVien: true },
-            },
+            loaiXetNghiem: true,
+            kyThuatVien: { include: { nhanVien: true } },
           },
+          orderBy: { MaPhieuXN: 'asc' },
         },
-        hoaDon: true,
+        vienPhi: true,
       },
     });
 
     if (!exam) {
-      throw new NotFoundException(`Không tìm thấy lượt khám ${id}`);
+      throw new NotFoundException({
+        ruleCode: 'NOT_FOUND',
+        message: `Lượt khám ${maLuotKham} không tồn tại`,
+      });
     }
 
-    return exam;
+    const [bnView, dtView, vpView] = await Promise.all([
+      this.prisma.$queryRaw<Array<{ Tuoi: number }>>`
+        SELECT "Tuoi" FROM "V_BENH_NHAN" WHERE "MaBN" = ${exam.MaBN}
+      `,
+      exam.donThuoc
+        ? this.prisma.$queryRaw<Array<{ TongTienThuoc: string }>>`
+            SELECT "TongTienThuoc" FROM "V_DON_THUOC" WHERE "MaDonThuoc" = ${exam.donThuoc.MaDonThuoc}
+          `
+        : Promise.resolve([]),
+      exam.vienPhi
+        ? this.prisma.$queryRaw<
+            Array<{ TongTienDichVu: string; TongTienThuoc: string; ThucThu: string }>
+          >`
+            SELECT "TongTienDichVu", "TongTienThuoc", "ThucThu" FROM "V_VIEN_PHI" WHERE "MaHoaDon" = ${exam.vienPhi.MaHoaDon}
+          `
+        : Promise.resolve([]),
+    ]);
+
+    return {
+      ...exam,
+      benhNhan: {
+        ...exam.benhNhan,
+        NgaySinh: formatDateOnly(exam.benhNhan.NgaySinh),
+        Tuoi: bnView[0]?.Tuoi ?? 0,
+        theBHYTs: exam.benhNhan.theBHYTs.map((t) => ({
+          ...t,
+          MucHuong: Number(t.MucHuong),
+          NgayBatDau: formatDateOnly(t.NgayBatDau),
+          NgayHetHan: formatDateOnly(t.NgayHetHan),
+        })),
+      },
+      dotNoiTru: exam.dotNoiTru
+        ? {
+            ...exam.dotNoiTru,
+            NgayNhapVien: formatDateOnly(exam.dotNoiTru.NgayNhapVien),
+            NgayRaVien: formatDateOnly(exam.dotNoiTru.NgayRaVien),
+          }
+        : null,
+      donThuoc: exam.donThuoc
+        ? {
+            ...exam.donThuoc,
+            NgayKeDon: formatDateOnly(exam.donThuoc.NgayKeDon),
+            TongTienThuoc: Number(dtView[0]?.TongTienThuoc ?? 0),
+            chiTietDonThuocs: exam.donThuoc.chiTietDonThuocs.map((ct) => ({
+              ...ct,
+              DonGiaKe: Number(ct.DonGiaKe),
+              thuoc: { ...ct.thuoc, DonGia: Number(ct.thuoc.DonGia) },
+            })),
+          }
+        : null,
+      phieuXetNghiems: exam.phieuXetNghiems.map((pxn) => ({
+        ...pxn,
+        DonGiaXN: Number(pxn.DonGiaXN),
+        loaiXetNghiem: { ...pxn.loaiXetNghiem, DonGia: Number(pxn.loaiXetNghiem.DonGia) },
+      })),
+      vienPhi: exam.vienPhi
+        ? {
+            ...exam.vienPhi,
+            NgayLap: formatDateOnly(exam.vienPhi.NgayLap),
+            TruBHYT: Number(exam.vienPhi.TruBHYT),
+            TongTienDichVu: Number(vpView[0]?.TongTienDichVu ?? 0),
+            TongTienThuoc: Number(vpView[0]?.TongTienThuoc ?? 0),
+            ThucThu: Number(vpView[0]?.ThucThu ?? 0),
+          }
+        : null,
+    };
   }
 
-  async getAllExaminations(maBS?: string, maBN?: string) {
-    const where: any = {};
-    if (maBS) where.MaBS = maBS;
-    if (maBN) where.MaBN = maBN;
-
+  async getAllExaminations(maNV_BacSi?: string, maBN?: string, maDotNT?: string) {
     return this.prisma.luotKham.findMany({
-      where,
-      orderBy: { ThoiGianKham: 'desc' },
-      include: {
-        benhNhan: {
-          select: {
-            MaBN: true,
-            HoTen: true,
-            GioiTinh: true,
-            NgaySinh: true,
-            SoBHYT: true,
-          },
-        },
-        bacSi: {
-          include: {
-            nhanVien: {
-              select: { HoTen: true },
-            },
-          },
-        },
-        phongKham: true,
+      where: {
+        ...(maNV_BacSi ? { MaNV_BacSi: maNV_BacSi } : {}),
+        ...(maBN ? { MaBN: maBN } : {}),
+        ...(maDotNT ? { MaDotNT: maDotNT } : {}),
       },
+      include: {
+        benhNhan: true,
+        bacSi: { include: { nhanVien: true } },
+        dotNoiTru: true,
+        vienPhi: true,
+      },
+      orderBy: { NgayGioKham: 'desc' },
     });
   }
 }

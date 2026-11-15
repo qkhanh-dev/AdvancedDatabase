@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" type="device" version="24.0.0" designNotes="06 Kien Truc BCE &amp; Co Che Toan Ven 18 Bang v2.&#10;Tuan thu 01_EER_hoan_chinh_v2.xml va 02_Relational_Schema_18Bang_v2.xml.">
+  <diagram id="arch-bce-v2" name="06 Kien Truc BCE &amp; Toan Ven 18 Bang v2">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2600" pageHeight="1860" math="0" shadow="0" background="#FFFFFF">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="HDR_06" value="&lt;b&gt;06 — KIẾN TRÚC HỆ THỐNG BCE &amp;amp; CƠ CHẾ TOÀN VẸN DỮ LIỆU (18 BẢNG v2)&lt;/b&gt;&lt;br&gt;&lt;font style='font-size:13px'&gt;Ánh xạ Boundary – Control – Entity tuân thủ tuyệt đối 01_EER_hoan_chinh_v2.xml &amp;amp; 02_Relational_Schema_18Bang_v2.xml&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#28253D;strokeWidth=2;fontFamily=Recursive;fontSize=18;fontColor=#28253D;align=center;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="2520" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="T1_ACT" value="TẦNG TÁC NHÂN (ACTORS — BENH_NHAN &amp;amp; NHAN_VIEN IS-A (d, p))" style="swimlane;startSize=36;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#64748B;strokeWidth=2;rounded=1;fontFamily=Recursive;fontSize=14;fontStyle=1;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="40" y="122" width="2520" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="A1" value="Bệnh nhân
+(BENH_NHAN)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#4ADE80;strokeWidth=2;fontFamily=Recursive;fontSize=13;fontStyle=1;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="30" y="175" width="300" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="A2" value="Bác sĩ
+(BAC_SI)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDFA;strokeColor=#2DD4BF;strokeWidth=2;fontFamily=Recursive;fontSize=13;fontStyle=1;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="490" y="175" width="300" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="A3" value="Điều dưỡng
+(DIEU_DUONG)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF7ED;strokeColor=#FB923C;strokeWidth=2;fontFamily=Recursive;fontSize=13;fontStyle=1;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="950" y="175" width="300" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="A4" value="Kỹ thuật viên
+(KY_THUAT_VIEN)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECFEFF;strokeColor=#22D3EE;strokeWidth=2;fontFamily=Recursive;fontSize=13;fontStyle=1;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="1410" y="175" width="300" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="A5" value="NV Tiếp nhận / Thu ngân / Admin
+(NHAN_VIEN — Partial (d, p))" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF4FF;strokeColor=#E879F9;strokeWidth=2;fontFamily=Recursive;fontSize=13;fontStyle=1;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="1910" y="175" width="300" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="T2_BND" value="&amp;lt;&amp;lt;boundary&amp;gt;&amp;gt; TẦNG GIAO DIỆN CLIENT (NEXT.JS APP ROUTER)" style="swimlane;startSize=36;whiteSpace=wrap;html=1;fillColor=#F0F9FF;strokeColor=#38BDF8;strokeWidth=2;rounded=1;fontFamily=Recursive;fontSize=14;fontStyle=1;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="40" y="345" width="2520" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="B1" value="&lt;b&gt;(reception)&lt;/b&gt;&lt;br&gt;Tiếp nhận BENH_NHAN,&lt;br&gt;kiểm tra THE_BHYT,&lt;br&gt;đăng ký LUOT_KHAM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#4ADE80;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="80" y="405" width="320" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="B2" value="&lt;b&gt;(clinical)&lt;/b&gt;&lt;br&gt;Khám LUOT_KHAM,&lt;br&gt;kê DON_THUOC &amp;amp;&lt;br&gt;chỉ định XN" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF1F2;strokeColor=#FB7185;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="425" y="405" width="320" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="B3" value="&lt;b&gt;(laboratory)&lt;/b&gt;&lt;br&gt;KTV thực hiện &amp;amp;&lt;br&gt;trả kết quả&lt;br&gt;PHIEU_XET_NGHIEM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECFEFF;strokeColor=#22D3EE;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="770" y="405" width="320" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="B4" value="&lt;b&gt;(inpatient)&lt;/b&gt;&lt;br&gt;Quản lý DOT_NOI_TRU,&lt;br&gt;tra cứu GIUONG_BENH &amp;amp;&lt;br&gt;phân giường PHAN_GIUONG" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F3FF;strokeColor=#A78BFA;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="1115" y="405" width="320" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="B5" value="&lt;b&gt;(cashier)&lt;/b&gt;&lt;br&gt;Lập VIEN_PHI theo lượt,&lt;br&gt;chọn 1 THE_BHYT -&amp;gt;&lt;br&gt;TruBHYT &amp;amp; chốt thu" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#F87171;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="405" width="320" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="B6" value="&lt;b&gt;(admin)&lt;/b&gt;&lt;br&gt;Danh mục KHOA, PHONG,&lt;br&gt;GIUONG_BENH, THUOC,&lt;br&gt;LOAI_XET_NGHIEM, NHAN_VIEN" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEFCE8;strokeColor=#FACC15;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="1805" y="405" width="320" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="B7" value="&lt;b&gt;(auth) &amp;amp; API Client&lt;/b&gt;&lt;br&gt;Phiên làm việc theo vai trò&lt;br&gt;(d, p), validate biểu mẫu&lt;br&gt;&amp;amp; gọi REST API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF2FF;strokeColor=#818CF8;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="2150" y="405" width="370" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="T3_CTRL" value="&amp;lt;&amp;lt;control&amp;gt;&amp;gt; TẦNG ĐIỀU PHỐI NGHIỆP VỤ &amp;amp; GIAO DỊCH (NESTJS MODULAR BACKEND)" style="swimlane;startSize=36;whiteSpace=wrap;html=1;fillColor=#F5F3FF;strokeColor=#A78BFA;strokeWidth=2;rounded=1;fontFamily=Recursive;fontSize=14;fontStyle=1;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="40" y="610" width="2520" height="410" as="geometry" />
+        </mxCell>
+        <mxCell id="C1" value="&lt;b&gt;PatientInsuranceService&lt;/b&gt;&lt;br&gt;Hồ sơ BENH_NHAN &amp;amp; THE_BHYT&lt;br&gt;(NgayHetHan &amp;gt;= NgayBatDau)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#4ADE80;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="80" y="670" width="370" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="C2" value="&lt;b&gt;ExaminationService&lt;/b&gt;&lt;br&gt;LUOT_KHAM (MaDotNT NULL=ngoại trú;&lt;br&gt;nội trú khớp MaBN qua FK11 &amp;amp; ngày đợt)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF1F2;strokeColor=#FB7185;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="475" y="670" width="390" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="C3" value="&lt;b&gt;PrescriptionService&lt;/b&gt;&lt;br&gt;DON_THUOC (1–0..1) &amp;amp; CHI_TIET_DON_THUOC&lt;br&gt;(SoLuong &amp;gt; 0, snapshot DonGiaKe)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDFA;strokeColor=#2DD4BF;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="890" y="670" width="390" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="C4" value="&lt;b&gt;LabTestService&lt;/b&gt;&lt;br&gt;PHIEU_XET_NGHIEM: snapshot DonGiaXN;&lt;br&gt;TX ghi KTV, NgayGioXN, KQ, NgayGioTraKQ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECFEFF;strokeColor=#22D3EE;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="1305" y="670" width="400" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="C5" value="&lt;b&gt;InpatientBedService&lt;/b&gt;&lt;br&gt;DOT_NOI_TRU (chống chồng khoảng) &amp;amp;&lt;br&gt;PHAN_GIUONG [TuNgay, DenNgay) có khóa" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF4FF;strokeColor=#E879F9;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="1730" y="670" width="400" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="C6" value="&lt;b&gt;BillingService&lt;/b&gt;&lt;br&gt;VIEN_PHI (1–0..1), TruBHYT [0..1 thẻ],&lt;br&gt;khóa chi phí &amp;amp; hóa đơn sau thanh toán" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#F87171;strokeWidth=2;fontFamily=Recursive;fontSize=12;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="2155" y="670" width="370" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="C_INFRA" value="&lt;b&gt;HẠ TẦNG ĐIỀU PHỐI &amp;amp; BẢO ĐẢM 13 NHÓM QUY TẮC (CORE RULES &amp;amp; LOCKING):&lt;/b&gt;&lt;br&gt;• &lt;b&gt;Chuyên biệt hóa (d, p):&lt;/b&gt; Kiểm soát BAC_SI, DIEU_DUONG, KY_THUAT_VIEN rời nhau (disjoint) và cho phép nhân sự ngoài 3 nhóm (partial).&lt;br&gt;• &lt;b&gt;Khóa đồng thời Nội trú &amp;amp; Phân giường (Quy tắc 2, 3, 11, 12):&lt;/b&gt; Transaction khóa theo MaBN và MaGiuong/MaDotNT; ngăn trùng khoảng [TuNgay, DenNgay) và chồng lấn đợt điều trị; tự đóng phân giường khi ra viện.&lt;br&gt;• &lt;b&gt;Khóa đồng bộ Chi phí &amp;amp; Thanh toán (Quy tắc 5, 7, 8, 13):&lt;/b&gt; Cùng cơ chế khóa giữa thay đổi đơn/XN/chuyển chi phí và chốt VIEN_PHI; đảm bảo 0 ≤ TruBHYT ≤ TongTienThuoc + TongTienDichVu và khóa mọi sửa/xóa sau thanh toán." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#818CF8;strokeWidth=2;align=left;spacingLeft=18;spacingRight=18;fontFamily=Recursive;fontSize=12;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="80" y="810" width="2445" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="T4_ENT" value="&amp;lt;&amp;lt;entity&amp;gt;&amp;gt; TẦNG DỮ LIỆU QUAN HỆ — 18 BẢNG · 103 CỘT LƯU TRỮ · 20 FK · 6 DẪN XUẤT (THAM CHIẾU SQL SERVER)" style="swimlane;startSize=38;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#4ADE80;strokeWidth=2;rounded=1;fontFamily=Recursive;fontSize=14;fontStyle=1;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1080" width="2520" height="740" as="geometry" />
+        </mxCell>
+        <mxCell id="G_FAC" value="&lt;b&gt;1. Cơ sở vật chất (3 bảng)&lt;/b&gt;&lt;br&gt;• &lt;b&gt;KHOA&lt;/b&gt; (MaKhoa PK)&lt;br&gt;• &lt;b&gt;PHONG&lt;/b&gt; (MaPhong PK, FK01→KHOA)&lt;br&gt;• &lt;b&gt;GIUONG_BENH&lt;/b&gt; (MaGiuong PK, FK02→PHONG,&lt;br&gt;  TrangThai khai thác, DonGiaNgay)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEFCE8;strokeColor=#FACC15;strokeWidth=2;align=left;spacingLeft=14;spacingRight=12;fontFamily=Recursive;fontSize=12;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1145" width="455" height="225" as="geometry" />
+        </mxCell>
+        <mxCell id="G_HR" value="&lt;b&gt;2. Nhân sự IS-A (d, p) (4 bảng)&lt;/b&gt;&lt;br&gt;• &lt;b&gt;NHAN_VIEN&lt;/b&gt; (MaNV PK, FK03→KHOA)&lt;br&gt;• &lt;b&gt;BAC_SI&lt;/b&gt; (MaNV PK,FK04→NHAN_VIEN)&lt;br&gt;• &lt;b&gt;DIEU_DUONG&lt;/b&gt; (MaNV PK,FK05→NHAN_VIEN)&lt;br&gt;• &lt;b&gt;KY_THUAT_VIEN&lt;/b&gt; (MaNV PK,FK06→NHAN_VIEN)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF4FF;strokeColor=#E879F9;strokeWidth=2;align=left;spacingLeft=14;spacingRight=12;fontFamily=Recursive;fontSize=12;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="560" y="1145" width="465" height="225" as="geometry" />
+        </mxCell>
+        <mxCell id="G_PAT" value="&lt;b&gt;3. Bệnh nhân, BHYT &amp;amp; Nội trú (4 bảng)&lt;/b&gt;&lt;br&gt;• &lt;b&gt;BENH_NHAN&lt;/b&gt; (MaBN PK)&lt;br&gt;• &lt;b&gt;THE_BHYT&lt;/b&gt; (MaTheBHYT PK, FK08→BENH_NHAN)&lt;br&gt;• &lt;b&gt;DOT_NOI_TRU&lt;/b&gt; (MaDotNT PK, FK07→BENH_NHAN,&lt;br&gt;  UQ(MaDotNT, MaBN), Filtered UQ NgayRaVien NULL)&lt;br&gt;• &lt;b&gt;PHAN_GIUONG&lt;/b&gt; (PK: MaDotNT, MaGiuong, TuNgay;&lt;br&gt;  FK18→DOT_NOI_TRU, FK19→GIUONG_BENH)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F3FF;strokeColor=#A78BFA;strokeWidth=2;align=left;spacingLeft=14;spacingRight=12;fontFamily=Recursive;fontSize=12;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="1145" width="515" height="225" as="geometry" />
+        </mxCell>
+        <mxCell id="G_CLN" value="&lt;b&gt;4. Khám, Đơn thuốc &amp;amp; Xét nghiệm (6 bảng)&lt;/b&gt;&lt;br&gt;• &lt;b&gt;LUOT_KHAM&lt;/b&gt; (FK09→BN, FK10→BS, FK11→(MaDotNT,MaBN)?)&lt;br&gt;• &lt;b&gt;DON_THUOC&lt;/b&gt; (FK12 UQ→LUOT_KHAM)&lt;br&gt;• &lt;b&gt;CHI_TIET_DON_THUOC&lt;/b&gt; (FK13→DON_THUOC, FK14→THUOC)&lt;br&gt;• &lt;b&gt;THUOC&lt;/b&gt; (MaThuoc PK, DonGia)&lt;br&gt;• &lt;b&gt;LOAI_XET_NGHIEM&lt;/b&gt; (MaLoaiXN PK, DonGia)&lt;br&gt;• &lt;b&gt;PHIEU_XET_NGHIEM&lt;/b&gt; (FK15→LK, FK16→LoaiXN, FK17?→KTV)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF1F2;strokeColor=#FB7185;strokeWidth=2;align=left;spacingLeft=14;spacingRight=12;fontFamily=Recursive;fontSize=12;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="1590" y="1145" width="530" height="225" as="geometry" />
+        </mxCell>
+        <mxCell id="G_FIN" value="&lt;b&gt;5. Viện phí (1 bảng)&lt;/b&gt;&lt;br&gt;• &lt;b&gt;VIEN_PHI&lt;/b&gt; (MaHoaDon PK,&lt;br&gt;  FK20 UQ→LUOT_KHAM,&lt;br&gt;  NgayLap, HinhThucThanhToan,&lt;br&gt;  &lt;b&gt;TruBHYT&lt;/b&gt; DECIMAL(18,2) DEFAULT 0,&lt;br&gt;  TrangThaiThanhToan)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#F87171;strokeWidth=2;align=left;spacingLeft=14;spacingRight=12;fontFamily=Recursive;fontSize=12;fontColor=#28253D;shadow=1;shadowColor=#000000;shadowOffsetX=4;shadowOffsetY=4;shadowBlur=0;shadowOpacity=6;" vertex="1" parent="1">
+          <mxGeometry x="2145" y="1145" width="380" height="225" as="geometry" />
+        </mxCell>
+        <mxCell id="DB_DERIVED" value="&lt;b&gt;6 THUỘC TÍNH DẪN XUẤT — TRIỂN KHAI QUA VIEW / QUERY (KHÔNG LƯU THÀNH CỘT):&lt;/b&gt;&lt;br&gt;1. &lt;b&gt;NHAN_VIEN.SoNamCongTac&lt;/b&gt;&lt;br&gt;2. &lt;b&gt;BENH_NHAN.Tuoi&lt;/b&gt;&lt;br&gt;3. &lt;b&gt;DON_THUOC.TongTienThuoc&lt;/b&gt; = COALESCE(SUM(SoLuong × DonGiaKe), 0)&lt;br&gt;4. &lt;b&gt;VIEN_PHI.TongTienDichVu&lt;/b&gt; = COALESCE(SUM(DonGiaXN), 0) với NgayGioXN IS NOT NULL&lt;br&gt;5. &lt;b&gt;VIEN_PHI.TongTienThuoc&lt;/b&gt; = COALESCE(SUM(SoLuong × DonGiaKe), 0)&lt;br&gt;6. &lt;b&gt;VIEN_PHI.ThucThu&lt;/b&gt; = TongTienThuoc + TongTienDichVu − TruBHYT (≥ 0)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F9FF;strokeColor=#38BDF8;strokeWidth=2;align=left;spacingLeft=18;spacingRight=16;fontFamily=Recursive;fontSize=12;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1410" width="1150" height="370" as="geometry" />
+        </mxCell>
+        <mxCell id="DB_RULES" value="&lt;b&gt;RÀNG BUỘC TOÀN VẸN VẬT LÝ &amp;amp; PHẠM VI TRIỂN KHAI (TỪ SCHEMA v2):&lt;/b&gt;&lt;br&gt;• &lt;b&gt;20 Khóa ngoại (FK01–FK20):&lt;/b&gt; Toàn bộ dùng &lt;code&gt;ON DELETE NO ACTION / ON UPDATE NO ACTION&lt;/code&gt;.&lt;br&gt;• &lt;b&gt;FK ghép FK11:&lt;/b&gt; &lt;code&gt;LUOT_KHAM(MaDotNT, MaBN) → DOT_NOI_TRU(MaDotNT, MaBN)&lt;/code&gt; kết hợp &lt;code&gt;UQ(MaDotNT, MaBN)&lt;/code&gt; (vẫn giữ MaDotNT NULL cho ngoại trú).&lt;br&gt;• &lt;b&gt;Unique có điều kiện:&lt;/b&gt; &lt;code&gt;DOT_NOI_TRU(MaBN) WHERE NgayRaVien IS NULL&lt;/code&gt; + trigger kiểm tra không giao khoảng điều trị.&lt;br&gt;• &lt;b&gt;DDL &amp;amp; Trigger:&lt;/b&gt; Thực thi toàn bộ 13 nhóm quy tắc bằng CHECK, UNIQUE, VIEW và Trigger/Transaction có khóa; kiểu dữ liệu tham chiếu SQL Server (chốt độ dài chuỗi &amp;amp; kiểm thử DDL khi triển khai)." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEFCE8;strokeColor=#FACC15;strokeWidth=2;align=left;spacingLeft=18;spacingRight=16;fontFamily=Recursive;fontSize=12;fontColor=#28253D;" vertex="1" parent="1">
+          <mxGeometry x="1265" y="1410" width="1260" height="370" as="geometry" />
+        </mxCell>
+        <mxCell id="E_T1_T2" value="Tương tác người dùng (HTTPS)" style="endArrow=block;endFill=1;html=1;rounded=0;strokeWidth=2.5;strokeColor=#28253D;fontFamily=Recursive;fontSize=12;fontStyle=1;fontColor=#28253D;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="T1_ACT" target="T2_BND">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_T2_T3" value="REST API (JSON) + Phiên vai trò" style="endArrow=block;endFill=1;html=1;rounded=0;strokeWidth=2.5;strokeColor=#28253D;fontFamily=Recursive;fontSize=12;fontStyle=1;fontColor=#28253D;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="T2_BND" target="T3_CTRL">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="E_T3_T4" value="Transactions, Trigger Khóa, VIEW &amp;amp; 20 FK (NO ACTION)" style="endArrow=block;endFill=1;html=1;rounded=0;strokeWidth=2.5;strokeColor=#28253D;fontFamily=Recursive;fontSize=12;fontStyle=1;fontColor=#28253D;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="T3_CTRL" target="T4_ENT">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
