@@ -96,15 +96,16 @@ jobs:
       - name: "[DTB] Verify tables, derived VIEWs, triggers & seed counts"
         working-directory: backend
         run: |
+          PSQL_URL="${DATABASE_URL%%\?*}"
           if [ -d prisma/migrations ] && [ "$(ls -A prisma/migrations)" ]; then
-            psql "$DATABASE_URL" -v ON_ERROR_STOP=1 \
+            psql "$PSQL_URL" -v ON_ERROR_STOP=1 \
               -c "DO \$\$ DECLARE tbl_count INT; view_count INT; trig_count INT; BEGIN SELECT COUNT(*) INTO tbl_count FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE' AND table_name IN ('KHOA','PHONG','GIUONG_BENH','NHAN_VIEN','BAC_SI','DIEU_DUONG','KY_THUAT_VIEN','BENH_NHAN','THE_BHYT','DOT_NOI_TRU','PHAN_GIUONG','LUOT_KHAM','DON_THUOC','THUOC','CHI_TIET_DON_THUOC','LOAI_XET_NGHIEM','PHIEU_XET_NGHIEM','VIEN_PHI'); IF tbl_count <> 18 THEN RAISE EXCEPTION 'Expected 18 v2 tables, found %', tbl_count; END IF; SELECT COUNT(*) INTO view_count FROM information_schema.views WHERE table_schema = 'public' AND table_name IN ('V_NHAN_VIEN','V_BENH_NHAN','V_DON_THUOC','V_LUOT_KHAM_CHI_PHI','V_VIEN_PHI'); IF view_count <> 5 THEN RAISE EXCEPTION 'Expected 5 v2 derived views, found %', view_count; END IF; SELECT COUNT(DISTINCT trigger_name) INTO trig_count FROM information_schema.triggers WHERE trigger_schema = 'public'; IF trig_count < 10 THEN RAISE EXCEPTION 'Expected at least 10 triggers, found %', trig_count; END IF; END \$\$;" \
               -c 'SELECT COUNT(*) AS so_nhan_vien, MIN("SoNamCongTac") AS min_tham_nien FROM "V_NHAN_VIEN";' \
               -c 'SELECT COUNT(*) AS so_benh_nhan, MIN("Tuoi") AS min_tuoi FROM "V_BENH_NHAN";' \
               -c 'SELECT COUNT(*) AS so_don_thuoc, COALESCE(SUM("TongTienThuoc"), 0) AS tong_tien_thuoc FROM "V_DON_THUOC";' \
               -c 'SELECT COUNT(*) AS so_hoa_don, COALESCE(SUM("ThucThu"), 0) AS tong_thuc_thu FROM "V_VIEN_PHI";'
           else
-            psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c "SELECT COUNT(*) AS public_tables FROM information_schema.tables WHERE table_schema = 'public';"
+            psql "$PSQL_URL" -v ON_ERROR_STOP=1 -c "SELECT COUNT(*) AS public_tables FROM information_schema.tables WHERE table_schema = 'public';"
           fi
 
       - name: "[BE] Build NestJS application"
