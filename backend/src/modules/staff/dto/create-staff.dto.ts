@@ -6,6 +6,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  Matches,
   MaxLength,
   MinLength,
   ValidateNested,
@@ -92,6 +93,7 @@ export class CreateStaffDto {
   @ApiProperty({ example: '079090009999' })
   @IsNotEmpty()
   @IsString()
+  @Matches(/^\d{12}$/, { message: 'CCCD phải gồm đúng 12 chữ số' })
   @MaxLength(20)
   cccd!: string;
 

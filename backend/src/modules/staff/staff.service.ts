@@ -195,6 +195,17 @@ export class StaffService {
         message: 'Vai trò KY_THUAT_VIEN bắt buộc phải có thông tin chuyên môn kyThuatVien',
       });
     }
+    if (
+      dto.role &&
+      ((dto.role !== Role.BAC_SI && dto.bacSi) ||
+        (dto.role !== Role.DIEU_DUONG && dto.dieuDuong) ||
+        (dto.role !== Role.KY_THUAT_VIEN && dto.kyThuatVien))
+    ) {
+      throw new ConflictException({
+        ruleCode: 'BR-V2-01',
+        message: `Vai trò ${dto.role} không khớp với thông tin chuyên môn được gửi kèm (BR-V2-01)`,
+      });
+    }
 
     const khoa = await this.prisma.khoa.findUnique({ where: { MaKhoa: dto.maKhoa } });
     if (!khoa) {

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useAuthStore } from "@/store/useAuthStore";
 import { useToastStore } from "@/store/useToastStore";
 import { ApiErrorResponse } from "@/types";
 
@@ -97,8 +98,16 @@ api.interceptors.response.use(
   },
   (error) => {
     if (typeof window !== "undefined") {
-      const method = (error?.config?.method || "get").toLowerCase();
+      const status = error?.response?.status;
       const url = error?.config?.url || "";
+      if (status === 401 && !url.includes("/auth/login")) {
+        useAuthStore.getState().logout();
+        if (window.location.pathname !== "/login") {
+          window.location.replace("/login");
+        }
+        return Promise.reject(error);
+      }
+      const method = (error?.config?.method || "get").toLowerCase();
       if (["post", "patch", "put", "delete"].includes(method) && !url.includes("/auth/login")) {
         const parsed = extractApiError(error);
         const prefix = parsed.ruleCode ? `[${parsed.ruleCode}] ` : "";

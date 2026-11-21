@@ -6,6 +6,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Matches,
   Max,
   MaxLength,
   Min,
@@ -38,6 +39,7 @@ export class CreatePatientDto {
   @ApiProperty({ example: '079092001234' })
   @IsNotEmpty()
   @IsString()
+  @Matches(/^\d{12}$/, { message: 'CCCD phải gồm đúng 12 chữ số' })
   @MaxLength(20)
   cccd!: string;
 

@@ -14,14 +14,7 @@ export class ReportController {
   constructor(private readonly reportService: ReportService) {}
 
   @Get('dashboard')
-  @Roles(
-    Role.ADMIN,
-    Role.BAC_SI,
-    Role.DIEU_DUONG,
-    Role.KY_THUAT_VIEN,
-    Role.TIEP_NHAN,
-    Role.THU_NGAN,
-  )
+  @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Tổng quan Dashboard từ 18 bảng và VIEW (BR-V2-08, 11)' })
   @ApiQuery({ name: 'date', required: false, example: '2026-11-15' })
   async getDashboardSummary(@Query('date') date?: string) {

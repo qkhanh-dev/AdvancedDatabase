@@ -91,7 +91,7 @@ export default function ReceptionPage() {
   });
 
   const { data: openAdmissions = [] } = useQuery({
-    queryKey: QUERY_KEYS.inpatientAdmissions(true),
+    queryKey: QUERY_KEYS.inpatientAdmissions(true, selectedMaBN),
     queryFn: () => hospitalApi.inpatient.getAdmissions(true, selectedMaBN),
     enabled: !!selectedMaBN,
   });

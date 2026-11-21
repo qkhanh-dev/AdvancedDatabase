@@ -6,13 +6,20 @@ export async function lockLuotKhamAndAssertUnlocked(
   tx: Prisma.TransactionClient,
   maLuotKham: string,
 ) {
-  const locked = await tx.$queryRaw<Array<{ MaLuotKham: string }>>`
-    SELECT "MaLuotKham" FROM "LUOT_KHAM" WHERE "MaLuotKham" = ${maLuotKham} FOR UPDATE
+  const locked = await tx.$queryRaw<Array<{ MaLuotKham: string; TrangThai?: string }>>`
+    SELECT "MaLuotKham", "TrangThai" FROM "LUOT_KHAM" WHERE "MaLuotKham" = ${maLuotKham} FOR UPDATE
   `;
   if (!locked || locked.length === 0) {
     throw new NotFoundException({
       ruleCode: 'NOT_FOUND',
       message: `Lượt khám ${maLuotKham} không tồn tại`,
+    });
+  }
+
+  if (locked[0].TrangThai === 'HUY') {
+    throw new ConflictException({
+      ruleCode: 'LUOT_KHAM_CANCELLED',
+      message: `Lượt khám ${maLuotKham} đã ở trạng thái HUY, không thể thực hiện thao tác`,
     });
   }
 

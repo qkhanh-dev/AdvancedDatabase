@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   CreateDepartmentDto,
@@ -15,6 +15,14 @@ export class DepartmentRoomService {
 
   async getAllDepartments() {
     return this.prisma.khoa.findMany({
+      include: {
+        _count: {
+          select: {
+            nhanViens: true,
+            phongs: true,
+          },
+        },
+      },
       orderBy: { MaKhoa: 'asc' },
     });
   }
@@ -195,6 +203,22 @@ export class DepartmentRoomService {
         ruleCode: 'NOT_FOUND',
         message: `Giường bệnh ${maGiuong} không tồn tại`,
       });
+    }
+
+    if (dto.trangThai !== 'SAN_SANG') {
+      const today = parseDateOnlyUtc(new Date());
+      const activeAlloc = await this.prisma.phanGiuong.findFirst({
+        where: {
+          MaGiuong: maGiuong,
+          OR: [{ DenNgay: null }, { DenNgay: { gt: today } }],
+        },
+      });
+      if (activeAlloc) {
+        throw new ConflictException({
+          ruleCode: 'BR-V2-11',
+          message: `Giường ${maGiuong} đang có phân giường (${activeAlloc.MaDotNT}), không thể chuyển sang ${dto.trangThai}`,
+        });
+      }
     }
 
     const updated = await this.prisma.giuongBenh.update({

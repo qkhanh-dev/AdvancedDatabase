@@ -3,6 +3,7 @@
 import React, { useMemo } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Activity,
   BedDouble,
@@ -128,6 +129,7 @@ function getInitials(name?: string | null): string {
 export function Sidebar({ mobile = false }: { mobile?: boolean } = {}) {
   const pathname = usePathname();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { user, logout } = useAuthStore();
 
   const visibleNavGroups = useMemo(() => {
@@ -217,6 +219,7 @@ export function Sidebar({ mobile = false }: { mobile?: boolean } = {}) {
           <button
             type="button"
             onClick={() => {
+              queryClient.clear();
               logout();
               router.replace("/login");
             }}

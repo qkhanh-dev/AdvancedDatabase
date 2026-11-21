@@ -4,10 +4,12 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateExaminationDto, UpdateExaminationDto } from './dto/examination.dto';
 import { TrangThaiLuotKham } from '../../common/enums/role.enum';
 import { addUtcDays, formatDateOnly, parseDateOnlyUtc } from '../../common/utils/date.util';
+import { lockLuotKhamAndAssertUnlocked } from '../../common/utils/cost-lock.util';
 
 @Injectable()
 export class ExaminationService {
@@ -108,30 +110,48 @@ export class ExaminationService {
   }
 
   async updateExamination(maLuotKham: string, dto: UpdateExaminationDto) {
-    const existing = await this.prisma.luotKham.findUnique({
-      where: { MaLuotKham: maLuotKham },
-    });
-    if (!existing) {
-      throw new NotFoundException({
-        ruleCode: 'NOT_FOUND',
-        message: `Lượt khám ${maLuotKham} không tồn tại`,
-      });
-    }
+    await this.prisma.$transaction(
+      async (tx) => {
+        await lockLuotKhamAndAssertUnlocked(tx, maLuotKham);
 
-    if (dto.maDotNT !== undefined && dto.maDotNT !== null) {
-      await this.validateDotNoiTruConstraint(dto.maDotNT, existing.MaBN, existing.NgayGioKham);
-    }
+        const existing = await tx.luotKham.findUnique({
+          where: { MaLuotKham: maLuotKham },
+        });
+        if (!existing) {
+          throw new NotFoundException({
+            ruleCode: 'NOT_FOUND',
+            message: `Lượt khám ${maLuotKham} không tồn tại`,
+          });
+        }
 
-    await this.prisma.luotKham.update({
-      where: { MaLuotKham: maLuotKham },
-      data: {
-        ...(dto.lyDoKham !== undefined ? { LyDoKham: dto.lyDoKham } : {}),
-        ...(dto.trieuChung !== undefined ? { TrieuChung: dto.trieuChung } : {}),
-        ...(dto.chanDoanSoBo !== undefined ? { ChanDoanSoBo: dto.chanDoanSoBo } : {}),
-        ...(dto.trangThai !== undefined ? { TrangThai: dto.trangThai } : {}),
-        ...(dto.maDotNT !== undefined ? { MaDotNT: dto.maDotNT } : {}),
+        if (
+          dto.trangThai !== undefined &&
+          (existing.TrangThai === 'HOAN_TAT' || existing.TrangThai === 'HUY') &&
+          dto.trangThai !== existing.TrangThai
+        ) {
+          throw new ConflictException({
+            ruleCode: 'INVALID_STATUS_TRANSITION',
+            message: `Lượt khám ${maLuotKham} đã ở trạng thái ${existing.TrangThai}, không thể chuyển sang ${dto.trangThai}`,
+          });
+        }
+
+        if (dto.maDotNT !== undefined && dto.maDotNT !== null) {
+          await this.validateDotNoiTruConstraint(dto.maDotNT, existing.MaBN, existing.NgayGioKham);
+        }
+
+        await tx.luotKham.update({
+          where: { MaLuotKham: maLuotKham },
+          data: {
+            ...(dto.lyDoKham !== undefined ? { LyDoKham: dto.lyDoKham } : {}),
+            ...(dto.trieuChung !== undefined ? { TrieuChung: dto.trieuChung } : {}),
+            ...(dto.chanDoanSoBo !== undefined ? { ChanDoanSoBo: dto.chanDoanSoBo } : {}),
+            ...(dto.trangThai !== undefined ? { TrangThai: dto.trangThai } : {}),
+            ...(dto.maDotNT !== undefined ? { MaDotNT: dto.maDotNT } : {}),
+          },
+        });
       },
-    });
+      { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+    );
 
     return this.getExaminationById(maLuotKham);
   }

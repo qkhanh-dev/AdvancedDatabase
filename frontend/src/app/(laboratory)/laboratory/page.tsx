@@ -102,7 +102,12 @@ export default function LaboratoryPage() {
       }),
     onSuccess: async (updated) => {
       setSelectedLab(updated);
-      completeForm.setValue("ngayGioXN", toLocalIsoInput(updated.NgayGioXN));
+      const startedLocal = toLocalIsoInput(updated.NgayGioXN);
+      completeForm.setValue("ngayGioXN", startedLocal);
+      const currentReturn = completeForm.getValues("ngayGioTraKQ");
+      if (!currentReturn || currentReturn < startedLocal) {
+        completeForm.setValue("ngayGioTraKQ", startedLocal);
+      }
       await invalidateLabQueries();
     },
   });
@@ -306,7 +311,13 @@ export default function LaboratoryPage() {
                       </select>
                       <button
                         type="button"
-                        disabled={!canPerformLab || isPaidLocked || startMutation.isPending}
+                        disabled={
+                          !canPerformLab ||
+                          isPaidLocked ||
+                          Boolean(selectedLab.NgayGioXN) ||
+                          Boolean(selectedLab.NgayGioTraKQ) ||
+                          startMutation.isPending
+                        }
                         onClick={() => startMutation.mutate(selectedLab)}
                         className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 disabled:opacity-50 text-white font-semibold"
                       >

@@ -48,7 +48,7 @@ export default function DashboardPage() {
   } = useQuery({
     queryKey: QUERY_KEYS.dashboardReport(selectedDate),
     queryFn: () => hospitalApi.report.getDashboard(selectedDate),
-    enabled: !!token,
+    enabled: !!token && user?.role === RoleEnum.ADMIN,
   });
 
   const { data: departments = [] } = useQuery({
