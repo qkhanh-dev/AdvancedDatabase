@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useAuthStore } from "@/store/useAuthStore";
+import { getStoredAccessToken, useAuthStore } from "@/store/useAuthStore";
 import { useToastStore } from "@/store/useToastStore";
 import { ApiErrorResponse } from "@/types";
 
@@ -13,7 +13,7 @@ export const api = axios.create({
 
 api.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
-    const token = localStorage.getItem("access_token");
+    const token = getStoredAccessToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
