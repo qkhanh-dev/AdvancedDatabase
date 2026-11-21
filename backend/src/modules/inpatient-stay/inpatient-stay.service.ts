@@ -414,6 +414,20 @@ export class InpatientStayService {
     try {
       return await this.prisma.$transaction(
         async (tx) => {
+          const pre = await tx.dotNoiTru.findUnique({
+            where: { MaDotNT: maDotNT },
+            select: { MaBN: true },
+          });
+          if (!pre) {
+            throw new NotFoundException({
+              ruleCode: 'NOT_FOUND',
+              message: `Đợt nội trú ${maDotNT} không tồn tại`,
+            });
+          }
+
+          await tx.$queryRaw`SELECT "MaBN" FROM "BENH_NHAN" WHERE "MaBN" = ${pre.MaBN} FOR UPDATE`;
+          await tx.$queryRaw`SELECT "MaDotNT" FROM "DOT_NOI_TRU" WHERE "MaDotNT" = ${maDotNT} FOR UPDATE`;
+
           const dot = await tx.dotNoiTru.findUnique({ where: { MaDotNT: maDotNT } });
           if (!dot) {
             throw new NotFoundException({
@@ -421,9 +435,12 @@ export class InpatientStayService {
               message: `Đợt nội trú ${maDotNT} không tồn tại`,
             });
           }
-
-          await tx.$queryRaw`SELECT "MaBN" FROM "BENH_NHAN" WHERE "MaBN" = ${dot.MaBN} FOR UPDATE`;
-          await tx.$queryRaw`SELECT "MaDotNT" FROM "DOT_NOI_TRU" WHERE "MaDotNT" = ${maDotNT} FOR UPDATE`;
+          if (dot.NgayRaVien !== null) {
+            throw new ConflictException({
+              ruleCode: 'BR-V2-02',
+              message: `Đợt nội trú ${maDotNT} đã xuất viện ngày ${formatDateOnly(dot.NgayRaVien)}`,
+            });
+          }
 
           const ngayNhapVien = parseDateOnlyUtc(dot.NgayNhapVien);
           if (ngayRaVien < ngayNhapVien) {
@@ -457,7 +474,10 @@ export class InpatientStayService {
             }
           }
 
-          const allocs = await tx.phanGiuong.findMany({ where: { MaDotNT: maDotNT } });
+          const allocs = await tx.phanGiuong.findMany({
+            where: { MaDotNT: maDotNT },
+            orderBy: { MaGiuong: 'asc' },
+          });
           const closedAllocations = [];
           for (const a of allocs) {
             const tuNgay = parseDateOnlyUtc(a.TuNgay);

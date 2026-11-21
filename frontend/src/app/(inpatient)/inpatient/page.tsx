@@ -16,6 +16,7 @@ import { AuthGuard } from "@/components/layout/AuthGuard";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { hospitalApi } from "@/services/hospitalApi";
 import { QUERY_KEYS } from "@/lib/queryKeys";
+import { useAuthStore } from "@/store/useAuthStore";
 import { RoleEnum, TrangThaiGiuongEnum } from "@/types";
 
 const admissionSchema = z.object({
@@ -41,8 +42,18 @@ type AdmissionValues = z.infer<typeof admissionSchema>;
 type AllocateValues = z.infer<typeof allocateSchema>;
 type TransferValues = z.infer<typeof transferSchema>;
 
+function addDaysYmd(ymd: string, days: number): string {
+  const [y, m, d] = ymd.split("-").map(Number);
+  if (!y || !m || !d) return ymd;
+  const dt = new Date(Date.UTC(y, m - 1, d + days));
+  return dt.toISOString().slice(0, 10);
+}
+
 export default function InpatientPage() {
   const queryClient = useQueryClient();
+  const { user } = useAuthStore();
+  const canManageAdmissions =
+    user?.role === RoleEnum.ADMIN || user?.role === RoleEnum.BAC_SI;
   const [selectedDate, setSelectedDate] = useState("2026-11-15");
   const [selectedKhoa, setSelectedKhoa] = useState("");
   const [showAllAdmissions, setShowAllAdmissions] = useState(false);
@@ -96,6 +107,20 @@ export default function InpatientPage() {
     },
   });
 
+  const handleDateChange = (nextDate: string) => {
+    if (!nextDate) return;
+    if (admitForm.getValues("ngayNhapVien") === selectedDate) {
+      admitForm.setValue("ngayNhapVien", nextDate);
+    }
+    if (allocateForm.getValues("tuNgay") === selectedDate) {
+      allocateForm.setValue("tuNgay", nextDate);
+    }
+    if (transferForm.getValues("ngayChuyen") === selectedDate) {
+      transferForm.setValue("ngayChuyen", nextDate);
+    }
+    setSelectedDate(nextDate);
+  };
+
   const invalidateAll = async () => {
     await queryClient.invalidateQueries({ queryKey: ["beds", "map"] });
     await queryClient.invalidateQueries({ queryKey: ["inpatient", "admissions"] });
@@ -117,18 +142,35 @@ export default function InpatientPage() {
 
   const allocateMutation = useMutation({
     mutationFn: (v: AllocateValues) => hospitalApi.inpatient.allocateBed(v),
-    onSuccess: invalidateAll,
+    onSuccess: async (_data, variables) => {
+      if (selectedDate < variables.tuNgay) {
+        handleDateChange(variables.tuNgay);
+      }
+      await invalidateAll();
+    },
   });
 
   const transferMutation = useMutation({
     mutationFn: (v: TransferValues) => hospitalApi.inpatient.transferBed(v),
-    onSuccess: invalidateAll,
+    onSuccess: async (_data, variables) => {
+      if (selectedDate < variables.ngayChuyen) {
+        handleDateChange(variables.ngayChuyen);
+      }
+      await invalidateAll();
+    },
   });
 
   const dischargeMutation = useMutation({
     mutationFn: ({ maDotNT, ngayRaVien }: { maDotNT: string; ngayRaVien: string }) =>
       hospitalApi.inpatient.discharge(maDotNT, { ngayRaVien }),
-    onSuccess: invalidateAll,
+    onSuccess: async (_data, variables) => {
+      // BR-V2-03: Khoảng nửa mở [TuNgay, DenNgay) với DenNgay = NgayRaVien + 1
+      // Chuyển ngày xem sơ đồ sang DenNgay nếu đang xem ngày <= NgayRaVien để thấy giường trống ngay
+      if (selectedDate <= variables.ngayRaVien) {
+        handleDateChange(addDaysYmd(variables.ngayRaVien, 1));
+      }
+      await invalidateAll();
+    },
   });
 
   const openAdmissions = admissions.filter((a) => !a.NgayRaVien);
@@ -157,7 +199,7 @@ export default function InpatientPage() {
                 <input
                   type="date"
                   value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
+                  onChange={(e) => handleDateChange(e.target.value)}
                   className="bg-transparent font-mono font-semibold focus:outline-none"
                 />
               </label>
@@ -232,10 +274,32 @@ export default function InpatientPage() {
                       </div>
                       <div className="mt-2 pt-2 border-t border-slate-200/70">
                         {occupied && bed.phanGiuongHienTai ? (
-                          <div className="text-[11px] text-sky-900">
-                            <strong className="font-mono">{bed.phanGiuongHienTai.MaDotNT}</strong> —{" "}
-                            {bed.phanGiuongHienTai.dotNoiTru?.benhNhan?.HoTen} (Từ{" "}
-                            {bed.phanGiuongHienTai.TuNgay})
+                          <div className="text-[11px] text-sky-900 space-y-1">
+                            <div>
+                              <strong className="font-mono">{bed.phanGiuongHienTai.MaDotNT}</strong> —{" "}
+                              {bed.phanGiuongHienTai.dotNoiTru?.benhNhan?.HoTen} (Từ{" "}
+                              {bed.phanGiuongHienTai.TuNgay}
+                              {bed.phanGiuongHienTai.DenNgay
+                                ? ` → trước ${bed.phanGiuongHienTai.DenNgay}`
+                                : ""}
+                              )
+                            </div>
+                            {bed.phanGiuongHienTai.DenNgay && (
+                              <div className="flex flex-wrap items-center justify-between gap-1 text-[10px] text-amber-800 bg-amber-50 border border-amber-200 rounded px-2 py-0.5">
+                                <span>
+                                  {bed.phanGiuongHienTai.dotNoiTru?.NgayRaVien
+                                    ? `Đã xuất viện ${bed.phanGiuongHienTai.dotNoiTru.NgayRaVien} · Trống từ ${bed.phanGiuongHienTai.DenNgay}`
+                                    : `Kết thúc nằm giường từ ${bed.phanGiuongHienTai.DenNgay}`}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDateChange(bed.phanGiuongHienTai!.DenNgay!)}
+                                  className="font-semibold underline text-indigo-700 hover:text-indigo-900"
+                                >
+                                  Xem ngày trống
+                                </button>
+                              </div>
+                            )}
                           </div>
                         ) : (
                           <div className="text-[11px] text-slate-500">
@@ -250,8 +314,11 @@ export default function InpatientPage() {
             </section>
 
             {/* 3 WORKFLOW FORMS */}
-            <section className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <section
+              className={`grid grid-cols-1 ${canManageAdmissions ? "lg:grid-cols-3" : "lg:grid-cols-2"} gap-4`}
+            >
               {/* OPEN DOT_NOI_TRU */}
+              {canManageAdmissions && (
               <form
                 onSubmit={admitForm.handleSubmit((v) => admitMutation.mutate(v))}
                 className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs space-y-3 text-xs"
@@ -306,6 +373,7 @@ export default function InpatientPage() {
                   Mở Đợt Nội Trú
                 </button>
               </form>
+              )}
 
               {/* ALLOCATE BED */}
               <form
@@ -340,6 +408,9 @@ export default function InpatientPage() {
                     {readyBeds.map((g) => (
                       <option key={g.MaGiuong} value={g.MaGiuong}>
                         {g.MaGiuong} ({g.phong?.TenPhong})
+                        {g.dangCoNguoiNam
+                          ? ` — Bận ngày ${selectedDate}${g.phanGiuongHienTai?.DenNgay ? ` (trống từ ${g.phanGiuongHienTai.DenNgay})` : ""}`
+                          : " — Trống"}
                       </option>
                     ))}
                   </select>
@@ -394,6 +465,9 @@ export default function InpatientPage() {
                     {readyBeds.map((g) => (
                       <option key={g.MaGiuong} value={g.MaGiuong}>
                         {g.MaGiuong} ({g.phong?.TenPhong})
+                        {g.dangCoNguoiNam
+                          ? ` — Bận ngày ${selectedDate}${g.phanGiuongHienTai?.DenNgay ? ` (trống từ ${g.phanGiuongHienTai.DenNgay})` : ""}`
+                          : " — Trống"}
                       </option>
                     ))}
                   </select>
@@ -474,7 +548,7 @@ export default function InpatientPage() {
                         )}
                       </div>
 
-                      {!isClosed && (
+                      {canManageAdmissions && !isClosed && (
                         <div className="flex items-center gap-2">
                           <input
                             type="date"

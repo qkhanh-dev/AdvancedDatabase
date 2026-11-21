@@ -14,8 +14,8 @@ export const QUERY_KEYS = {
   labRequestsPending: ["lab-requests", "pending"] as const,
   labRequestsByStatus: (status?: string) => ["lab-requests", status ?? "ALL"] as const,
   bedsMap: (date: string, maKhoa?: string) => ["beds", "map", date, maKhoa ?? "ALL"] as const,
-  inpatientAdmissions: (openOnly?: boolean) =>
-    ["inpatient", "admissions", openOnly ? "OPEN" : "ALL"] as const,
+  inpatientAdmissions: (openOnly?: boolean, maBN?: string) =>
+    ["inpatient", "admissions", openOnly ? "OPEN" : "ALL", maBN ?? "ALL"] as const,
   billingPreview: (maLuotKham: string) => ["billing", "preview", maLuotKham] as const,
   billingInvoice: (id: string) => ["billing", "invoice", id] as const,
   departments: ["departments"] as const,

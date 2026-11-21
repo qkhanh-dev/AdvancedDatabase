@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Edit3,
@@ -59,10 +59,31 @@ export default function ClinicalPage() {
   });
 
   const { data: openAdmissions = [] } = useQuery({
-    queryKey: QUERY_KEYS.inpatientAdmissions(true),
+    queryKey: QUERY_KEYS.inpatientAdmissions(true, examDetail?.MaBN),
     queryFn: () => hospitalApi.inpatient.getAdmissions(true, examDetail?.MaBN),
     enabled: !!examDetail?.MaBN,
   });
+
+  useEffect(() => {
+    if (!examDetail) return;
+    setTrieuChung(examDetail.TrieuChung || "");
+    setChanDoanSoBo(examDetail.ChanDoanSoBo || "");
+    setTrangThai((examDetail.TrangThai as TrangThaiKhamEnum) || TrangThaiKhamEnum.DANG_KHAM);
+    setMaDotNT(examDetail.MaDotNT || "");
+    if (examDetail.donThuoc) {
+      setLoiDan(examDetail.donThuoc.LoiDanCuaBacSi || "");
+      setRxItems(
+        (examDetail.donThuoc.chiTietDonThuocs || []).map((ct) => ({
+          maThuoc: ct.MaThuoc,
+          soLuong: ct.SoLuong,
+          lieuDung: ct.LieuDung,
+        })),
+      );
+    } else {
+      setLoiDan("Uống đủ liều và tái khám đúng hẹn");
+      setRxItems([]);
+    }
+  }, [examDetail]);
 
   const selectExam = (id: string) => {
     setSelectedExamId(id);
@@ -76,6 +97,8 @@ export default function ClinicalPage() {
   };
 
   const isLockedPaid = examDetail?.vienPhi?.TrangThaiThanhToan === TrangThaiTTEnum.DA_THANH_TOAN;
+  const isCancelled = examDetail?.TrangThai === TrangThaiKhamEnum.HUY;
+  const isCostLocked = isLockedPaid || isCancelled;
 
   const invalidateExamData = async () => {
     await queryClient.invalidateQueries({ queryKey: ["examinations"] });
@@ -289,15 +312,21 @@ export default function ClinicalPage() {
                         <label className="font-semibold text-slate-700">Trạng thái lượt khám</label>
                         <select
                           value={trangThai}
-                          disabled={isLockedPaid}
+                          disabled={isLockedPaid || isCancelled}
                           onChange={(e) => setTrangThai(e.target.value as TrangThaiKhamEnum)}
                           className="mt-1 w-full px-3 py-2 rounded-lg border border-slate-300 bg-white disabled:bg-slate-100"
                         >
-                          {Object.values(TrangThaiKhamEnum).map((st) => (
-                            <option key={st} value={st}>
-                              {st}
-                            </option>
-                          ))}
+                          {Object.values(TrangThaiKhamEnum).map((st) => {
+                            const isTerminal =
+                              examDetail?.TrangThai === TrangThaiKhamEnum.HOAN_TAT ||
+                              examDetail?.TrangThai === TrangThaiKhamEnum.HUY;
+                            const disabledOpt = isTerminal && st !== examDetail?.TrangThai;
+                            return (
+                              <option key={st} value={st} disabled={disabledOpt}>
+                                {st}
+                              </option>
+                            );
+                          })}
                         </select>
                       </div>
                       <div>
@@ -352,7 +381,7 @@ export default function ClinicalPage() {
                             <strong className="font-mono">{examDetail.donThuoc.MaDonThuoc}</strong> ·
                             Ngày kê: {examDetail.donThuoc.NgayKeDon}
                           </div>
-                          {!isLockedPaid && (
+                          {!isCostLocked && (
                             <button
                               type="button"
                               onClick={() =>
@@ -387,7 +416,7 @@ export default function ClinicalPage() {
                     )}
 
                     {/* FORM KE DON / SUA DON */}
-                    {!isLockedPaid && (
+                    {!isCostLocked && (
                       <div className="space-y-3 pt-2 border-t border-slate-100 text-xs">
                         <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 items-end">
                           <div className="sm:col-span-5">
@@ -541,7 +570,7 @@ export default function ClinicalPage() {
                                   : "Đang chờ KTV nhận mẫu"}
                             </div>
                           </div>
-                          {!isLockedPaid && (
+                          {!isCostLocked && (
                             <button
                               type="button"
                               onClick={() => deleteLabMutation.mutate(pxn.MaPhieuXN)}

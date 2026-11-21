@@ -306,18 +306,20 @@ async function runTests() {
   );
 
   // Inpatient admission + bed map date + allocation + discharge (BR-V2-02, 03, 11, 12)
+  const testInpatientDate = "2026-12-20";
+  const testDischargeDate = "2026-12-21";
   const admitRes = await apiClient.post(
     "/inpatient/admissions",
     {
       maDotNT: maDot,
       maBN,
-      ngayNhapVien: "2026-11-15",
+      ngayNhapVien: testInpatientDate,
       nguoiNhaLienHe: "Người nhà Test",
       tinhTrangNhapVien: "Theo dõi nội trú",
     },
     docAuth,
   );
-  const bedMapRes = await apiClient.get("/beds/map?date=2026-11-15", nurseAuth);
+  const bedMapRes = await apiClient.get(`/beds/map?date=${testInpatientDate}`, nurseAuth);
   const freeBed = (bedMapRes.data || []).find(
     (b) => b.TrangThai === "SAN_SANG" && !b.dangCoNguoiNam,
   );
@@ -325,14 +327,14 @@ async function runTests() {
   if (freeBed) {
     const allocRes = await apiClient.post(
       "/inpatient/bed-allocations",
-      { maDotNT: maDot, maGiuong: freeBed.MaGiuong, tuNgay: "2026-11-15" },
+      { maDotNT: maDot, maGiuong: freeBed.MaGiuong, tuNgay: testInpatientDate },
       nurseAuth,
     );
     allocOk = allocRes.status === 201;
   }
   const dischargeRes = await apiClient.patch(
     `/inpatient/admissions/${maDot}/discharge`,
-    { ngayRaVien: "2026-11-16" },
+    { ngayRaVien: testDischargeDate },
     docAuth,
   );
   record(

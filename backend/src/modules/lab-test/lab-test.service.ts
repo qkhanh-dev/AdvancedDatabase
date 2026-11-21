@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -47,7 +48,7 @@ export class LabTestService {
       include: {
         loaiXetNghiem: true,
         kyThuatVien: { include: { nhanVien: true } },
-        luotKham: { include: { benhNhan: true } },
+        luotKham: { include: { benhNhan: true, vienPhi: true } },
       },
       orderBy: { MaPhieuXN: 'asc' },
     });
@@ -108,6 +109,19 @@ export class LabTestService {
   async startLabRequest(maPhieuXN: string, dto: StartLabRequestDto, currentMaNV?: string) {
     const updated = await this.prisma.$transaction(
       async (tx) => {
+        const pre = await tx.phieuXetNghiem.findUnique({
+          where: { MaPhieuXN: maPhieuXN },
+          select: { MaLuotKham: true },
+        });
+        if (!pre) {
+          throw new NotFoundException({
+            ruleCode: 'NOT_FOUND',
+            message: `Phiếu xét nghiệm ${maPhieuXN} không tồn tại`,
+          });
+        }
+
+        await lockLuotKhamAndAssertUnlocked(tx, pre.MaLuotKham);
+
         const existing = await tx.phieuXetNghiem.findUnique({
           where: { MaPhieuXN: maPhieuXN },
         });
@@ -118,7 +132,12 @@ export class LabTestService {
           });
         }
 
-        await lockLuotKhamAndAssertUnlocked(tx, existing.MaLuotKham);
+        if (existing.NgayGioXN !== null || existing.NgayGioTraKQ !== null) {
+          throw new ConflictException({
+            ruleCode: 'BR-V2-07',
+            message: `Phiếu xét nghiệm ${maPhieuXN} đã được bắt đầu hoặc hoàn tất, không thể bắt đầu lại (BR-V2-07)`,
+          });
+        }
 
         const maNV_KTV = dto.maNV_KTV || currentMaNV;
         if (!maNV_KTV) {
@@ -141,13 +160,6 @@ export class LabTestService {
           throw new BadRequestException({
             ruleCode: 'VALIDATION_ERROR',
             message: 'NgayGioXN không hợp lệ',
-          });
-        }
-
-        if (existing.NgayGioTraKQ && existing.NgayGioTraKQ < ngayGioXN) {
-          throw new BadRequestException({
-            ruleCode: 'BR-V2-07',
-            message: 'NgayGioXN không được lớn hơn NgayGioTraKQ hiện có (BR-V2-07)',
           });
         }
 
@@ -184,6 +196,19 @@ export class LabTestService {
   ) {
     const updated = await this.prisma.$transaction(
       async (tx) => {
+        const pre = await tx.phieuXetNghiem.findUnique({
+          where: { MaPhieuXN: maPhieuXN },
+          select: { MaLuotKham: true },
+        });
+        if (!pre) {
+          throw new NotFoundException({
+            ruleCode: 'NOT_FOUND',
+            message: `Phiếu xét nghiệm ${maPhieuXN} không tồn tại`,
+          });
+        }
+
+        await lockLuotKhamAndAssertUnlocked(tx, pre.MaLuotKham);
+
         const existing = await tx.phieuXetNghiem.findUnique({
           where: { MaPhieuXN: maPhieuXN },
         });
@@ -194,7 +219,12 @@ export class LabTestService {
           });
         }
 
-        await lockLuotKhamAndAssertUnlocked(tx, existing.MaLuotKham);
+        if (existing.NgayGioTraKQ !== null) {
+          throw new ConflictException({
+            ruleCode: 'BR-V2-07',
+            message: `Phiếu xét nghiệm ${maPhieuXN} đã trả kết quả, không thể ghi đè (BR-V2-07)`,
+          });
+        }
 
         const maNV_KTV = dto.maNV_KTV || existing.MaNV_KTV || currentMaNV;
         const ngayGioXN = dto.ngayGioXN ? new Date(dto.ngayGioXN) : existing.NgayGioXN;
