@@ -1,0 +1,616 @@
+--- P 0 [Normal] ---
+
+--- P 1 [Normal] ---
+
+--- P 2 [Normal] ---
+TRƯỜNG ĐẠI HỌC SÀI GÒN
+--- P 3 [Normal] ---
+KHOA CÔNG NGHỆ THÔNG TIN
+--- P 4 [Normal] ---
+
+--- P 5 [Normal] ---
+
+--- P 6 [Normal] ---
+
+--- P 7 [Normal] ---
+
+--- P 8 [Normal] ---
+
+--- P 9 [Normal] ---
+HỌC PHẦN: CƠ SỞ DỮ LIỆU NÂNG CAO
+--- P 10 [Normal] ---
+BÁO CÁO ĐỒ ÁN
+--- P 11 [Normal] ---
+ĐỀ TÀI: QUẢN LÝ BỆNH VIỆN BẰNG MÔ HÌNH EER VÀ CHUẨN HÓA
+--- P 12 [Normal] ---
+
+--- P 13 [Normal] ---
+Giảng viên hướng dẫn:
+--- P 14 [Normal] ---
+Huỳnh Minh Trí
+--- P 15 [Normal] ---
+
+--- P 16 [Normal] ---
+
+--- P 17 [Normal] ---
+
+--- P 18 [Normal] ---
+Nhóm sinh viên thực hiện
+--- P 19 [Normal] ---
+Cao Nguyễn Quốc Khánh - 3124410149
+--- P 20 [Normal] ---
+Trần Nguyễn Quỳnh Như – 3124410258
+--- P 21 [Normal] ---
+Hoàng Văn Lập – 3124410184
+--- P 22 [Normal] ---
+Nguyễn Đăng Thụy – 3124410352
+--- P 23 [Normal] ---
+Cô Thành Long – 31244102192
+--- P 24 [Normal] ---
+
+--- P 25 [Normal] ---
+
+--- P 26 [Normal] ---
+
+--- P 27 [Normal] ---
+
+--- P 28 [Normal] ---
+
+--- P 29 [Normal] ---
+
+--- P 30 [Normal] ---
+
+--- P 31 [Normal] ---
+
+--- P 32 [Normal] ---
+
+--- P 33 [Normal] ---
+
+--- P 34 [Normal] ---
+
+--- P 35 [Normal] ---
+
+--- P 36 [Normal] ---
+TP. HCM THÁNG 11/2026
+--- P 37 [Normal] ---
+
+--- P 38 [Normal] ---
+
+--- P 39 [Normal] ---
+
+--- P 40 [Normal] ---
+TRƯỜNG ĐẠI HỌC SÀI GÒN
+--- P 41 [Normal] ---
+KHOA CÔNG NGHỆ THÔNG TIN
+--- P 42 [Normal] ---
+
+--- P 43 [Normal] ---
+
+--- P 44 [Normal] ---
+
+--- P 45 [Normal] ---
+
+--- P 46 [Normal] ---
+HỌC PHẦN: CƠ SỞ DỮ LIỆU NÂNG CAO
+--- P 47 [Normal] ---
+BÁO CÁO ĐỒ ÁN
+--- P 48 [Normal] ---
+ĐỀ TÀI: QUẢN LÝ BỆNH VIỆN BẰNG MÔ HÌNH EER VÀ CHUẨN HÓA
+--- P 49 [Normal] ---
+
+--- P 50 [Normal] ---
+Giảng viên hướng dẫn:
+--- P 51 [Normal] ---
+Huỳnh Minh Trí
+--- P 52 [Normal] ---
+
+--- P 53 [Normal] ---
+
+--- P 54 [Normal] ---
+
+--- P 55 [Normal] ---
+Nhóm sinh viên thực hiện
+--- P 56 [Normal] ---
+Cao Nguyễn Quốc Khánh - 3124410149
+--- P 57 [Normal] ---
+Trần Nguyễn Quỳnh Như – 3124410258
+--- P 58 [Normal] ---
+Hoàng Văn Lập – 3124410184
+--- P 59 [Normal] ---
+Nguyễn Đăng Thụy – 3124410352
+--- P 60 [Normal] ---
+Cô Thành Long – 31244102192
+--- P 61 [Normal] ---
+
+--- P 62 [Normal] ---
+
+--- P 63 [Normal] ---
+
+--- P 64 [Normal] ---
+
+--- P 65 [Normal] ---
+
+--- P 66 [Normal] ---
+
+--- P 67 [Normal] ---
+
+--- P 68 [Normal] ---
+
+--- P 69 [Normal] ---
+
+--- P 70 [Normal] ---
+
+--- P 71 [Normal] ---
+                                           
+--- P 72 [Normal] ---
+TP. HCM THÁNG 11/2026
+--- P 73 [Normal] ---
+
+--- P 74 [Normal] ---
+NHẬN XÉT CỦA GIẢNG VIÊN
+--- P 75 [Normal] ---
+	
+--- P 76 [Normal] ---
+
+--- P 77 [Normal] ---
+	
+--- P 78 [Normal] ---
+
+--- P 79 [Normal] ---
+	
+--- P 80 [Normal] ---
+
+--- P 81 [Normal] ---
+	
+--- P 82 [Normal] ---
+
+--- P 83 [Normal] ---
+	
+--- P 84 [Normal] ---
+
+--- P 85 [Normal] ---
+	
+--- P 86 [Normal] ---
+
+--- P 87 [Normal] ---
+	
+--- P 88 [Normal] ---
+
+--- P 89 [Normal] ---
+	
+--- P 90 [Normal] ---
+
+--- P 91 [Normal] ---
+	
+--- P 92 [Normal] ---
+
+--- P 93 [Normal] ---
+	
+--- P 94 [Normal] ---
+
+--- P 95 [Normal] ---
+	
+--- P 96 [Normal] ---
+
+--- P 97 [Normal] ---
+	
+--- P 98 [Normal] ---
+
+--- P 99 [Normal] ---
+	
+--- P 100 [Normal] ---
+
+--- P 101 [Normal] ---
+	
+--- P 102 [Normal] ---
+
+--- P 103 [Normal] ---
+	
+--- P 104 [Normal] ---
+
+--- P 105 [Normal] ---
+	
+--- P 106 [Normal] ---
+
+--- P 107 [Normal] ---
+	
+--- P 108 [Normal] ---
+
+--- P 109 [Normal] ---
+	
+--- P 110 [Normal] ---
+
+--- P 111 [Normal] ---
+	
+--- P 112 [Normal] ---
+
+--- P 113 [Normal] ---
+	
+--- P 114 [Normal] ---
+
+--- P 115 [Normal] ---
+	
+--- P 116 [Normal] ---
+
+--- P 117 [Normal] ---
+	
+--- P 118 [Normal] ---
+
+--- P 119 [Normal] ---
+	
+--- P 120 [Normal] ---
+
+--- P 121 [Normal] ---
+	
+--- P 122 [Heading 1] ---
+Chương 1: TỔNG QUAN VÀ KHẢO SAT
+--- P 123 [Heading 2] ---
+Giới thiệu chung
+--- P 124 [Heading 3] ---
+Lý do chọn đề tài
+--- P 125 [Normal] ---
+Trong bối cảnh hiện đại hóa và số hóa quy trình quản lý, việc tổ chức và quản trị thông tin tại các cơ sở khám chữa bệnh đóng vai trò vô cùng cấp thiết. Bệnh viện là một môi trường vận hành đặc thù với cơ cấu tổ chức phân tầng phức tạp, lực lượng nhân sự đa dạng và khối lượng dữ liệu phát sinh liên tục mỗi ngày — từ hồ sơ bệnh nhân, lượt khám, đơn thuốc, kết quả xét nghiệm cho đến việc phân bổ giường bệnh và thanh toán viện phí. 
+--- P 126 [Normal] ---
+Thực tế quản lý cho thấy các phương thức lưu trữ thủ công hoặc rời rạc dễ dẫn đến tình trạng trùng lặp, thiếu nhất quán và khó bảo toàn tính toàn vẹn của thông tin y tế. Bên cạnh đó, các đối tượng trong môi trường bệnh viện có tính phân cấp và chuyên biệt hóa rất cao: lực lượng nhân viên được phân chia theo các vai trò chuyên môn riêng biệt (bác sĩ, điều dưỡng, kỹ thuật viên), trong khi đối tượng người bệnh lại có sự khác biệt rõ rệt về quy trình theo dõi (điều trị nội trú hoặc khám ngoại trú). Những mối quan hệ phức tạp này đòi hỏi một phương pháp mô hình hóa dữ liệu mở rộng có khả năng phản ánh trọn vẹn ngữ nghĩa thực tế. 
+--- P 127 [Normal] ---
+Đồng thời, để hệ thống vận hành ổn định và chính xác, cơ sở dữ liệu cần được thiết kế bài bản thông qua quy trình chuẩn hóa nhằm loại bỏ tối đa các dị thường khi thêm, xóa, sửa và triệt tiêu sự dư thừa dữ liệu. Việc thiết lập chặt chẽ các ràng buộc nghiệp vụ là nền tảng cốt lõi đảm bảo dữ liệu luôn nhất quán, an toàn và phục vụ hiệu quả cho công tác quản lý chuyên môn. 
+--- P 128 [Heading 3] ---
+Mục tiêu nghiên cứu và phát triển đề tài
+--- P 129 [Normal] ---
+Đề tài hướng tới việc hoàn thiện quy trình phân tích và thiết kế cơ sở dữ liệu cho bài toán quản lý bệnh viện với các mục tiêu cụ thể sau:
+--- P 130 [Normal] ---
+Khảo sát và mô hình hóa nghiệp vụ y tế: Phân tích chi tiết các quy trình vận hành trung tâm tại cơ sở y tế (tiếp đón khám bệnh, quản lý hồ sơ bệnh nhân, thực hiện xét nghiệm, cấp phát đơn thuốc, lưu viện và tính viện phí) để xác định đầy đủ các thực thể, thuộc tính và mối quan hệ ngữ nghĩa giữa chúng. 
+--- P 131 [Normal] ---
+Thiết kế mô hình quan niệm mở rộng (EER): Xây dựng sơ đồ thực thể kết hợp mở rộng (EERD) biểu diễn chính xác cấu trúc dữ liệu của bài toán, đặc biệt là các mối quan hệ chuyên biệt hóa/tổng quát hóa đối với lực lượng nhân sự (phân cấp thành bác sĩ, điều dưỡng, kỹ thuật viên) và đối tượng bệnh nhân (phân loại thành nội trú và ngoại trú). 
+--- P 132 [Normal] ---
+Chuyển đổi và chuẩn hóa cấu trúc dữ liệu: Áp dụng hệ thống quy tắc ánh xạ chuẩn để chuyển đổi mô hình EER sang mô hình quan hệ; phân tích các phụ thuộc hàm nghiệp vụ và tiến hành chuẩn hóa lược đồ dữ liệu về các dạng chuẩn cao nhằm triệt tiêu dư thừa và ngăn ngừa các dị thường dữ liệu. 
+--- P 133 [Normal] ---
+Đặc tả ràng buộc và toàn vẹn dữ liệu: Xác định rõ ràng các ràng buộc toàn vẹn khóa, toàn vẹn tham chiếu, ràng buộc ngữ nghĩa và quy tắc nghiệp vụ đặc thù trong quy trình khám chữa bệnh nhằm bảo đảm tính nhất quán và độ chính xác của toàn bộ hệ thống dữ liệu. 
+--- P 134 [Normal] ---
+Xây dựng kịch bản thử nghiệm và xác thực: Thiết lập bộ dữ liệu mẫu sơ bộ mô phỏng các hoạt động thực tế của bệnh viện, đồng thời xây dựng các câu truy vấn nghiệp vụ phức tạp để kiểm chứng tính đúng đắn, tính toàn vẹn và mức độ đáp ứng thông tin của mô hình đã thiết kế. 
+--- P 135 [Heading 3] ---
+Phạm vi đề tài
+--- P 136 [Normal] ---
+Đề tài tập trung nghiên cứu, phân tích và mô hình hóa cơ sở dữ liệu cho hệ thống Quản lý Bệnh viện ở mức độ tiếp nhận, khám chữa bệnh và quản trị vận hành nội bộ. Phạm vi cụ thể bao gồm:   
+--- P 137 [Style1] ---
+Phạm vi chức năng và nghiệp vụ quản lý
+--- P 138 [List Paragraph] ---
+Quản trị cơ sở vật chất & cơ cấu tổ chức: Quản lý danh mục các khoa phòng, danh sách phòng chức năng, buồng bệnh và từng giường bệnh cụ thể.   
+--- P 139 [List Paragraph] ---
+Quản lý nhân sự y tế: Quản lý hồ sơ nhân viên y tế phân cấp theo các vai trò nghiệp vụ chính gồm Bác sĩ, Điều dưỡng và Kỹ thuật viên xét nghiệm.   
+--- P 140 [List Paragraph] ---
+Quản lý hồ sơ bệnh nhân: Lưu trữ thông tin định danh, địa chỉ, nhóm máu, lịch sử thẻ Bảo hiểm y tế (BHYT) và phân loại bệnh nhân theo hai nhóm: Nội trú và Ngoại trú.   Quy trình khám chữa bệnh & Cận lâm sàng: Quản lý các lượt khám bệnh, chỉ định và thực hiện các phiếu xét nghiệm chuyên môn, kê đơn thuốc và chi tiết các loại thuốc điều trị.   
+--- P 141 [List Paragraph] ---
+Quản lý nội trú: Theo dõi lịch sử phân giường bệnh cho bệnh nhân nội trú theo khoảng thời gian lưu trú.   
+--- P 142 [List Paragraph] ---
+Quản lý tài chính & Viện phí: Theo dõi và lập hóa đơn thanh toán viện phí tương ứng với từng lượt khám chữa bệnh.   
+--- P 143 [Style1] ---
+Giới hạn phạm vi 
+--- P 144 [List Paragraph] ---
+Không mở rộng sang phân hệ quản lý kho dược chuyên sâu (nhập/xuất kho từ nhà cung cấp, kiểm kê hạn dùng quy mô tổng kho) mà chỉ dừng ở mức danh mục thuốc và kê đơn.   
+--- P 145 [List Paragraph] ---
+Không can thiệp vào nghiệp vụ chấm công, tính lương chi tiết hay đánh giá KPI của nhân viên y tế.   
+--- P 146 [List Paragraph] ---
+Không tích hợp thanh toán cổng trực tuyến ngoại vi (chỉ ghi nhận trạng thái thanh toán và số tiền viện phí tại cơ sở y tế).
+--- P 147 [Heading 2] ---
+Khảo sát hiện trạng và quy trình vận hành
+--- P 148 [List Paragraph] ---
+Hiện trạng hoạt động
+--- P 149 [List Paragraph] ---
+Tại các cơ sở khám chữa bệnh, khối lượng thông tin cần luân chuyển hàng ngày giữa các bộ phận (Tiếp đón – Phòng khám – Phòng xét nghiệm – Nhà thuốc – Thu ngân – Khoa nội trú) là rất lớn. Việc theo dõi thủ công hoặc sử dụng các phần mềm rời rạc dễ dẫn đến các bất cập:   
+--- P 150 [List Paragraph] ---
+Trùng lặp thông tin bệnh nhân qua các đợt khám khác nhau.   
+--- P 151 [List Paragraph] ---
+Khó kiểm soát tình trạng giường trống và dễ xảy ra xung đột khi xếp giường cho bệnh nhân nội trú.   
+--- P 152 [List Paragraph] ---
+Sai sót trong quá trình tổng hợp viện phí do dịch vụ cận lâm sàng và thuốc nằm ở nhiều sổ sách riêng lẻ.   
+--- P 153 [List Paragraph] ---
+Do đó, việc thiết kế một cơ sở dữ liệu quan hệ hoàn chỉnh từ mô hình EER là nền tảng tất yếu để tin học hóa quy trình bệnh viện một cách nhất quán và chính xác.  
+--- P 154 [List Paragraph] ---
+Các quy trình vận hành nghiệp vụ cốt lõi
+--- P 155 [List Paragraph] ---
+Quy trình hoạt động trong hệ thống bệnh viện được tổ chức thành các luồng nghiệp vụ liên hoàn như sau:
+--- P 156 [Style1] ---
+Quy trình 1: Tiếp đón và Đăng ký khám (Khám Ngoại trú)
+--- P 157 [List Paragraph] ---
+Bệnh nhân đến bệnh viện xuất trình giấy tờ tùy thân (CCCD) và thẻ BHYT (nếu có). 
+--- P 158 [List Paragraph] ---
+Nhân viên tiếp đón kiểm tra thông tin:
+--- P 159 [List Paragraph] ---
+Nếu là bệnh nhân mới: Tạo lập hồ sơ BENH_NHAN và ghi nhận thông tin THE_BHYT tương ứng.   
+--- P 160 [List Paragraph] ---
+Nếu đã từng khám: Tra cứu lại mã bệnh nhân MaBN.   
+--- P 161 [List Paragraph] ---
+Hệ thống khởi tạo một LUOT_KHAM mới với trạng thái ban đầu, phân bổ bệnh nhân vào phòng khám chuyên khoa phù hợp và chỉ định một Bác sĩ phụ trách.  
+--- P 162 [Style1] ---
+Quy trình 2: Khám bệnh và Chỉ định Cận lâm sàng (Xét nghiệm)
+--- P 163 [List Paragraph] ---
+Bác sĩ thực hiện thăm khám lâm sàng cho bệnh nhân trong lượt khám.  
+--- P 164 [List Paragraph] ---
+Nếu cần kiểm tra cận lâm sàng, Bác sĩ chỉ định các dịch vụ xét nghiệm: Hệ thống tạo ra một hoặc nhiều PHIEU_XET_NGHIEM, mỗi phiếu liên kết với một LOAI_XET_NGHIEM cụ thể.   
+--- P 165 [List Paragraph] ---
+Kỹ thuật viên tại phòng xét nghiệm tiếp nhận mẫu, thực hiện kỹ thuật chuyên môn, cập nhật kết quả và chẩn đoán cận lâm sàng lên phiếu.   
+--- P 166 [List Paragraph] ---
+Bác sĩ dựa vào kết quả xét nghiệm để đưa ra kết luận chẩn đoán cuối cùng.   
+--- P 167 [Style1] ---
+Quy trình 3: Kê đơn thuốc và Điều trị
+--- P 168 [List Paragraph] ---
+Sau khi hoàn tất khám bệnh, Bác sĩ kê một DON_THUOC cho lượt khám đó (mỗi lượt khám có tối đa 1 đơn thuốc).  
+--- P 169 [List Paragraph] ---
+Bác sĩ chọn các loại THUOC và nhập số lượng, cách dùng vào danh sách CT_DON_THUOC.   
+--- P 170 [List Paragraph] ---
+Đơn thuốc được chuyển thông tin sang phân hệ dược để cấp phát thuốc cho người bệnh.   
+--- P 171 [Style1] ---
+Quy trình 4: Nhập viện và Quản lý Nội trú
+--- P 172 [List Paragraph] ---
+Đối với các ca bệnh chuyển biến nặng cần theo dõi dài ngày, Bác sĩ ra chỉ định nhập viện: Hồ sơ bệnh nhân được kích hoạt/chuyển sang phân loại BN_NOI_TRU.   
+--- P 173 [List Paragraph] ---
+Bộ phận điều phối buồng phòng kiểm tra danh sách GIUONG_BENH tại các PHONG thuộc KHOA tương ứng.   
+--- P 174 [List Paragraph] ---
+Khi tìm được giường có trạng thái TRONG, hệ thống tiến hành lập phiếu PHAN_GIUONG: Ghi nhận MaBN, MaGiuong, thời điểm bắt đầu (TuNgay) và cập nhật trạng thái giường sang DANG SU DUNG. Bệnh nhân được điều dưỡng theo dõi và chăm sóc trong suốt thời gian nằm viện.   
+--- P 175 [Style1] ---
+Quy trình 5: Xuất viện và Thanh toán Viện phí
+--- P 176 [List Paragraph] ---
+Khi hoàn thành đợt điều trị/khám bệnh, hệ thống kết thúc việc phân giường (ghi nhận DenNgay) và trả lại trạng thái TRONG cho giường bệnh.   
+--- P 177 [List Paragraph] ---
+Nhân viên thu ngân tiến hành lập hóa đơn VIEN_PHI gắn với lượt khám đó (mỗi lượt khám gắn với tối đa 1 hóa đơn).   
+--- P 178 [List Paragraph] ---
+Tổng viện phí được tính toán tự động dựa trên:
+--- P 179 [List Paragraph] ---
+Tiền dịch vụ khám và các phiếu xét nghiệm cận lâm sàng.   
+--- P 180 [List Paragraph] ---
+Tiền thuốc từ chi tiết đơn thuốc.   
+--- P 181 [List Paragraph] ---
+Chi phí lưu trú tại buồng bệnh (dựa trên số ngày thực tế và đơn giá giường).   
+--- P 182 [List Paragraph] ---
+Khấu trừ quyền lợi bảo hiểm (nếu có THE_BHYT hợp lệ căn cứ theo MucHuong).   
+--- P 183 [List Paragraph] ---
+Bệnh nhân thanh toán số tiền thực thu, hệ thống cập nhật trạng thái hóa đơn sang đã hoàn tất và kết thúc quy trình.
+--- P 184 [Heading 2] ---
+Tổng hợp danh mục quy tắt nghiệp vụ (Bussiness Rules)
+--- P 185 [Normal] ---
+
+--- P 186 [Heading 1] ---
+Chương 2: MÔ HÌNH DỮ LIỆU QUAN NIỆM MỞ RỘNG (EER)
+--- P 187 [Heading 2] ---
+Cơ sở lí thuyết về mô hình EER
+--- P 188 [Heading 3] ---
+Khái niệm cốt lõi
+--- P 189 [List Paragraph] ---
+Superclass (Thực thể cha): Là tập thực thể bao hàm chứa các thuộc tính và hành vi chung của một nhóm đối tượng rộng lớn.   
+--- P 190 [List Paragraph] ---
+Subclass (Thực thể con): Là tập con của superclass, đại diện cho một nhóm đối tượng cụ thể có vai trò hoặc đặc trưng riêng biệt mà superclass không biểu diễn chi tiết.   
+--- P 191 [List Paragraph] ---
+Mối quan hệ IS-A (Là-Một): Mỗi thực thể trong subclass bắt buộc phải là một thành viên của superclass (ví dụ: Bác sĩ là một Nhân viên, Bệnh nhân nội trú là một Bệnh nhân).   
+--- P 192 [List Paragraph] ---
+Kế thừa: Một thực thể thuộc Subclass sẽ tự động thừa hưởng toàn bộ thuộc tính và mối kết hợp của Superclass tương ứng, đồng thời có thêm các thuộc tính riêng (specific attributes) của chính nó.
+--- P 193 [Heading 3] ---
+Tiến trình thiết kế phân cấp
+--- P 194 [Normal] ---
+
+--- P 195 [Heading 3] ---
+Tổ hợp ràng buộc trên mô hình EER
+--- P 196 [Normal] ---
+
+--- P 197 [Heading 3] ---
+Quy tắc ánh xạ sang lược đồ quan hệ
+--- P 198 [List Paragraph] ---
+Option 8A (Multiple relations: Superclass and Subclasses): Tạo bảng cha + các bảng con (khóa chính bảng con đồng thời là khóa ngoại trỏ về bảng cha). Phù hợp cho mọi loại ràng buộc.
+--- P 199 [List Paragraph] ---
+
+--- P 200 [List Paragraph] ---
+Option 8B (Multiple relations: Subclass relations only): Chỉ tạo bảng con, sao chép toàn bộ thuộc tính cha xuống con. Chỉ áp dụng cho Total + Disjoint.
+--- P 201 [List Paragraph] ---
+
+--- P 202 [List Paragraph] ---
+Option 8C (Single relation with one type attribute): Gom hết vào 1 bảng lớn kèm cột phân loại type (chấp nhận NULL cho thuộc tính riêng). Phù hợp cho Disjoint khi có ít thuộc tính riêng.
+--- P 203 [List Paragraph] ---
+
+--- P 204 [List Paragraph] ---
+Option 8D (Single relation with multiple boolean flags): Gom hết vào 1 bảng lớn kèm các cờ Boolean (is_A, is_B). Phù hợp cho Overlapping.
+--- P 205 [Heading 2] ---
+Phân tích cây chuyên biệt hóa
+--- P 206 [Heading 3] ---
+Cây chuyên biệt hóa nhân viên y tế
+--- P 207 [Style1] ---
+Cấu trúc phân cấp
+--- P 208 [Style2] ---
+Superclass (Lớp cha): NHAN_VIEN   Thuộc tính chung kế thừa: MaNV (PK), MaKhoa (FK), HoTen, NgaySinh, GioiTinh, CCCD, DiaChi, SoDienThoai, NgayVaoLam, SoNamCongTac (D).   
+--- P 209 [Style2] ---
+Subclasses (Lớp con): BAC_SI, DIEU_DUONG, KY_THUAT_VIEN.   
+--- P 210 [Style2] ---
+BAC_SI: Kế thừa toàn bộ thông tin từ 
+--- P 211 [Style2] ---
+NHAN_VIEN; bổ sung các thuộc tính chuyên môn riêng gồm ChuyenKhoa, TrinhDoHocVan, SoChungChiHanhNghe.   
+--- P 212 [Style2] ---
+DIEU_DUONG: Kế thừa từ NHAN_VIEN; bổ sung các thuộc tính riêng gồm CapBac, ChungChiHanhNghe.   
+--- P 213 [Style2] ---
+KY_THUAT_VIEN: Kế thừa từ NHAN_VIEN; bổ sung các thuộc tính riêng gồm ChuyenMonXetNghiem, STT_ThietBiPhuTrach.   
+--- P 214 [Style1] ---
+Phân tích ràng buộc: [d, p] (Disjoint, Partial)   
+--- P 215 [Style2] ---
+Ràng buộc Disjoint (d): Các lớp con loại trừ lẫn nhau hoàn toàn. Một nhân viên trong hệ thống tại một thời điểm chỉ đảm nhiệm tối đa một chức danh chuyên môn (chỉ có thể là Bác sĩ, hoặc Điều dưỡng, hoặc Kỹ thuật viên, không thể kiêm nhiệm cùng lúc nhiều vai trò này).   
+--- P 216 [Style2] ---
+Ràng buộc Partial (p): Chuyên biệt hóa một phần. Bệnh viện có những nhân viên thuộc các bộ phận khác (nhân viên hành chính, kế toán viện phí, bảo vệ, tiếp đón...). Do đó, một thực thể NHAN_VIEN có thể không thuộc bất kỳ Subclass chuyên môn y tế nào trong 3 nhóm trên.   
+--- P 217 [Heading 3] ---
+Cây chuyên biệt hóa bệnh nhân
+--- P 218 [Style1] ---
+Cấu trúc phân cấp
+--- P 219 [Style3] ---
+Thực thể cha (Superclass): BENH_NHAN.   Thuộc tính dùng chung: MaBN (PK), HoTen, NgaySinh, GioiTinh, CCCD, SDT, DiaChi_Duong, DiaChi_Phuong, DiaChi_Quan, NhomMau, (Tuoi).   
+--- P 220 [Style3] ---
+Thực thể con (Subclasses)
+--- P 221 [Style3] ---
+BN_NOI_TRU: Lưu trữ các thuộc tính quản lý lưu viện: MaHoSoNoiTru, NgayNhapVien, NguoiNhaLienHe, TinhTrangNhapVien.   
+--- P 222 [Style3] ---
+BN_NGOAI_TRU: Lưu trữ lịch sử tái khám: SoLanKhamGanNhat, NgayKhamGanNhat.   
+--- P 223 [Style1] ---
+Phân tích ràng buộc: [d, t] (Disjoint, Total)
+--- P 224 [Style3] ---
+Ràng buộc Disjoint : Một bệnh nhân trong một đợt khám/điều trị chỉ thuộc diện Nội trú hoặc Ngoại trú.   
+--- P 225 [Style3] ---
+Ràng buộc Total : Bất kỳ người bệnh nào có hồ sơ trong hệ thống bắt buộc phải thuộc một trong hai diện này.   
+--- P 226 [Heading 2] ---
+Sơ đồ EER 
+--- P 227 [Normal] ---
+
+--- P 228 [Normal] ---
+Hình 1. Sơ đồ EER
+--- P 229 [Style1] ---
+
+--- P 230 [Heading 1] ---
+Chương 3: CHUYỂN ĐỔI MÔ HÌNH EER SANG MÔ HÌNH QUAN HỆ VÀ CHUẨN HÓA DỮ LIỆU
+--- P 231 [List Paragraph] ---
+Chuyển đổi mô hình EER sang mô hình quan hệ
+--- P 232 [Normal] ---
+Quá trình chuyển đổi từ mô hình quan niệm mở rộng (EER) sang lược đồ quan hệ được tiến hành theo quy trình ánh xạ chuẩn 7 bước (kế thừa từ phương pháp luận của Elmasri & Navathe), đảm bảo bảo toàn toàn bộ các thực thể, thuộc tính và mối kết hợp nghiệp vụ bệnh viện: 
+--- P 233 [List Paragraph] ---
+Bước 1: Ánh xạ thực thể mạnh (Strong Entities): Các thực thể độc lập gồm KHOA, PHONG, GIUONG_BENH, THUOC, DICH_VU, LUOT_KHAM được chuyển thành các quan hệ riêng biệt với khóa chính (PK) tương ứng. 
+--- P 234 [List Paragraph] ---
+Bước 2: Ánh xạ thực thể yếu & quan hệ lịch sử: Thực thể PHAN_GIUONG nhận khóa chính phức hợp gồm (MaBN, MaGiuong, NgayBatDau) để quản lý lịch sử điều chuyển giường theo thời gian. 
+--- P 235 [List Paragraph] ---
+Bước 3: Ánh xạ mối quan hệ 1:1:
+--- P 236 [List Paragraph] ---
+Bác sĩ làm Trưởng khoa: đưa MaTruongKhoa (kèm ràng buộc UNIQUE, NOT NULL) vào bảng KHOA tham chiếu tới BAC_SI(MaNV). 
+--- P 237 [List Paragraph] ---
+Kê đơn thuốc: đưa MaLuotKham (UNIQUE, NOT NULL) vào DON_THUOC. 
+--- P 238 [List Paragraph] ---
+Quyết toán hóa đơn: đưa MaLuotKham (UNIQUE, NOT NULL) vào HOA_DON. 
+--- P 239 [List Paragraph] ---
+Bước 4: Ánh xạ mối quan hệ 1:N: Khóa chính của phía "1" được đưa vào làm khóa ngoại (FK) ở phía "N" (MaKhoa vào PHONG và NHAN_VIEN; MaPhong vào GIUONG_BENH; MaBN, MaBS, MaPhongKham vào LUOT_KHAM). 
+--- P 240 [List Paragraph] ---
+Bước 5: Ánh xạ mối quan hệ N:M: Tạo bảng quan hệ trung gian chứa khóa ghép:
+--- P 241 [List Paragraph] ---
+CT_DON_THUOC với PK: (MaDon, MaThuoc). 
+--- P 242 [List Paragraph] ---
+SU_DUNG_DV với PK: (MaLuotKham, MaDV, ThoiGianChiDinh). 
+--- P 243 [List Paragraph] ---
+LICH_TRUC với PK: (MaNV, MaPhong, NgayTruc, CaTruc) (sau đó được tối ưu hóa ở mục 3.4). 
+--- P 244 [List Paragraph] ---
+Bước 6: Xử lý thuộc tính đa trị & phức hợp: Trải phẳng các thuộc tính phức hợp địa chỉ; chuyển đổi các thuộc tính đơn giá lịch sử thành các cột lưu trữ thời điểm. 
+--- P 245 [List Paragraph] ---
+Bước 7: Ánh xạ cây chuyên biệt hóa IS-A (Áp dụng Option 8A): 
+--- P 246 [List Paragraph] ---
+Cây NHAN_VIEN (Disjoint, Total): Tạo bảng cha NHAN_VIEN chứa thuộc tính chung và 3 bảng con BAC_SI, DIEU_DUONG, NV_HANH_CHINH có PK vừa là FK trỏ về NHAN_VIEN(MaNV). 
+--- P 247 [List Paragraph] ---
+Cây BENH_NHAN (Overlapping, Total): Tạo bảng cha BENH_NHAN và 2 bảng con BN_NOI_TRU, BN_NGOAI_TRU có PK trỏ về BENH_NHAN(MaBN). 
+--- P 248 [List Paragraph] ---
+Phụ thuộc hàm và chuẩn hóa dữ liệu
+--- P 249 [List Paragraph] ---
+Cơ sở lý thuyết
+--- P 250 [List Paragraph] ---
+Định nghĩa tiền đề Armtrong
+--- P 251 [List Paragraph] ---
+Định nghĩa phụ thuộc hàm: Cho lược đồ quan hệ  và hai tập thuộc tính . Ta nói  ( xác định hàm , hoặc  phụ thuộc hàm vào ) nếu với mọi cặp bộ dữ liệu , khi  thì bắt buộc .
+--- P 252 [List Paragraph] ---
+Phụ thuộc hàm tầm thường: Phụ thuộc hàm  là tầm thường nếu .
+--- P 253 [List Paragraph] ---
+Hệ tiên đề Armstrong:
+--- P 254 [List Paragraph] ---
+Tính phản xạ (Reflexivity): Nếu  thì .
+--- P 255 [List Paragraph] ---
+Tính tăng trưởng (Augmentation): Nếu  thì  với mọi tập thuộc tính .
+--- P 256 [List Paragraph] ---
+Tính bắc cầu (Transitivity): Nếu  và  thì .
+--- P 257 [List Paragraph] ---
+
+--- P 258 [List Paragraph] ---
+Thuật toán tìm bao đóng  và chứng minh khóa
+--- P 259 [Normal] ---
+Để xác định các khóa ứng viên tối tiểu (Candidate Keys - CK) và khóa chính (Primary Key - PK) cho một quan hệ  dưới tập phụ thuộc hàm , ta sử dụng thuật toán tính bao đóng  của tập thuộc tính :
+--- P 260 [List Paragraph] ---
+Khởi tạo: .
+--- P 261 [List Paragraph] ---
+Lặp: Tại mỗi bước , nếu tồn tại  sao cho  thì .
+--- P 262 [List Paragraph] ---
+Thuật toán dừng khi . Tập kết quả chính là .
+--- P 263 [List Paragraph] ---
+Nếu  (phủ toàn bộ thuộc tính của quan hệ ) và không tồn tại tập con thực sự nào  có , thì  là một Khóa ứng viên tối tiểu của .
+--- P 264 [List Paragraph] ---
+
+--- P 265 [List Paragraph] ---
+Minh họa thuật toán
+--- P 266 [Normal] ---
+Ví dụ 1 – Quan hệ NHAN_VIEN 
+--- P 267 [List Paragraph] ---
+Tập thuộc tính U={  MaNV, HoTen, NgaySinh, GioiTinh, CCCD, SoDienThoai, Email, DiaChi, NgayVaoLam, HeSoLuong, LoaiNV, MaKhoa }.
+--- P 268 [List Paragraph] ---
+Tập phụ thuộc hàm FNV 
+--- P 269 [List Paragraph] ---
+FD1: MaNV → HoTen, NgaySinh, GioiTinh, CCCD, SoDienThoai, Email, DiaChi, NgayVaoLam, HeSoLuong, LoaiNV, MaKhoa 
+--- P 270 [List Paragraph] ---
+FD2: CCCD → MaNV 
+--- P 271 [List Paragraph] ---
+FD3: SoDienThoai → MaNV
+--- P 272 [List Paragraph] ---
+Ta tính bao đóng
+--- P 273 [List Paragraph] ---
+{MaNV}+ = toàn bộ thuộc tính của NHAN_VIEN . 
+--- P 274 [List Paragraph] ---
+Tương tự, nhờ tính bắc cầu (Transitivity)
+--- P 275 [List Paragraph] ---
+{CCCD}+ → {MaNV}+ = toàn bộ thuộc tính
+--- P 276 [List Paragraph] ---
+{SoDienThoai}+ → {MaNV}+ = toàn bộ thuộc tính. 
+--- P 277 [Normal] ---
+Do đó bảng có 3 Khóa ứng viên tối tiểu: CK1 = MaNV (Chọn làm PK), CK2 = CCCD (Unique), CK3 = SoDienThoai (Unique). Vì mọi FD trong FNV đều có vế trái là Siêu khóa (Superkey), nên NHAN_VIEN đạt chuẩn BCNF.
+--- P 278 [List Paragraph] ---
+
+--- P 279 [Normal] ---
+Ví dụ 2 – Quan hệ PHAN_GIUONG
+--- P 280 [List Paragraph] ---
+Tập thuộc tính: U={ MaBN, MaGiuong, NgayBatDau, NgayKetThuc, GiaGiuongNgay, GhiChuChuyenGiuong}
+--- P 281 [List Paragraph] ---
+Theo quy tắc nghiệp vụ BR-15, tại một thời điểm bắt đầu ( NgayBatDau ),một bệnh nhân nội trú chỉ nằm trên một giường duy nhất và một giường chỉ chứa một bệnh nhân. 
+--- P 282 [List Paragraph] ---
+Tập phụ thuộc hàm FD: {FD1: (MaBN, MaGiuong, NgayBatDau) → NgayKetThuc, GiaGiuongNgay, GhiChuChuyenGiuong }. 
+--- P 283 [List Paragraph] ---
+Tính bao đóng {MaBN, MaGiuong, NgayBatDau}+ phủ toàn bộ quan hệ và không có tập con thực sự nào xác định được các thuộc tính còn lại → Khóa chính tối tiểu là (MaBN, MaGiuong, NgayBatDau) .
+--- P 284 [Normal] ---
+Do đó khóa chính tối tiểu là bộ ba thuộc tính: (MaBN, MaGiuong, NgayBatDau)
+--- P 285 [List Paragraph] ---
+Tiêu chuẩn kiểm định các dạng chuẩn
+--- P 286 [List Paragraph] ---
+Chuẩn 1NF (First Normal Form): Nguyên tử hóa thuộc tính và loại bỏ đa trị.
+--- P 287 [List Paragraph] ---
+Chuẩn 2NF (Second Normal Form): Mọi thuộc tính không khóa phụ thuộc đầy đủ vào toàn bộ PK phức hợp (khử phụ thuộc bộ phận).
+--- P 288 [List Paragraph] ---
+Chuẩn 3NF (Third Normal Form): Không tồn tại phụ thuộc bắc cầu X → A (với X không phải siêu khóa và A không phải thuộc tính khóa).
+--- P 289 [List Paragraph] ---
+Chuẩn BCNF (Boyce-Codd Normal Form): Mọi vế trái của phụ thuộc hàm không tầm thường X → Y bắt buộc phải là Siêu khóa (Superkey)
+--- P 290 [List Paragraph] ---
+
+--- P 291 [List Paragraph] ---
+ Chứng minh kết nối không mất mát thông tin (Lossless-Join Decomposition)
+--- P 292 [Normal] ---
+Theo Định lý Heath, phép phân rã một lược đồ quan hệ  thành hai lược đồ quan hệ và  là một phép phân rã kết nối không mất mát thông tin (Lossless-Join) đối với tập phụ thuộc hàm  nếu và chỉ nếu ít nhất một trong hai phụ thuộc hàm sau thuộc : 
+--- P 293 [Normal] ---
+  hoặc  
+--- P 294 [Normal] ---
+Kiểm chứng toán học trên CSDL Bệnh viện:
+--- P 295 [Normal] ---
+Phân rã Nhân viên – Khoa: Giao của hai quan hệ . Vì MaKhoa là Khóa chính của KHOA, ta có . Thỏa mãn hoàn toàn Định lý Heath.
+--- P 296 [Normal] ---
+Phân rã Cây kế thừa IS-A (NHAN_VIEN và BAC_SI): Giao của hai quan hệ là {MaNV}. Vì MaNV là Khóa chính của cả NHAN_VIEN và BAC_SI, phép kết nối tự nhiên () giữa hai bảng đảm bảo khôi phục chính xác 100% dữ liệu ban đầu mà không sinh ra các bộ dữ liệu giả (Spurious Tuples).
+--- P 297 [List Paragraph] ---
+Chứng minh tính bảo toàn phụ thuộc hàm (Dependency Preservation)
+--- P 298 [Normal] ---
+Phép phân rã lược đồ  thành bảo toàn tập phụ thuộc hàm  nếu: 
+--- P 299 [Normal] ---
+Trong đó  là tập phụ thuộc hàm cục bộ trên quan hệ .
+--- P 300 [Normal] ---
+Kiểm chứng trên CSDL Bệnh viện: Tất cả các phụ thuộc hàm trong tập phụ thuộc hàm tối tiểu  đều nằm gọn trong từng quan hệ tương ứng sau khi phân rã. Hệ quản trị CSDL có thể kiểm tra và cưỡng chế tất cả các ràng buộc phụ thuộc hàm thông qua các cơ chế Khóa chính (PRIMARY KEY) và Ràng buộc duy nhất (UNIQUE) trên từng bảng riêng lẻ mà không cần thực hiện các phép kết nối (JOIN) nhiều bảng tốn kém chi phí tính toán.
+--- P 301 [List Paragraph] ---
+Danh mục lượt đồ quan hệ sau BNFC hoàn chỉnh
+--- P 302 [Normal] ---
+Quy ước ký hiệu lược đồ: Gạch chân liền nét (PK) là Khóa chính (Primary Key); In nghiêng xanh (FK) là Khóa ngoại (Foreign Key); [UK] là Khóa ứng viên (Candidate Key / Unique Constraint).
+--- P 303 [Normal] ---
+
+--- P 304 [Heading 1] ---
+Chương 4: SCHEMA VÀ CONSTRAINT
+--- P 305 [Heading 1] ---
+Chương 5: KIỂM THỬ
+--- P 306 [Heading 1] ---
+Chương 6: KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
+--- P 307 [Heading 1] ---
+Tài liệu tham khảo

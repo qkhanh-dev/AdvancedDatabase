@@ -1,0 +1,267 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// LƯỢC ĐỒ CƠ SỞ DỮ LIỆU v2.0 — 18 BẢNG · 103 CỘT · 20 KHÓA NGOẠI (NO ACTION)
+// Đồng bộ tuyệt đối với 02_Relational_Schema_18Bang_v2.xml & Business_Rules_v2.md
+// ============================================================================
+
+model Khoa {
+  MaKhoa      String     @id @db.VarChar(20)
+  TenKhoa     String     @db.VarChar(100)
+  DiaDiem     String     @db.VarChar(200)
+  SoDienThoai String     @db.VarChar(15)
+
+  phongs      Phong[]
+  nhanViens   NhanVien[]
+
+  @@map("KHOA")
+}
+
+model Phong {
+  MaPhong     String       @id @db.VarChar(20)
+  MaKhoa      String       @db.VarChar(20)
+  TenPhong    String       @db.VarChar(100)
+  LoaiPhong   String       @db.VarChar(100)
+  ViTri       String       @db.VarChar(200)
+
+  khoa        Khoa         @relation(fields: [MaKhoa], references: [MaKhoa], onDelete: NoAction, onUpdate: NoAction, map: "FK01_PHONG_KHOA")
+  giuongBenhs GiuongBenh[]
+
+  @@map("PHONG")
+}
+
+model GiuongBenh {
+  MaGiuong    String       @id @db.VarChar(20)
+  MaPhong     String       @db.VarChar(20)
+  SoGiuong    String       @db.VarChar(20)
+  LoaiGiuong  String       @db.VarChar(100)
+  TrangThai   String       @default("SAN_SANG") @db.VarChar(100)
+  DonGiaNgay  Decimal      @db.Decimal(18, 2)
+
+  phong       Phong        @relation(fields: [MaPhong], references: [MaPhong], onDelete: NoAction, onUpdate: NoAction, map: "FK02_GIUONG_PHONG")
+  phanGiuongs PhanGiuong[]
+
+  @@map("GIUONG_BENH")
+}
+
+model NhanVien {
+  MaNV        String       @id @db.VarChar(20)
+  MaKhoa      String       @db.VarChar(20)
+  HoTen       String       @db.VarChar(100)
+  NgaySinh    DateTime     @db.Date
+  GioiTinh    String       @db.VarChar(10)
+  CCCD        String       @unique @db.VarChar(20)
+  DiaChi      String       @db.VarChar(200)
+  SoDienThoai String       @db.VarChar(15)
+  NgayVaoLam  DateTime     @db.Date
+
+  khoa        Khoa         @relation(fields: [MaKhoa], references: [MaKhoa], onDelete: NoAction, onUpdate: NoAction, map: "FK03_NHAN_VIEN_KHOA")
+  bacSi       BacSi?
+  dieuDuong   DieuDuong?
+  kyThuatVien KyThuatVien?
+
+  @@map("NHAN_VIEN")
+}
+
+model BacSi {
+  MaNV               String     @id @db.VarChar(20)
+  ChuyenKhoa         String     @db.VarChar(100)
+  TrinhDoHocVan      String     @db.VarChar(100)
+  SoChungChiHanhNghe String     @unique @db.VarChar(50)
+
+  nhanVien           NhanVien   @relation(fields: [MaNV], references: [MaNV], onDelete: NoAction, onUpdate: NoAction, map: "FK04_BAC_SI_NHAN_VIEN")
+  luotKhams          LuotKham[]
+
+  @@map("BAC_SI")
+}
+
+model DieuDuong {
+  MaNV             String   @id @db.VarChar(20)
+  CapBac           String   @db.VarChar(100)
+  ChungChiHanhNghe String   @unique @db.VarChar(50)
+
+  nhanVien         NhanVien @relation(fields: [MaNV], references: [MaNV], onDelete: NoAction, onUpdate: NoAction, map: "FK05_DIEU_DUONG_NHAN_VIEN")
+
+  @@map("DIEU_DUONG")
+}
+
+model KyThuatVien {
+  MaNV                String           @id @db.VarChar(20)
+  ChuyenMonXetNghiem  String           @db.VarChar(100)
+  BTD_ThietBiPhuTrach String           @db.VarChar(255)
+
+  nhanVien            NhanVien         @relation(fields: [MaNV], references: [MaNV], onDelete: NoAction, onUpdate: NoAction, map: "FK06_KTV_NHAN_VIEN")
+  phieuXetNghiems     PhieuXetNghiem[]
+
+  @@map("KY_THUAT_VIEN")
+}
+
+model BenhNhan {
+  MaBN          String      @id @db.VarChar(20)
+  HoTen         String      @db.VarChar(100)
+  NgaySinh      DateTime    @db.Date
+  GioiTinh      String      @db.VarChar(10)
+  CCCD          String      @unique @db.VarChar(20)
+  SDT           String      @db.VarChar(15)
+  DiaChi_Duong  String      @db.VarChar(200)
+  DiaChi_Phuong String      @db.VarChar(100)
+  DiaChi_Quan   String      @db.VarChar(100)
+  NhomMau       String      @db.VarChar(10)
+
+  theBHYTs      TheBHYT[]
+  dotNoiTrus    DotNoiTru[]
+  luotKhams     LuotKham[]
+
+  @@map("BENH_NHAN")
+}
+
+model TheBHYT {
+  MaTheBHYT  String   @id @db.VarChar(20)
+  MaBN       String   @db.VarChar(20)
+  MucHuong   Decimal  @db.Decimal(5, 4)
+  NgayBatDau DateTime @db.Date
+  NgayHetHan DateTime @db.Date
+
+  benhNhan   BenhNhan @relation(fields: [MaBN], references: [MaBN], onDelete: NoAction, onUpdate: NoAction, map: "FK08_THE_BHYT_BENH_NHAN")
+
+  @@map("THE_BHYT")
+}
+
+model DotNoiTru {
+  MaDotNT           String       @id @db.VarChar(20)
+  MaBN              String       @db.VarChar(20)
+  NgayNhapVien      DateTime     @db.Date
+  NguoiNhaLienHe    String       @db.VarChar(100)
+  TinhTrangNhapVien String       @db.VarChar(100)
+  NgayRaVien        DateTime?    @db.Date
+
+  benhNhan          BenhNhan     @relation(fields: [MaBN], references: [MaBN], onDelete: NoAction, onUpdate: NoAction, map: "FK07_DOT_NOI_TRU_BENH_NHAN")
+  phanGiuongs       PhanGiuong[]
+  luotKhams         LuotKham[]
+
+  @@unique([MaDotNT, MaBN], map: "UQ_DOT_NOI_TRU_MADOT_MABN")
+  @@map("DOT_NOI_TRU")
+}
+
+model PhanGiuong {
+  MaDotNT    String     @db.VarChar(20)
+  MaGiuong   String     @db.VarChar(20)
+  TuNgay     DateTime   @db.Date
+  DenNgay    DateTime?  @db.Date
+
+  dotNoiTru  DotNoiTru  @relation(fields: [MaDotNT], references: [MaDotNT], onDelete: NoAction, onUpdate: NoAction, map: "FK18_PHAN_GIUONG_DOT_NOI_TRU")
+  giuongBenh GiuongBenh @relation(fields: [MaGiuong], references: [MaGiuong], onDelete: NoAction, onUpdate: NoAction, map: "FK19_PHAN_GIUONG_GIUONG_BENH")
+
+  @@id([MaDotNT, MaGiuong, TuNgay])
+  @@map("PHAN_GIUONG")
+}
+
+model LuotKham {
+  MaLuotKham      String           @id @db.VarChar(20)
+  MaBN            String           @db.VarChar(20)
+  MaNV_BacSi      String           @db.VarChar(20)
+  NgayGioKham     DateTime         @db.Timestamp(3)
+  LyDoKham        String           @db.VarChar(255)
+  TrieuChung      String           @db.VarChar(255)
+  ChanDoanSoBo    String           @db.VarChar(255)
+  TrangThai       String           @db.VarChar(100)
+  MaDotNT         String?          @db.VarChar(20)
+
+  benhNhan        BenhNhan         @relation(fields: [MaBN], references: [MaBN], onDelete: NoAction, onUpdate: NoAction, map: "FK09_LUOT_KHAM_BENH_NHAN")
+  bacSi           BacSi            @relation(fields: [MaNV_BacSi], references: [MaNV], onDelete: NoAction, onUpdate: NoAction, map: "FK10_LUOT_KHAM_BAC_SI")
+  dotNoiTru       DotNoiTru?       @relation(fields: [MaDotNT, MaBN], references: [MaDotNT, MaBN], onDelete: NoAction, onUpdate: NoAction, map: "FK11_LUOT_KHAM_DOT_NOI_TRU")
+  donThuoc        DonThuoc?
+  phieuXetNghiems PhieuXetNghiem[]
+  vienPhi         VienPhi?
+
+  @@map("LUOT_KHAM")
+}
+
+model DonThuoc {
+  MaDonThuoc       String            @id @db.VarChar(20)
+  MaLuotKham       String            @unique @db.VarChar(20)
+  NgayKeDon        DateTime          @db.Date
+  LoiDanCuaBacSi   String            @db.VarChar(500)
+
+  luotKham         LuotKham          @relation(fields: [MaLuotKham], references: [MaLuotKham], onDelete: NoAction, onUpdate: NoAction, map: "FK12_DON_THUOC_LUOT_KHAM")
+  chiTietDonThuocs ChiTietDonThuoc[]
+
+  @@map("DON_THUOC")
+}
+
+model Thuoc {
+  MaThuoc          String            @id @db.VarChar(20)
+  TenThuoc         String            @db.VarChar(100)
+  HoatChat         String            @db.VarChar(100)
+  HamLuong         String            @db.VarChar(50)
+  DonViTinh        String            @db.VarChar(30)
+  DonGia           Decimal           @db.Decimal(18, 2)
+  HuongDanSD       String            @db.VarChar(500)
+
+  chiTietDonThuocs ChiTietDonThuoc[]
+
+  @@map("THUOC")
+}
+
+model ChiTietDonThuoc {
+  MaDonThuoc String   @db.VarChar(20)
+  MaThuoc    String   @db.VarChar(20)
+  SoLuong    Int
+  LieuDung   String   @db.VarChar(200)
+  DonGiaKe   Decimal  @db.Decimal(18, 2)
+
+  donThuoc   DonThuoc @relation(fields: [MaDonThuoc], references: [MaDonThuoc], onDelete: NoAction, onUpdate: NoAction, map: "FK13_CTDT_DON_THUOC")
+  thuoc      Thuoc    @relation(fields: [MaThuoc], references: [MaThuoc], onDelete: NoAction, onUpdate: NoAction, map: "FK14_CTDT_THUOC")
+
+  @@id([MaDonThuoc, MaThuoc])
+  @@map("CHI_TIET_DON_THUOC")
+}
+
+model LoaiXetNghiem {
+  MaLoaiXN          String           @id @db.VarChar(20)
+  TenXN             String           @db.VarChar(100)
+  ChiTieuBinhThuong String           @db.VarChar(255)
+  DonGia            Decimal          @db.Decimal(18, 2)
+
+  phieuXetNghiems   PhieuXetNghiem[]
+
+  @@map("LOAI_XET_NGHIEM")
+}
+
+model PhieuXetNghiem {
+  MaPhieuXN     String        @id @db.VarChar(20)
+  MaLuotKham    String        @db.VarChar(20)
+  MaLoaiXN      String        @db.VarChar(20)
+  MaNV_KTV      String?       @db.VarChar(20)
+  NgayGioXN     DateTime?     @db.Timestamp(3)
+  NgayGioTraKQ  DateTime?     @db.Timestamp(3)
+  KetQua        String?       @db.VarChar(500)
+  DanhGia       String?       @db.VarChar(255)
+  DonGiaXN      Decimal       @db.Decimal(18, 2)
+
+  luotKham      LuotKham      @relation(fields: [MaLuotKham], references: [MaLuotKham], onDelete: NoAction, onUpdate: NoAction, map: "FK15_PXN_LUOT_KHAM")
+  loaiXetNghiem LoaiXetNghiem @relation(fields: [MaLoaiXN], references: [MaLoaiXN], onDelete: NoAction, onUpdate: NoAction, map: "FK16_PXN_LOAI_XN")
+  kyThuatVien   KyThuatVien?  @relation(fields: [MaNV_KTV], references: [MaNV], onDelete: NoAction, onUpdate: NoAction, map: "FK17_PXN_KTV")
+
+  @@map("PHIEU_XET_NGHIEM")
+}
+
+model VienPhi {
+  MaHoaDon           String   @id @db.VarChar(20)
+  MaLuotKham         String   @unique @db.VarChar(20)
+  NgayLap            DateTime @db.Date
+  HinhThucThanhToan  String   @db.VarChar(100)
+  TruBHYT            Decimal  @default(0.00) @db.Decimal(18, 2)
+  TrangThaiThanhToan String   @default("CHUA_THANH_TOAN") @db.VarChar(100)
+
+  luotKham           LuotKham @relation(fields: [MaLuotKham], references: [MaLuotKham], onDelete: NoAction, onUpdate: NoAction, map: "FK20_VIEN_PHI_LUOT_KHAM")
+
+  @@map("VIEN_PHI")
+}
